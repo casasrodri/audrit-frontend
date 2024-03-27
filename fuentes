@@ -1,0 +1,11 @@
+'@nuxtjs/google-fonts', {
+        families: {
+          'Work+Sans': true,
+          Sora: true,
+          Inter: true,
+          Rubik: true,
+          Lato: true
+        }
+      }
+
+      nuxt-icon
