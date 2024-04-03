@@ -3,6 +3,7 @@ import HomeView from '@/views/HomeView.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 import SesionLayout from '@/layouts/SesionLayout.vue'
 import ObservacionesView from '@/views/ObservacionesView.vue'
+import DevTools from '@/components/DevTools.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,6 +30,11 @@ const router = createRouter({
           path: '/observaciones',
           name: 'observaciones',
           component: ObservacionesView
+        },
+        {
+          path: '/devtools',
+          name: 'devtools',
+          component: DevTools
         }
       ]
     },
