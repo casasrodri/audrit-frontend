@@ -1,7 +1,3 @@
-<script setup>
+<script setup></script>
 
-</script>
-
-<template>
-    Hacer login.
-</template>
+<template>Hacer login.</template>

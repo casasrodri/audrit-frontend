@@ -4,10 +4,10 @@ import { defineStore } from 'pinia'
 export const useMenuStore = defineStore('menu', () => {
   const abierto = ref(false)
   const cerrado = ref(true)
-//   const doubleCount = computed(() => count.value * 2)
-//   function increment() {
-//     count.value++
-//   }
+  //   const doubleCount = computed(() => count.value * 2)
+  //   function increment() {
+  //     count.value++
+  //   }
   function abrir() {
     abierto.value = true
     cerrado.value = false
