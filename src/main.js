@@ -18,13 +18,16 @@ app.use(router)
 
 app.use(PrimeVue, {
   unstyled: true,
-  pt: Lara
+  pt: Lara,
+  ripple: true,
 })
 
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
+import ToastService from 'primevue/toastservice';
 
 app.component('PrimeDialog', Dialog)
 app.component('PrimeButton', Button)
+app.use(ToastService);
 
 app.mount('#app')

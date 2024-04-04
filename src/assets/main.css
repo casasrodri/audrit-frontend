@@ -42,6 +42,6 @@ html {
   font-size: 15px;
 }
 
-.myTailwindInput {
-  @apply bg-gray-100 dark:bg-gray-900 p-4 rounded-full placeholder:text-gray-500 border border-transparent text-red-400;
+.encabezadoCiclos th {
+  @apply text-cyan-800 bg-cyan-300 dark:text-cyan-200 dark:bg-purple-800;
 }

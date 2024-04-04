@@ -10,7 +10,7 @@ import AudiView from '@/views/auditorias/AudiView.vue'
 import ObservView from '@/views/observaciones/ObservView.vue'
 import ReqView from '@/views/requerimientos/ReqView.vue'
 
-import ParamSelector from '@/views/parametros/ParamSelector.vue'
+import ParamMenu from '@/views/parametros/ParamMenu.vue'
 import ParamCiclos from '@/views/parametros/ParamCiclos.vue'
 import ParamPeriodos from '@/views/parametros/ParamPeriodos.vue'
 
@@ -61,7 +61,7 @@ const router = createRouter({
         {
           path: '/parametros',
           name: 'parametros',
-          component: ParamSelector,
+          component: ParamMenu,
           meta: { title: 'Parámetros' },
           children: [
             {
@@ -78,7 +78,6 @@ const router = createRouter({
             },
           ]
         },
-
         {
           path: '/devtools',
           name: 'devtools',
