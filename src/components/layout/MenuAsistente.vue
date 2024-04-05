@@ -21,6 +21,11 @@ import InputIcon from 'primevue/inputicon';
 
 const alertame = () => alert('Consultando!!')
 
+document.addEventListener('keydown', (e) => {
+    e.preventDefault();
+    if (e.ctrlKey && e.key === 'a') visible.value = true
+})
+
 </script>
 
 <template>
@@ -34,7 +39,8 @@ const alertame = () => alert('Consultando!!')
         </span>
     </div>
 
-    <Dialog v-model:visible="visible" :draggable="false" modal dismissableMask closeOnEscape :closable="false">
+    <Dialog v-model:visible="visible" :draggable="false" modal dismissableMask :closable="false"
+        :pt="{ mask: 'bg-black/20 backdrop-blur-[0.5px]' }">
         <template #header>
             <!-- <span class="relative w-full">
                 <InputText v-model="textoBuscado" placeholder="Buscar" class="pl-10 w-full" />
@@ -46,7 +52,7 @@ const alertame = () => alert('Consultando!!')
                     <i class="pi pi-send" />
                 </InputIcon>
                 <InputText v-model="textoBuscado" placeholder="Hazme una pregunta..." @keyup.enter="alertame"
-                    autofocus />
+                    @keyup.escape="visible = false" autofocus />
             </IconField>
         </template>
         <p class="m-0">

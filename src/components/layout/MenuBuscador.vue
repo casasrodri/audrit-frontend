@@ -18,6 +18,11 @@ const textoBuscado = ref('')
 
 watch(visible, () => textoBuscado.value = '')
 
+document.addEventListener('keydown', (e) => {
+    e.preventDefault();
+    if (e.ctrlKey && e.key === 'k') visible.value = true
+})
+
 </script>
 
 <template>
@@ -31,15 +36,17 @@ watch(visible, () => textoBuscado.value = '')
         </span>
     </div>
 
-    <Dialog v-model:visible="visible" :draggable="false" modal dismissableMask closeOnEscape :closable="false">
+    <Dialog v-model:visible="visible" :draggable="false" dismissableMask :closable="false" modal
+        :pt="{ mask: 'bg-black/20 backdrop-blur-[0.5px]' }">
         <template #header>
             <span class="relative w-full">
                 <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
-                <InputText v-model="textoBuscado" placeholder="Buscar" class="pl-10 w-full" autofocus />
+                <InputText v-model="textoBuscado" placeholder="Buscar" class="pl-10 w-full" autofocus
+                    @keyup.escape="visible = false" />
             </span>
         </template>
         <p class="m-0">
-            {{ textoBuscado === '' ? 'Sin resultados' : `Buscando: ${textoBuscado}...` }}
+            {{ textoBuscado === '' ? '' : `Buscando: ${textoBuscado}...` }}
         </p>
     </Dialog>
 

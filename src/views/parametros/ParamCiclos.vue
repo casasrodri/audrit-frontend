@@ -72,6 +72,7 @@ function modif(key) {
 function del(key) {
     accion.value = 'eliminar'
     cicloActivo.value = buscarNodo(key)
+    asignarRefPadre()
     toast.add({ severity: 'warn', summary: 'Atención!', detail: `Se está por borrar al ciclo "${cicloActivo.value.nombre}"`, life: 3000 });
 }
 
@@ -96,8 +97,9 @@ function cambiarAEdicion() {
 watch(cicloActivo, () => asignarRefPadre)
 
 watch(cicloActivo, () => {
+
     const idPropio = cicloActivo.value.id.toString()
-    const idAsociando = Object.keys(cicloActivo.value.refPadre)[0]
+    const idAsociando = Object.keys(toRaw(cicloActivo.value).refPadre)[0]
 
     if (idPropio === idAsociando) {
         toast.add({ severity: 'warn', summary: 'Referencia circular', detail: `No se puede asociar como subciclo así mismo.`, life: 3000 });
@@ -136,6 +138,7 @@ async function guardarNuevoCiclo() {
 
     console.log(nuevo)
 
+    // TODO try / catch, toast...
     const res = await api.post('/ciclos/', nuevo)
 
     console.log(res)
