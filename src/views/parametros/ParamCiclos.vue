@@ -8,7 +8,7 @@ import Textarea from 'primevue/textarea';
 import InputText from 'primevue/inputtext';
 import Toast from 'primevue/toast';
 
-import { ref, onMounted, toRaw, watchEffect } from 'vue';
+import { ref, onMounted, toRaw, watchEffect, watch } from 'vue';
 import { Icon } from '@iconify/vue'
 import { useToast } from 'primevue/usetoast';
 
@@ -30,8 +30,7 @@ const accion = ref()
 const nodos = ref();
 const todosCiclos = ref();
 const modalVisible = ref(false)
-const seleccionado = ref(null)
-const cicloAsociado = ref(null);
+const cicloActivo = ref(null)
 
 onMounted(async () => {
     nodos.value = await obtenerNodos()
@@ -47,27 +46,42 @@ function buscarNodo(key) {
     })
 }
 
+function asignarRefPadre() {
+    cicloActivo.value['refPadre'] = {}
+
+    if (cicloActivo.value?.padre) {
+        const idPadre = cicloActivo.value.padre.id
+        cicloActivo.value['refPadre'][idPadre] = true
+    }
+}
+
 function ver(key) {
     accion.value = 'ver'
-    seleccionado.value = buscarNodo(key)
+    cicloActivo.value = buscarNodo(key)
+    asignarRefPadre()
     modalVisible.value = true
 }
 
 function modif(key) {
     accion.value = 'modificar'
-    seleccionado.value = buscarNodo(key)
+    cicloActivo.value = buscarNodo(key)
+    asignarRefPadre()
     modalVisible.value = true
 }
 
 function del(key) {
     accion.value = 'eliminar'
-    seleccionado.value = buscarNodo(key)
-    toast.add({ severity: 'warn', summary: 'Atención!', detail: `Se está por borrar al ciclo "${seleccionado.value.nombre}"`, life: 3000 });
+    cicloActivo.value = buscarNodo(key)
+    toast.add({ severity: 'warn', summary: 'Atención!', detail: `Se está por borrar al ciclo "${cicloActivo.value.nombre}"`, life: 3000 });
 }
 
 function nuevo() {
     accion.value = 'modificar'
-    seleccionado.value = {}
+    cicloActivo.value = {
+        id: 0,
+        nuevo: true,
+        refPadre: {}
+    }
     modalVisible.value = true
 }
 
@@ -79,13 +93,69 @@ function cambiarAEdicion() {
     modalVisible.value = true
 }
 
-watchEffect(() => {
-    cicloAsociado.value = {}
+watch(cicloActivo, () => asignarRefPadre)
 
-    if (seleccionado.value?.padre) {
-        cicloAsociado.value[seleccionado.value.padre.id] = true
+watch(cicloActivo, () => {
+    const idPropio = cicloActivo.value.id.toString()
+    const idAsociando = Object.keys(cicloActivo.value.refPadre)[0]
+
+    if (idPropio === idAsociando) {
+        toast.add({ severity: 'warn', summary: 'Referencia circular', detail: `No se puede asociar como subciclo así mismo.`, life: 3000 });
+        cicloActivo.value.refPadre = {}
     }
-});
+}, { deep: true })
+
+watchEffect(() => {
+    if (cicloActivo.value?.sigla) {
+        cicloActivo.value.sigla = cicloActivo.value.sigla.toUpperCase()
+    }
+})
+
+function isEmpty(obj) {
+    return Object.keys(obj).length === 0 && obj.constructor === Object
+}
+
+
+async function guardarNuevoCiclo() {
+    const ciclo = cicloActivo.value
+    let padre = ciclo.refPadre
+
+    if (isEmpty(toRaw(padre))) {
+        padre = { id: null }
+    } else {
+        const id = Object.keys(padre)[0]
+        padre = toRaw(buscarNodo(id))
+    }
+
+    const nuevo = {
+        nombre: ciclo.nombre,
+        sigla: ciclo.sigla,
+        descripcion: ciclo.descripcion,
+        padre_id: padre.id,
+    }
+
+    console.log(nuevo)
+
+    const res = await api.post('/ciclos/', nuevo)
+
+    console.log(res)
+
+    nodos.value = await obtenerNodos()
+    todosCiclos.value = await obtenerTodosCiclos()
+}
+
+
+function procesarGuardado() {
+    // console.log(toRaw(cicloActivo.value))
+
+    if (cicloActivo.value.nuevo) {
+        guardarNuevoCiclo()
+    } else {
+        console.log('Se trata de un ciclo existente!')
+    }
+
+    modalVisible.value = false
+}
 
 </script>
 
@@ -97,10 +167,6 @@ watchEffect(() => {
         </div>
 
         <TreeTable :value="nodos" :pt="{ headerrow: 'hidden', row: 'group/filaciclo' }" class="mt-3">
-
-            <template #headerRow>
-                ...
-            </template>
 
             <Column expander>
                 <template #body="props">
@@ -141,57 +207,47 @@ watchEffect(() => {
                 <div v-if="accion === 'ver'">
                     <span
                         class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
-                        {{ seleccionado.sigla }}
+                        {{ cicloActivo.sigla }}
                     </span>
                 </div>
                 <div v-if="accion === 'modificar'">
-                    <InputText type="text" v-model="seleccionado.sigla" style="width: 100px;" />
-                </div>
-            </div>
-
-            <div class="flex flex-row" v-if="accion === 'ver'">
-                <div class="w-40 font-semibold">Sigla extendida:</div>
-                <div>
-                    <span
-                        class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
-                        {{ seleccionado.sigla_extendida }}
-                    </span>
+                    <InputText type="text" v-model="cicloActivo.sigla" style="width: 100px;" />
                 </div>
             </div>
 
             <div class="flex flex-row">
                 <div class="w-40 font-semibold flex items-center">Nombre:</div>
                 <div v-if="accion === 'ver'">
-                    {{ seleccionado.nombre }}
+                    {{ cicloActivo.nombre }}
                 </div>
 
                 <div v-if="accion === 'modificar'">
-                    <InputText type="text" v-model="seleccionado.nombre" style="width: 300px;" />
+                    <InputText type="text" v-model="cicloActivo.nombre" style="width: 300px;" />
                 </div>
             </div>
 
             <div class="flex flex-row">
                 <div class="w-40 font-semibold">Descripción:</div>
                 <div v-if="accion === 'ver'">
-                    {{ seleccionado.descripcion }}
+                    {{ cicloActivo.descripcion }}
                 </div>
                 <div v-if="accion === 'modificar'">
-                    <Textarea v-model="seleccionado.descripcion" rows="5" cols="37" />
+                    <Textarea v-model="cicloActivo.descripcion" rows="5" cols="37" />
                 </div>
             </div>
 
             <div class="flex flex-row">
                 <div class="w-40 font-semibold flex items-center">Ciclo asociado:</div>
                 <div v-if="accion === 'ver'">
-                    <span v-if="seleccionado.padre">
-                        {{ seleccionado.padre.nombre }}
+                    <span v-if="cicloActivo.padre">
+                        {{ cicloActivo.padre.nombre }}
                     </span>
                     <span v-else>
                         Sin asociación
                     </span>
                 </div>
                 <div v-if="accion === 'modificar'">
-                    <TreeSelect v-model="cicloAsociado" :options="nodos" placeholder="Sin asociación"
+                    <TreeSelect v-model="cicloActivo.refPadre" :options="nodos" placeholder="Sin asociación"
                         class="md:w-[20rem] w-full" />
                 </div>
             </div>
@@ -201,7 +257,7 @@ watchEffect(() => {
             <div class="flex justify-end gap-2">
                 <template v-if="accion === 'modificar'">
                     <Button label="Descartar" severity="danger" icon="pi pi-times" @click="modalVisible = false" />
-                    <Button label="Guardar" icon="pi pi-save" @click="modalVisible = false" />
+                    <Button label="Guardar" icon="pi pi-save" @click="procesarGuardado" />
                 </template>
 
                 <template v-if="accion === 'ver'">

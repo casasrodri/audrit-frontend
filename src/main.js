@@ -1,20 +1,22 @@
 import './assets/main.css'
 import 'primeicons/primeicons.css'
 
+// Application
 import { createApp } from 'vue'
-import { createPinia } from 'pinia'
-
 import App from './App.vue'
+const app = createApp(App)
+
+// Pinia
+import { createPinia } from 'pinia'
+app.use(createPinia())
+
+// Router
 import router from './router'
+app.use(router)
 
 // PrimeVue
 import PrimeVue from 'primevue/config'
 import Lara from '@/presets/lara'
-
-const app = createApp(App)
-
-app.use(createPinia())
-app.use(router)
 
 app.use(PrimeVue, {
   unstyled: true,
@@ -22,12 +24,16 @@ app.use(PrimeVue, {
   ripple: true,
 })
 
+// Toast
+import ToastService from 'primevue/toastservice';
+app.use(ToastService);
+
+// Components
 import Dialog from 'primevue/dialog'
 import Button from 'primevue/button'
-import ToastService from 'primevue/toastservice';
 
 app.component('PrimeDialog', Dialog)
 app.component('PrimeButton', Button)
-app.use(ToastService);
 
+// Mount
 app.mount('#app')

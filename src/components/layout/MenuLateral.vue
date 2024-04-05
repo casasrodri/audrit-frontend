@@ -7,6 +7,8 @@ import { RouterLink } from 'vue-router'
 import LogoApp from './LogoApp.vue'
 import BotonLateral from './BotonLateral.vue'
 import MenuUsuario from './MenuUsuario.vue'
+import MenuBuscador from './MenuBuscador.vue'
+import MenuAsistente from './MenuAsistente.vue'
 
 const menuStore = useMenuStore()
 
@@ -44,8 +46,8 @@ const estilosMenu = computed(() => {
       </div>
       <div id="inferior">
         <div class="flex flex-col">
-          <BotonLateral tipo="buscar" />
-          <BotonLateral tipo="asistente" />
+          <MenuBuscador />
+          <MenuAsistente />
           <BotonLateral tipo="configuracion" />
 
           <MenuUsuario />
