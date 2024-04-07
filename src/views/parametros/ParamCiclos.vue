@@ -6,7 +6,6 @@ import Button from 'primevue/button';
 import TreeSelect from 'primevue/treeselect';
 import Textarea from 'primevue/textarea';
 import InputText from 'primevue/inputtext';
-import Toast from 'primevue/toast';
 
 import { ref, onMounted, toRaw, watchEffect, watch } from 'vue';
 import { Icon } from '@iconify/vue'
@@ -73,7 +72,12 @@ function del(key) {
     accion.value = 'eliminar'
     cicloActivo.value = buscarNodo(key)
     asignarRefPadre()
-    toast.add({ severity: 'warn', summary: 'Atención!', detail: `Se está por borrar al ciclo "${cicloActivo.value.nombre}"`, life: 3000 });
+    toast.add({
+        severity: 'warn',
+        summary: 'Atención!',
+        detail: `Se está por borrar al ciclo "${cicloActivo.value.nombre}"`,
+        life: 3000
+    });
 }
 
 function nuevo() {
@@ -90,7 +94,12 @@ function nuevo() {
 function cambiarAEdicion() {
     modalVisible.value = false
     accion.value = 'modificar'
-    toast.add({ severity: 'info', summary: 'Modo edición', detail: 'Se ha cambiado al modo edición.', life: 3000 });
+    toast.add({
+        severity: 'info',
+        summary: 'Modo edición',
+        detail: 'Se ha cambiado al modo edición.',
+        life: 3000
+    });
     modalVisible.value = true
 }
 
@@ -102,7 +111,12 @@ watch(cicloActivo, () => {
     const idAsociando = Object.keys(toRaw(cicloActivo.value).refPadre)[0]
 
     if (idPropio === idAsociando) {
-        toast.add({ severity: 'warn', summary: 'Referencia circular', detail: `No se puede asociar como subciclo así mismo.`, life: 3000 });
+        toast.add({
+            severity: 'warn',
+            summary: 'Referencia circular',
+            detail: `No se puede asociar como subciclo así mismo.`,
+            life: 3000
+        });
         cicloActivo.value.refPadre = {}
     }
 }, { deep: true })
@@ -273,5 +287,4 @@ function procesarGuardado() {
         </template>
 
     </Dialog>
-    <Toast />
 </template>

@@ -26,8 +26,8 @@ watchEffect(() => {
       <!-- TODO Ver porque no está andando bien lo del ancho de la barra con el titulo -->
 
       <header
-        class="pl-4 min-h-14 z-10 border-b-[1px] border-gray-200 w-lvw fixed flex items-end bg-gradient-to-b from-gray-200 to-gray-100/80 justify-between pr-20 dark:from-gray-700 dark:to-gray-800/80 dark:border-gray-700 pb-2">
-        <h1 class="text-xl font-normal">
+        class="pl-4 min-h-14 z-10 border-b-[1px] border-gray-200 w-lvw fixed flex items-end bg-gradient-to-b from-gray-200/80 to-gray-100/40 justify-between pr-20 dark:from-gray-800/80 dark:to-gray-800/40 dark:border-gray-700 pb-2 backdrop-blur-[2px]">
+        <h1 class="text-xl font-semibold">
           {{ tituloStore.texto }}
         </h1>
         <span>

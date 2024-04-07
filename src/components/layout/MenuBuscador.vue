@@ -19,8 +19,11 @@ const textoBuscado = ref('')
 watch(visible, () => textoBuscado.value = '')
 
 document.addEventListener('keydown', (e) => {
-    e.preventDefault();
-    if (e.ctrlKey && e.key === 'k') visible.value = true
+    if (e.ctrlKey && e.key === 'k') {
+        e.preventDefault();
+        visible.value = true
+    }
+    return true
 })
 
 </script>

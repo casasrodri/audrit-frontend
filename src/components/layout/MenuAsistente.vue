@@ -22,8 +22,12 @@ import InputIcon from 'primevue/inputicon';
 const alertame = () => alert('Consultando!!')
 
 document.addEventListener('keydown', (e) => {
-    e.preventDefault();
-    if (e.ctrlKey && e.key === 'a') visible.value = true
+    if (e.ctrlKey && e.key === 'a') {
+        visible.value = true
+        e.preventDefault();
+    }
+
+    return true
 })
 
 </script>

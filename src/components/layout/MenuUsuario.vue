@@ -1,8 +1,13 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useMenuStore } from '@/stores/menuLateral.js'
+import { removeToken } from '@/utils/sesion.js'
+import { useRouter } from 'vue-router'
+import { useToast } from 'primevue/usetoast'
 
+const router = useRouter()
 const menuStore = useMenuStore()
+const toast = useToast()
 
 const toggleMenuUser = () => {
     const menuUsuarioFlotante = document.getElementById('menuUsuarioFlotante')
@@ -15,11 +20,26 @@ const user = ref({
     cargo: '',
 })
 
+
+// TODO Cambiar por los datos del usuario logueado
 onMounted(() => {
     user.value.nombre = 'Rodrigo Casas'
     user.value.siglas = 'RC'
     user.value.cargo = 'Auditor Analista'
 })
+
+function cerrarSesion() {
+    menuStore.cerrar()
+    removeToken()
+    router.push('/login')
+
+    toast.add({
+        severity: 'success',
+        summary: 'Sesión finalizada',
+        detail: 'Hasta luego!',
+        life: 3000
+    });
+}
 
 </script>
 
@@ -52,10 +72,10 @@ onMounted(() => {
                 </div>
 
             </div>
-            <a class="text-red-500" href="/cerrarSesion">
+            <div class="text-red-500 cursor-pointer" @click="cerrarSesion">
                 <i class="pi pi-sign-out" style="font-size: 0.8rem"></i>
                 Cerrar sesión
-            </a>
+            </div>
         </div>
     </div>
 </template>
