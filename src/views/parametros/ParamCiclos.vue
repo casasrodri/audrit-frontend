@@ -9,6 +9,7 @@ import InputText from 'primevue/inputtext';
 
 import { ref, onMounted, toRaw, watchEffect, watch } from 'vue';
 import { Icon } from '@iconify/vue'
+import { isObjectEmpty } from '@/utils/helpers.js';
 import { useToast } from 'primevue/usetoast';
 
 import api from '@/services/api.js';
@@ -23,6 +24,11 @@ async function obtenerTodosCiclos() {
     return res.data
 }
 
+async function fetchNodos() {
+    nodos.value = await obtenerNodos()
+    todosCiclos.value = await obtenerTodosCiclos()
+}
+
 const toast = useToast();
 
 const accion = ref()
@@ -32,8 +38,9 @@ const modalVisible = ref(false)
 const cicloActivo = ref(null)
 
 onMounted(async () => {
-    nodos.value = await obtenerNodos()
-    todosCiclos.value = await obtenerTodosCiclos()
+    fetchNodos()
+
+
 });
 
 function buscarNodo(key) {
@@ -68,16 +75,30 @@ function modif(key) {
     modalVisible.value = true
 }
 
-function del(key) {
+async function del(key) {
     accion.value = 'eliminar'
     cicloActivo.value = buscarNodo(key)
     asignarRefPadre()
-    toast.add({
-        severity: 'warn',
-        summary: 'Atención!',
-        detail: `Se está por borrar al ciclo "${cicloActivo.value.nombre}"`,
-        life: 3000
-    });
+
+    try {
+        const res = await api.delete(`/ciclos/${cicloActivo.value.id}`)
+        console.log({ res })
+        toast.add({
+            severity: 'success',
+            summary: 'Confirmación',
+            detail: `Se eliminó el ciclo "${cicloActivo.value.nombre}"`,
+            life: 3000
+        });
+    } catch (err) {
+        toast.add({
+            severity: 'warn',
+            summary: 'Error',
+            detail: `No se pudo borrar al ciclo "${cicloActivo.value.nombre}"`,
+            life: 3000
+        });
+    }
+
+    fetchNodos()
 }
 
 function nuevo() {
@@ -127,35 +148,86 @@ watchEffect(() => {
     }
 })
 
-function isEmpty(obj) {
-    return Object.keys(obj).length === 0 && obj.constructor === Object
-}
-
-
-async function guardarNuevoCiclo() {
+function obtenerCicloEnviar() {
     const ciclo = cicloActivo.value
     let padre = ciclo.refPadre
 
-    if (isEmpty(toRaw(padre))) {
+    if (isObjectEmpty(toRaw(padre))) {
         padre = { id: null }
     } else {
         const id = Object.keys(padre)[0]
         padre = toRaw(buscarNodo(id))
     }
 
-    const nuevo = {
+    return {
         nombre: ciclo.nombre,
         sigla: ciclo.sigla,
         descripcion: ciclo.descripcion,
         padre_id: padre.id,
     }
 
+}
+
+async function guardarNuevoCiclo() {
+    const nuevo = obtenerCicloEnviar()
+
     console.log(nuevo)
 
-    // TODO try / catch, toast...
-    const res = await api.post('/ciclos/', nuevo)
+    try {
+        const res = await api.post('/ciclos/', nuevo)
+        console.log(res)
 
-    console.log(res)
+        if (res.status === 201) {
+            toast.add({
+                severity: 'success',
+                summary: 'Ciclo guardado',
+                detail: `El ciclo "${nuevo.nombre}" ha sido guardado correctamente.`,
+                life: 3000
+            });
+        }
+    } catch (error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error al guardar',
+            detail: `Hubo un error al guardar el ciclo.`,
+            life: 3000
+        });
+
+        console.log(error)
+    }
+
+    nodos.value = await obtenerNodos()
+    todosCiclos.value = await obtenerTodosCiclos()
+}
+
+async function guardarCambiosCiclo() {
+    const actualizado = obtenerCicloEnviar()
+
+    console.log(actualizado)
+
+    try {
+        const id = cicloActivo.value.id
+        const res = await api.put(`/ciclos/${id}`, actualizado)
+        console.log(res)
+
+        if (res.status === 201) {
+            toast.add({
+                severity: 'success',
+                summary: 'Ciclo actualizado',
+                detail: `El ciclo "${actualizado.nombre}" ha sido actualizado correctamente.`,
+                life: 3000
+            });
+        }
+    } catch (error) {
+        toast.add({
+            severity: 'error',
+            summary: 'Error al actualizar',
+            detail: `Hubo un error al actualizar el ciclo.`,
+            life: 3000
+        });
+
+        console.log(error)
+    }
 
     nodos.value = await obtenerNodos()
     todosCiclos.value = await obtenerTodosCiclos()
@@ -168,7 +240,7 @@ function procesarGuardado() {
     if (cicloActivo.value.nuevo) {
         guardarNuevoCiclo()
     } else {
-        console.log('Se trata de un ciclo existente!')
+        guardarCambiosCiclo()
     }
 
     modalVisible.value = false
