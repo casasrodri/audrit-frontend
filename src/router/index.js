@@ -5,7 +5,13 @@ import HomeView from '@/views/HomeView.vue'
 import AppLayout from '@/layouts/AppLayout.vue'
 
 // Views
+import AudiList from '@/views/auditorias/AudiList.vue'
 import AudiView from '@/views/auditorias/AudiView.vue'
+
+import RevList from '@/views/revisiones/RevList.vue'
+
+import RelevView from '@/views/relevamientos/RelevView.vue'
+
 import ObservView from '@/views/observaciones/ObservView.vue'
 import ReqView from '@/views/requerimientos/ReqView.vue'
 
@@ -35,8 +41,23 @@ const router = createRouter({
         {
           path: '/auditorias',
           name: 'auditorias',
-          component: AudiView,
+          component: AudiList,
           meta: { title: 'Auditorías' },
+        },
+        {
+          path: '/auditorias/:siglaAudit/:nombre?',
+          name: 'auditoria',
+          component: AudiView,
+        },
+        {
+          path: '/auditorias/:siglaAudit/revisiones/:siglaRevision/:nombre?',
+          name: 'revision',
+          component: RevList,
+        },
+        {
+          path: '/auditorias/:siglaAudit/revisiones/:siglaRevision/relevamientos/:idRelev/:nombre?',
+          name: 'relevamiento',
+          component: RelevView,
         },
         {
           path: '/observaciones',

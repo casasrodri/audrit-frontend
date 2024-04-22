@@ -53,7 +53,7 @@ document.addEventListener('keydown', (e) => {
 
             <IconField class="relative w-full">
                 <InputIcon @click="alertame">
-                    <i class="pi pi-send" />
+                    <i class="pi pi-sparkles" />
                 </InputIcon>
                 <InputText v-model="textoBuscado" placeholder="Hazme una pregunta..." @keyup.enter="alertame"
                     @keyup.escape="visible = false" autofocus />
