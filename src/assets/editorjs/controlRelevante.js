@@ -1,3 +1,5 @@
+import api from '@/services/api.js'
+
 export default class ControlRelevante {
     static get toolbox() {
         return {
@@ -20,14 +22,12 @@ export default class ControlRelevante {
     }
 
     async _buscarControl(texto) {
-        const res = await fetch(`http://localhost:8000/listaControles/${texto}`)
-        const controles = await res.json();
-        return controles
+        const { data } = await api.get(`/listaControles/${texto}`)
+        return data
     }
     async _infoControl(id) {
-        const res = await fetch(`http://localhost:8000/control/${id}`)
-        const control = await res.json();
-        return control
+        const { data } = await api.get(`/control/${id}`)
+        return data
     }
     async setInfoControl(idControl, nombreControl, descripcionControl) {
         const control = await this._infoControl(idControl.value);
@@ -106,7 +106,6 @@ export default class ControlRelevante {
 
             Object.keys(controles).forEach((key) => {
                 const control = controles[key];
-                console.log(control)
                 const div = document.createElement('div');
                 div.className = 'p-1 border border-emerald-300 hover:border-sky-300 hover:font-semibold hover:bg-sky-100/70 rounded-md mt-1 cursor-pointer text-sm';
                 div.innerHTML = control.nombre;
@@ -124,7 +123,6 @@ export default class ControlRelevante {
         let ubicacionTitulo
 
         if (this.readOnly) {
-            console.log('Se renderiza en modo de lectura')
             ubicacionTitulo = titulo;
             buscadorNombreControl.hidden = true
         } else {

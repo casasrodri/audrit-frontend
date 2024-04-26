@@ -147,6 +147,7 @@ const editor = new EditorJS({
                 title: 'Título'
             }
         },
+        control: ControlRelevanteEditorJs,
         checklist: {
             class: ChecklistEditorJs,
             inlineToolbar: true
@@ -187,7 +188,6 @@ const editor = new EditorJS({
             class: InlineCode,
             shortcut: 'CMD+SHIFT+M',
         },
-        control: ControlRelevanteEditorJs,
     },
 
     // data: dataEjemplo,
