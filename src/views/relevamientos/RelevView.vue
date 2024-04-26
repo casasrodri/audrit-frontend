@@ -28,7 +28,7 @@ import AlertEditorJs from 'editorjs-alert';
 import ToggleBlockEditorJs from 'editorjs-toggle-block';
 import MermaidToolEditorJs from 'editorjs-mermaid'
 import InlineCode from '@editorjs/inline-code';
-
+import ControlRelevanteEditorJs from '@/assets/editorjs/controlRelevante.js';
 
 const idsActivos = ref({
     auditoria: {
@@ -187,6 +187,7 @@ const editor = new EditorJS({
             class: InlineCode,
             shortcut: 'CMD+SHIFT+M',
         },
+        control: ControlRelevanteEditorJs,
     },
 
     // data: dataEjemplo,
