@@ -28,7 +28,7 @@ import AlertEditorJs from 'editorjs-alert';
 import ToggleBlockEditorJs from 'editorjs-toggle-block';
 import MermaidToolEditorJs from 'editorjs-mermaid'
 import InlineCode from '@editorjs/inline-code';
-import ControlRelevanteEditorJs from '@/assets/editorjs/controlRelevante.js';
+import { ControlRelevante, RiesgoRelevante, Normativa, Aplicacion, Organigrama } from '@/assets/editorjs/audiReferencias.js';
 
 const idsActivos = ref({
     auditoria: {
@@ -147,7 +147,12 @@ const editor = new EditorJS({
                 title: 'Título'
             }
         },
-        control: ControlRelevanteEditorJs,
+        control: ControlRelevante,
+        riesgo: RiesgoRelevante,
+        normativa: Normativa,
+        aplicacion: Aplicacion,
+        organigrama: Organigrama,
+
         checklist: {
             class: ChecklistEditorJs,
             inlineToolbar: true
@@ -187,9 +192,8 @@ const editor = new EditorJS({
         inlineCode: {
             class: InlineCode,
             shortcut: 'CMD+SHIFT+M',
-        },
+        }
     },
-
     // data: dataEjemplo,
 });
 
