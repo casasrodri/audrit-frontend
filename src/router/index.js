@@ -15,6 +15,8 @@ import RelevView from '@/views/relevamientos/RelevView.vue'
 import ObservView from '@/views/observaciones/ObservView.vue'
 import ReqView from '@/views/requerimientos/ReqView.vue'
 
+import RiesgoForm from '@/views/riesgos/RiesgoForm.vue'
+
 import ParamMenu from '@/views/parametros/ParamMenu.vue'
 import ParamCiclos from '@/views/parametros/ParamCiclos.vue'
 import ParamPeriodos from '@/views/parametros/ParamPeriodos.vue'
@@ -58,6 +60,11 @@ const router = createRouter({
           path: '/auditorias/:siglaAudit/revisiones/:siglaRevision/relevamientos/:idRelev/:nombre?',
           name: 'relevamiento',
           component: RelevView,
+        },
+        {
+          path: '/auditorias/:siglaAudit/revisiones/:siglaRevision/riesgos/:idRiesgo/:nombre?',
+          name: 'riesgoForm',
+          component: RiesgoForm,
         },
         {
           path: '/observaciones',
