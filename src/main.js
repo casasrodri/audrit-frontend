@@ -35,5 +35,9 @@ import Button from 'primevue/button'
 app.component('PrimeDialog', Dialog)
 app.component('PrimeButton', Button)
 
+// Dialog Service
+import DialogService from 'primevue/dialogservice'
+app.use(DialogService)
+
 // Mount
 app.mount('#app')

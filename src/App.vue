@@ -1,6 +1,7 @@
 <script setup>
 import { RouterView, useRouter, useRoute } from 'vue-router'
 import { verificarSesionPeriodicamente } from '@/utils/sesion.js'
+import DynamicDialog from 'primevue/dynamicdialog';
 import { onMounted } from 'vue'
 
 const router = useRouter()
@@ -14,11 +15,11 @@ import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
 const toast = useToast();
 
-toast.add({ severity: 'warn', summary: 'Atención!', detail: `Ingresaste a Audrit"`, life: 3000 });
 
 </script>
 
 <template>
+  <DynamicDialog />
   <Toast />
   <RouterView />
 </template>
