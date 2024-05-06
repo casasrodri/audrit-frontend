@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body>
+    <div id="editorjs" class="max-w-lg px-6 py-4 bg-gray-100/0">
+
+        <div id="wrapper" class="rounded-md border border-red-400 flex relative bg-red-200" title="Control relevante">
+            <a id="izq" href="/hola/2"
+                class="min-w-12 flex justify-center border-r-[1px] border-red-400 bg-red-300 place-items-center rounded-l-md hover:bg-red-400 text-red-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-alert-circle" width="28"
+                    height="28" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor" fill="none"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                    <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0" />
+                    <path d="M12 8v4" />
+                    <path d="M12 16h.01" />
+                </svg>
+            </a>
+            <div id="der" class="p-3">
+                <h3 class="font-semibold underline">
+                    Control relevante:
+                </h3>
+                <input class="w-full p-1 border border-gray-300 rounded-md mt-2 text-sm" placeholder="Buscar">
+                <div class="mt-2 text-sm">
+                    Analisis de las cuentas para ver que todo ande bien.
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
