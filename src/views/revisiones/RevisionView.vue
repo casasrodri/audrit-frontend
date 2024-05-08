@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, watchEffect } from 'vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
+import { setTitulo } from '@/stores/titulo.js';
 
 import RelevTree from '@/views/revisiones/RelevTree.vue';
 import RiesgosTabla from '@/views/revisiones/RiesgosTabla.vue';
@@ -18,18 +19,20 @@ const idsActivos = ref({
     auditoria: {
         id: null,
         sigla: route.params.siglaAudit,
+        obj: null
     },
     revision: {
         id: null,
         sigla: route.params.siglaRevision,
+        obj: null
     },
 })
 
 function selectTab() {
-    const indice = tabsDisponibles.indexOf(route.query.tab);
+    const indice = tabsDisponibles.indexOf(route.params.tab);
 
     if (indice === -1) {
-        router.replace({ query: { tab: 'relevamientos' } })
+        router.replace({ params: { tab: 'relevamientos' } })
         selectedTab.value = 0;
     } else {
         selectedTab.value = indice;
@@ -42,22 +45,24 @@ async function getIds() {
 
     const { data } = await api.get(`/auditorias/sigla/${siglaAudit}`);
     idsActivos.value.auditoria.id = data.id;
+    idsActivos.value.auditoria.obj = data;
 
     const { data: revisiones } = await api.get(`/revisiones/auditoria/${idsActivos.value.auditoria.id}`);
     const revision = revisiones.filter(rev => rev.sigla === siglaRevision)[0];
     idsActivos.value.revision.id = revision.id;
+    idsActivos.value.revision.obj = revision;
 }
 
 onMounted(async () => {
     document.title = 'Revisión'
     selectTab()
     await getIds()
-
+    setTitulo(idsActivos.value.revision.obj.nombre)
 })
 
 watchEffect(() => {
     const seleccionada = tabsDisponibles[selectedTab.value];
-    router.replace({ query: { tab: seleccionada } })
+    router.replace({ params: { tab: seleccionada } })
 })
 
 </script>

@@ -52,7 +52,7 @@ const onRowSelect = (row) => {
     const siglaAudit = route.params.siglaAudit
     const siglaRev = row.data.sigla;
     const nombreRev = adaptarTextoParaUrl(row.data.nombre);
-    router.push(`/auditorias/${siglaAudit}/revisiones/${siglaRev}/${nombreRev}`);
+    router.push(`/auditorias/${siglaAudit}/revisiones/${siglaRev}`);
 };
 
 </script>

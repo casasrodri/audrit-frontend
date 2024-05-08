@@ -111,91 +111,135 @@ function buscarBloqueIdUrl(id) {
 }
 
 const editorReady = ref(false)
-const editor = new EditorJS({
 
-    holder: 'editorjs',
+function crearEditor({ auditoria, revision }) {
 
-    onReady: () => {
-        MermaidToolEditorJs.config({ theme: 'forest' })
-        // giveIdToBlocks()
-        // buscarBloqueIdUrl()
+    const urlRev = `/auditorias/${auditoria.sigla}/revisiones/${revision.sigla}`
+    return new EditorJS({
 
-        editorReady.value = true
-        determinarMenus()
+        holder: 'editorjs',
 
-        console.log('Editor.js is ready to work!')
-    },
-    onChange: (api, event) => {
-        // console.log(event)
-        // toast.add({ severity: 'success', summary: 'Update', detail: 'Contenido guardado!', life: 3000 });
-    },
-    readOnly: true,
+        onReady: () => {
+            MermaidToolEditorJs.config({ theme: 'forest' })
+            // giveIdToBlocks()
+            // buscarBloqueIdUrl()
 
-    placeholder: 'Escribe "/" para ver los bloques disponibles...',
+            editorReady.value = true
+            determinarMenus()
 
-    // Tools connection
-    tools: {
-        header: {
-            class: HeaderEditorJs,
-            inlineToolbar: true,
-            config: {
-                placeholder: 'Ingresa un título...',
-                levels: [1, 2, 3, 4],
-                defaultLevel: 1
+            console.log('Editor.js is ready to work!')
+        },
+        onChange: (api, event) => {
+            // console.log(event)
+            // toast.add({ severity: 'success', summary: 'Update', detail: 'Contenido guardado!', life: 3000 });
+        },
+        readOnly: true,
+
+        placeholder: 'Escribe "/" para ver los bloques disponibles...',
+
+        // Tools connection
+        tools: {
+            header: {
+                class: HeaderEditorJs,
+                inlineToolbar: true,
+                config: {
+                    placeholder: 'Ingresa un título...',
+                    levels: [1, 2, 3, 4],
+                    defaultLevel: 1
+                },
+                toolbox: {
+                    title: 'Título'
+                }
             },
-            toolbox: {
-                title: 'Título'
+            riesgo: {
+                class: RiesgoRelevante,
+                config: {
+                    endpointBuscar: `/riesgos/revision/${revision.id}/buscarRiesgo`,
+                    endpointInfoId: '/riesgos',
+                    urlVista: `${urlRev}/riesgos`,
+                    urlNuevo: `${urlRev}/riesgos/nuevo`,
+                }
+            },
+            control: {
+                class: ControlRelevante,
+                config: {
+                    endpointBuscar: '/listaOrganigrama',
+                    endpointInfoId: '/control',
+                    urlVista: '/verControl',
+                    urlNuevo: '/controlcito/nuevo',
+                }
+            },
+            normativa: {
+                class: Normativa,
+                config: {
+                    endpointBuscar: '/listaOrganigrama',
+                    endpointInfoId: '/organigrama',
+                    urlVista: '/organigrama',
+                    urlNuevo: '/organigrama/nuevo',
+                }
+            },
+            aplicacion: {
+                class: Aplicacion,
+                config: {
+                    endpointBuscar: '/listaOrganigrama',
+                    endpointInfoId: '/organigrama',
+                    urlVista: '/organigrama',
+                    urlNuevo: '/organigrama/nuevo',
+                }
+            },
+            organigrama: {
+                class: Organigrama,
+                config: {
+                    endpointBuscar: '/listaOrganigrama',
+                    endpointInfoId: '/organigrama',
+                    urlVista: '/organigrama',
+                    urlNuevo: '/organigrama/nuevo',
+                }
+            },
+            checklist: {
+                class: ChecklistEditorJs,
+                inlineToolbar: true
+            },
+            list: {
+                class: NestedListEditorJs,
+                inlineToolbar: true,
+            },
+            delimiter: DelimiterEditorJs,
+            table: {
+                class: TableEditorJs,
+                inlineToolbar: true,
+                config: {
+                    rows: 2,
+                    cols: 3,
+                    withHeadings: true, // No está funcionando https://github.com/editor-js/table/issues/141
+                },
+            },
+            marker: {
+                class: MarkerEditorJs,
+                shortcut: 'CMD+SHIFT+M',
+            },
+            underline: UnderlineEditorJs,
+            alert: {
+                class: AlertEditorJs,
+                inlineToolbar: true,
+                config: {
+                    defaultType: 'primary',
+                    messagePlaceholder: 'Enter something',
+                },
+            },
+            toggle: {
+                class: ToggleBlockEditorJs,
+                inlineToolbar: true,
+            },
+            mermaid: MermaidToolEditorJs,
+            inlineCode: {
+                class: InlineCode,
+                shortcut: 'CMD+SHIFT+M',
             }
         },
-        control: ControlRelevante,
-        riesgo: RiesgoRelevante,
-        normativa: Normativa,
-        aplicacion: Aplicacion,
-        organigrama: Organigrama,
-
-        checklist: {
-            class: ChecklistEditorJs,
-            inlineToolbar: true
-        },
-        list: {
-            class: NestedListEditorJs,
-            inlineToolbar: true,
-        },
-        delimiter: DelimiterEditorJs,
-        table: {
-            class: TableEditorJs,
-            inlineToolbar: true,
-            config: {
-                rows: 2,
-                cols: 3,
-                withHeadings: true, // No está funcionando https://github.com/editor-js/table/issues/141
-            },
-        },
-        marker: {
-            class: MarkerEditorJs,
-            shortcut: 'CMD+SHIFT+M',
-        },
-        underline: UnderlineEditorJs,
-        alert: {
-            class: AlertEditorJs,
-            inlineToolbar: true,
-            config: {
-                defaultType: 'primary',
-                messagePlaceholder: 'Enter something',
-            },
-        },
-        toggle: {
-            class: ToggleBlockEditorJs,
-            inlineToolbar: true,
-        },
-        mermaid: MermaidToolEditorJs,
-        inlineCode: {
-            class: InlineCode,
-            shortcut: 'CMD+SHIFT+M',
-        }
-    },
-    // data: dataEjemplo,
-});
+        // data: dataEjemplo,
+    });
+}
 
 const documento = ref({})
 
@@ -232,12 +276,15 @@ async function getTitulo() {
     const { data } = await api.get(`/relevamientos/${id}`)
     log(data)
     setTitulo(data.nombre)
+    document.title = 'Relevamiento - ' + data.nombre;
 }
 
+let editor = null
 onMounted(async () => {
     await getIds()
     getTitulo()
     renderDoc()
+    editor = crearEditor(idsActivos.value)
 })
 
 async function guardarDocumento() {
@@ -355,6 +402,8 @@ h2.ce-header {
 </style>
 
 <template>
+    <!-- {{ idsActivos }} -->
+
     <div id="editorjs"></div>
 
     <div id="containerSpeedDial" class="flex bg-red-500 h-lvh fixed bottom-0 right-0">

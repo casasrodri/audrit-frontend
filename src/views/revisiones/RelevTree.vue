@@ -4,6 +4,7 @@ import api from '@/services/api.js';
 import { Icon } from '@iconify/vue'
 import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
+import { setTitulo } from '@/stores/titulo.js';
 
 const props = defineProps({
     ids: Object,
@@ -48,6 +49,14 @@ function relevURL(relevamiento) {
 watchEffect(() => {
     if (props.ids.revision.id != null) {
         getRelevamientos()
+    }
+
+    if (props.ids.revision.obj) {
+        setTitulo(props.ids.revision.obj.nombre)
+    }
+
+    if (props.ids.revision.obj) {
+        document.title = 'Relevamientos - ' + props.ids.revision.obj.nombre;
     }
 })
 

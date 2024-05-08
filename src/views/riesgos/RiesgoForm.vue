@@ -107,34 +107,74 @@ const riesgo = ref({
     revision_id: null
 })
 
+function handleGuardarBoton() {
+    if (accion.value === 'nuevo') {
+        crearRiesgo()
+    } else if (accion.value === 'editar') {
+        actualizarRiesgo()
+    }
+}
+
+async function actualizarRiesgo() {
+    try {
+        const riesgoActualizado = validarInputs()
+        if (!riesgoActualizado) return
+
+        // Se acondicionan los campos a los tipos esperados por la API
+        riesgoActualizado.revision_id = idsActivos.value.revision.id
+        riesgoActualizado.objetivos_control = Object.values(riesgoActualizado.objetivos_control)
+        delete riesgoActualizado.oc
+        delete riesgoActualizado.revision
+        delete riesgoActualizado.documentos
+
+        console.log(riesgoActualizado)
+
+        const { data } = await api.put(`/riesgos/${riesgoActualizado.id}`, riesgoActualizado);
+        toast.add({ severity: 'success', summary: 'Riesgo creado', detail: 'El riesgo ha sido actualizado.', life: 3000 });
+        console.log(data);
+        router.push({ params: { idRiesgo: data.id.toString(), nombre: data.nombre } })
+    } catch (error) {
+        console.error(error);
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Ha ocurrido un error al guardar el riesgo' + error, life: 3000 });
+    }
+}
+
+function validarInputs() {
+    const riesgoEnviar = { ...riesgo.value }
+
+    if (riesgoEnviar.nombre === '') {
+        toast.add({ severity: 'warn', summary: 'Nombre', detail: 'El nombre del riesgo es obligatorio', life: 3000 });
+        return
+    }
+
+    if (riesgoEnviar.descripcion === '') {
+        toast.add({ severity: 'warn', summary: 'Descripción', detail: 'La descripción del riesgo es obligatoria', life: 3000 });
+        return
+    }
+
+    if (riesgoEnviar.nivel === '') {
+        toast.add({ severity: 'warn', summary: 'Nivel de riesgo', detail: 'Debes seleccionar un nivel de riesgo', life: 3000 });
+        return
+    }
+
+    if (riesgoEnviar.objetivos_control.length === 0) {
+        toast.add({ severity: 'warn', summary: 'Objetivos de control', detail: 'Debes seleccionar al menos un objetivo de control', life: 3000 });
+        return
+    }
+
+    return riesgoEnviar
+}
+
 async function crearRiesgo() {
     try {
 
-        const nuevoRiesgo = { ...riesgo.value }
+        const nuevoRiesgo = validarInputs()
+        if (!nuevoRiesgo) return
 
-        if (nuevoRiesgo.nombre === '') {
-            toast.add({ severity: 'warn', summary: 'Nombre', detail: 'El nombre del riesgo es obligatorio', life: 3000 });
-            return
-        }
-
-        if (nuevoRiesgo.descripcion === '') {
-            toast.add({ severity: 'warn', summary: 'Descripción', detail: 'La descripción del riesgo es obligatoria', life: 3000 });
-            return
-        }
-
-        if (nuevoRiesgo.nivel === '') {
-            toast.add({ severity: 'warn', summary: 'Nivel de riesgo', detail: 'Debes seleccionar un nivel de riesgo', life: 3000 });
-            return
-        }
-
-        if (nuevoRiesgo.objetivos_control.length === 0) {
-            toast.add({ severity: 'warn', summary: 'Objetivos de control', detail: 'Debes seleccionar al menos un objetivo de control', life: 3000 });
-            return
-        }
-
-        const { data } = await api.post('/riesgos', riesgo.value);
+        const { data } = await api.post('/riesgos', nuevoRiesgo);
         toast.add({ severity: 'success', summary: 'Riesgo creado', detail: 'El riesgo ha sido creado correctamente', life: 3000 });
         console.log(data);
+        router.push({ params: { idRiesgo: data.id.toString(), nombre: data.nombre } })
     } catch (error) {
         console.error(error);
         toast.add({ severity: 'error', summary: 'Error', detail: 'Ha ocurrido un error al crear el riesgo' + error, life: 3000 });
@@ -156,10 +196,10 @@ const verDescripObjCtrl = ref(true)
 
 <template>
 
-    accion: {{ accion }}
-    <hr>
+    <!-- accion: {{ accion }} -->
+    <!-- <hr> -->
     <template v-if="accion === 'ver'">
-        <div id="container" class="flex flex-col max-w-2xl">
+        <div id="container" class="flex flex-col max-w-2xl mb-5">
             <div id="descripcion" class="my-2 flex flex-col">
                 <label for="descripcion" class="font-semibold">Descripción:</label>
                 <div>
@@ -200,12 +240,12 @@ const verDescripObjCtrl = ref(true)
 
     <template v-else>
 
-        Riesgo: {{ riesgo }}
-        <hr>
+        <!-- Riesgo: {{ riesgo }} -->
+        <!-- <hr> -->
 
-        objetivosControlDisponibles: {{ objetivosControlDisponibles }}
-        <hr>
-        <div id="container" class="flex flex-col max-w-2xl">
+        <!-- objetivosControlDisponibles: {{ objetivosControlDisponibles }} -->
+        <!-- <hr> -->
+        <div id="container" class="flex flex-col max-w-2xl mb-5">
             <div id="nombre" class="mb-2 flex flex-col">
                 <label for="nombre" class="font-semibold">Nombre</label>
                 <InputText type="text" class="" v-model="riesgo.nombre" />
@@ -240,7 +280,7 @@ const verDescripObjCtrl = ref(true)
             </div>
 
             <div class="flex justify-end">
-                <Button :label="$route.params.idRiesgo === 'nuevo' ? 'Crear' : 'Guardar'" @click="crearRiesgo" />
+                <Button :label="$route.params.idRiesgo === 'nuevo' ? 'Crear' : 'Guardar'" @click="handleGuardarBoton" />
             </div>
         </div>
     </template>

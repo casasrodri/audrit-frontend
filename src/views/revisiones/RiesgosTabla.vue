@@ -5,13 +5,15 @@ import api from '@/services/api.js';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import { adaptarTextoParaUrl } from '@/utils/helpers.js'
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
+import { setTitulo } from '@/stores/titulo.js';
 
 const props = defineProps({
     ids: Object,
 })
 
 const router = useRouter();
+const route = useRoute();
 const riesgos = ref([]);
 
 async function getRiesgos() {
@@ -20,8 +22,19 @@ async function getRiesgos() {
 }
 
 watchEffect(() => {
+
+    route.params
+
     if (props.ids.revision.id != null) {
         getRiesgos()
+    }
+
+    if (props.ids.revision.obj) {
+        setTitulo(props.ids.revision.obj.nombre)
+    }
+
+    if (props.ids.revision.obj) {
+        document.title = 'Riesgos - ' + props.ids.revision.obj.nombre;
     }
 })
 
@@ -42,13 +55,5 @@ const onRowSelect = (row) => {
         @rowSelect="onRowSelect">
         <Column field="id" header="ID"></Column>
         <Column field="nombre" header="Nombre"></Column>
-        <!-- <Column header="Estado">
-            <template #body="slotProps">
-                <Tag :value="tagStyles.estados[slotProps.data.estado].text"
-                    :severity="tagStyles.estados[slotProps.data.estado].severity" rounded></Tag>
-            </template>
-</Column> -->
-
-
     </DataTable>
 </template>

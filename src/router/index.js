@@ -8,7 +8,7 @@ import AppLayout from '@/layouts/AppLayout.vue'
 import AudiList from '@/views/auditorias/AudiList.vue'
 import AudiView from '@/views/auditorias/AudiView.vue'
 
-import RevList from '@/views/revisiones/RevList.vue'
+import RevisionView from '@/views/revisiones/RevisionView.vue'
 
 import RelevView from '@/views/relevamientos/RelevView.vue'
 
@@ -52,9 +52,9 @@ const router = createRouter({
           component: AudiView,
         },
         {
-          path: '/auditorias/:siglaAudit/revisiones/:siglaRevision/:nombre?',
+          path: '/auditorias/:siglaAudit/revisiones/:siglaRevision/:tab?',
           name: 'revision',
-          component: RevList,
+          component: RevisionView,
         },
         {
           path: '/auditorias/:siglaAudit/revisiones/:siglaRevision/relevamientos/:idRelev/:nombre?',
