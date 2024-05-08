@@ -62,6 +62,10 @@ export class AudiReferencias {
         this.api = api;
         this.config = config;
         this.readOnly = readOnly;
+        this.endpointBuscar = config.endpointBuscar || ''
+        this.endpointInfoId = config.endpointInfoId || ''
+        this.urlVista = config.urlVista || ''
+        this.urlNuevo = config.urlNuevo || ''
     }
 
     async _buscarListaObjetos(texto) {
@@ -272,10 +276,6 @@ export class ControlRelevante extends AudiReferencias {
         this.titulo = 'Control relevante'
         this.colores = COLORES.verde;
         this.tipo = 'control'
-        this.endpointBuscar = '/listaControles'
-        this.endpointInfoId = '/control'
-        this.urlVista = '/controles'
-        this.urlNuevo = '/controles/nuevo'
     }
 }
 
@@ -294,10 +294,6 @@ export class RiesgoRelevante extends AudiReferencias {
         this.titulo = 'Riesgo relevante'
         this.colores = COLORES.rojo;
         this.tipo = 'riesgo'
-        this.endpointBuscar = '/listaRiesgos'
-        this.endpointInfoId = '/riesgo'
-        this.urlVista = '/riesgos'
-        this.urlNuevo = '/riesgos/nuevo'
     }
 }
 
@@ -316,10 +312,6 @@ export class Normativa extends AudiReferencias {
         this.titulo = 'Normativa'
         this.colores = COLORES.slate;
         this.tipo = 'normativa'
-        this.endpointBuscar = '/listaNormativas'
-        this.endpointInfoId = '/normativa'
-        this.urlVista = '/normativas'
-        this.urlNuevo = '/normativas/nuevo'
     }
 }
 
@@ -338,10 +330,6 @@ export class Aplicacion extends AudiReferencias {
         this.titulo = 'Aplicación'
         this.colores = COLORES.amarillo;
         this.tipo = 'aplicacion'
-        this.endpointBuscar = '/listaAplicaciones'
-        this.endpointInfoId = '/aplicacion'
-        this.urlVista = '/aplicaciones'
-        this.urlNuevo = '/aplicaciones/nuevo'
     }
 }
 
@@ -360,9 +348,5 @@ export class Organigrama extends AudiReferencias {
         this.titulo = 'Organigrama'
         this.colores = COLORES.fucsia;
         this.tipo = 'organigrama'
-        this.endpointBuscar = '/listaOrganigrama'
-        this.endpointInfoId = '/organigrama'
-        this.urlVista = '/organigrama'
-        this.urlNuevo = '/organigrama/nuevo'
     }
 }
