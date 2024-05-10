@@ -82,7 +82,7 @@ async function del(key) {
 
     try {
         const res = await api.delete(`/ciclos/${cicloActivo.value.id}`)
-        console.log({ res })
+        // console.log({ res })
         toast.add({
             severity: 'success',
             summary: 'Confirmación',
@@ -171,11 +171,11 @@ function obtenerCicloEnviar() {
 async function guardarNuevoCiclo() {
     const nuevo = obtenerCicloEnviar()
 
-    console.log(nuevo)
+    // console.log(nuevo)
 
     try {
         const res = await api.post('/ciclos/', nuevo)
-        console.log(res)
+        // console.log(res)
 
         if (res.status === 201) {
             toast.add({
@@ -203,12 +203,12 @@ async function guardarNuevoCiclo() {
 async function guardarCambiosCiclo() {
     const actualizado = obtenerCicloEnviar()
 
-    console.log(actualizado)
+    // console.log(actualizado)
 
     try {
         const id = cicloActivo.value.id
         const res = await api.put(`/ciclos/${id}`, actualizado)
-        console.log(res)
+        // console.log(res)
 
         if (res.status === 201) {
             toast.add({

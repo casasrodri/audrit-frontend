@@ -11,9 +11,9 @@ const showProducts = () => {
       nombre: 'Rodrigo Casas',
     },
     onClose: (opt) => {
-      console.log(opt)
+      // console.log(opt)
       const callbackParams = opt.data; // {selectedId: 12}
-      console.log(callbackParams)
+      // console.log(callbackParams)
     },
     props: {
       header: 'Controles',

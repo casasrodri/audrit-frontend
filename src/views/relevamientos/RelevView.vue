@@ -127,7 +127,7 @@ function crearEditor({ auditoria, revision }) {
             editorReady.value = true
             determinarMenus()
 
-            console.log('Editor.js is ready to work!')
+            // console.log('Editor.js is ready to work!')
         },
         onChange: (api, event) => {
             // console.log(event)
@@ -274,7 +274,7 @@ async function renderDoc() {
 async function getTitulo() {
     const id = idsActivos.value.relevamiento.id
     const { data } = await api.get(`/relevamientos/${id}`)
-    log(data)
+    // log(data)
     setTitulo(data.nombre)
     document.title = 'Relevamiento - ' + data.nombre;
 }

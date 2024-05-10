@@ -127,11 +127,11 @@ async function actualizarRiesgo() {
         delete riesgoActualizado.revision
         delete riesgoActualizado.documentos
 
-        console.log(riesgoActualizado)
+        // console.log(riesgoActualizado)
 
         const { data } = await api.put(`/riesgos/${riesgoActualizado.id}`, riesgoActualizado);
         toast.add({ severity: 'success', summary: 'Riesgo creado', detail: 'El riesgo ha sido actualizado.', life: 3000 });
-        console.log(data);
+        // console.log(data);
         router.push({ params: { idRiesgo: data.id.toString(), nombre: data.nombre } })
     } catch (error) {
         console.error(error);
@@ -173,7 +173,7 @@ async function crearRiesgo() {
 
         const { data } = await api.post('/riesgos', nuevoRiesgo);
         toast.add({ severity: 'success', summary: 'Riesgo creado', detail: 'El riesgo ha sido creado correctamente', life: 3000 });
-        console.log(data);
+        // console.log(data);
         router.push({ params: { idRiesgo: data.id.toString(), nombre: data.nombre } })
     } catch (error) {
         console.error(error);
@@ -182,7 +182,7 @@ async function crearRiesgo() {
 }
 
 function editarRiesgo() {
-    console.log('editar riesgo');
+    // console.log('editar riesgo');
     router.push({ params: { nombre: 'editar' } })
 }
 

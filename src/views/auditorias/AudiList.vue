@@ -13,7 +13,7 @@ const auditorias = ref([]);
 
 async function getAuditorias() {
     const res = await api.get('/auditorias');
-    console.log(res);
+    // console.log(res);
     auditorias.value = res.data
 }
 

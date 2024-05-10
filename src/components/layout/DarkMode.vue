@@ -7,7 +7,7 @@ const toggleDark = useToggle(isDark)
 
 const miToggle = () => {
   toggleDark()
-  console.log('isDark:', isDark.value)
+  // console.log('isDark:', isDark.value)
 }
 </script>
 

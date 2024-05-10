@@ -19,13 +19,13 @@ const revisiones = ref([]);
 async function getAuditoria() {
     let res
     res = await api.get(`/auditorias/sigla/${route.params.siglaAudit}`);
-    console.log(res);
+    // console.log(res);
     auditoria.value = res.data;
     setTitulo(res.data.nombre);
 
 
     res = await api.get(`/revisiones/auditoria/${auditoria.value.id}/nodos`);
-    console.log(res);
+    // console.log(res);
     revisiones.value = res.data;
 }
 
