@@ -154,7 +154,7 @@ function crearEditor({ auditoria, revision }) {
             riesgo: {
                 class: RiesgoRelevante,
                 config: {
-                    endpointBuscar: `/riesgos/revision/${revision.id}/buscarRiesgo`,
+                    endpointBuscar: `/riesgos/revision/${revision.id}/buscar`,
                     endpointInfoId: '/riesgos',
                     urlVista: `${urlRev}/riesgos`,
                     urlNuevo: `${urlRev}/riesgos/nuevo`,
@@ -163,10 +163,10 @@ function crearEditor({ auditoria, revision }) {
             control: {
                 class: ControlRelevante,
                 config: {
-                    endpointBuscar: '/listaOrganigrama',
-                    endpointInfoId: '/control',
-                    urlVista: '/verControl',
-                    urlNuevo: '/controlcito/nuevo',
+                    endpointBuscar: `/controles/revision/${revision.id}/buscar`,
+                    endpointInfoId: '/controles',
+                    urlVista: `${urlRev}/controles`,
+                    urlNuevo: `${urlRev}/controles/nuevo`,
                 }
             },
             normativa: {
@@ -336,7 +336,7 @@ async function determinarMenus() {
             try {
                 guardarDocumento()
                 // TODO volver a bloquear...
-                // bloquearEditor()
+                bloquearEditor()
                 toast.add({ severity: 'success', summary: 'Documento', detail: 'Guardado correctamente.', life: 3000 });
             } catch (err) {
                 toast.add({ severity: 'error', summary: 'Error al guardar!', detail: err, life: 3000 });
@@ -417,7 +417,7 @@ h2.ce-header {
             hideIcon="pi pi-plus" :tooltipOptions="{ position: 'left' }" :transitionDelay="80" />
     </div>
 
-    <button class="rounded-xl bg-[#0768a0] text-white p-2 px-7" @click="guardarDocumento">
+    <!-- <button class="rounded-xl bg-[#0768a0] text-white p-2 px-7" @click="guardarDocumento">
         Guardar
-    </button>
+    </button> -->
 </template>
