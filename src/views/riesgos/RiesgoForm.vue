@@ -149,7 +149,7 @@ async function actualizarRiesgo() {
         // console.log(riesgoActualizado)
 
         const { data } = await api.put(`/riesgos/${riesgoActualizado.id}`, riesgoActualizado);
-        toast.add({ severity: 'success', summary: 'Riesgo creado', detail: 'El riesgo ha sido actualizado.', life: 3000 });
+        toast.add({ severity: 'success', summary: 'Riesgo actualizado', detail: 'El riesgo ha sido actualizado.', life: 3000 });
         // console.log(data);
         router.push({ params: { idRiesgo: data.id.toString(), nombre: data.nombre } })
     } catch (error) {
@@ -254,7 +254,7 @@ const verDescripObjCtrl = ref(true)
                 <Button label="Editar" @click="editarRiesgo" />
             </div>
 
-            <div id="riesgosAsoc" class="max-w-2xl">
+            <div id="relevamientosAsoc" class="max-w-2xl">
                 <h3 class="font-semibold mb-2">Relevamientos asociados:</h3>
                 <template v-if="documentosAsociados.length > 0">
                     <DataTable :value="documentosAsociados" class="border-x-[1px] border-t-[1px]">
@@ -338,8 +338,8 @@ const verDescripObjCtrl = ref(true)
     line-height: 1.4rem;
 }
 
-#riesgosAsoc thead>tr>th,
-#riesgosAsoc tbody>tr>td {
+#relevamientosAsoc thead>tr>th,
+#relevamientosAsoc tbody>tr>td {
     padding: 0.5rem !important;
 }
 </style>
