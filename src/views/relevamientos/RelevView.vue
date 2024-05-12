@@ -296,7 +296,7 @@ async function guardarDocumento() {
     }
 
     const resPut = await api.put(`/documentos/${idsActivos.value.documento.id}`, nuevoObj)
-    log(resPut)
+    // log(resPut)
 }
 
 async function bloquearEditor() {
@@ -335,7 +335,8 @@ async function determinarMenus() {
         command: async () => {
             try {
                 guardarDocumento()
-                bloquearEditor()
+                // TODO volver a bloquear...
+                // bloquearEditor()
                 toast.add({ severity: 'success', summary: 'Documento', detail: 'Guardado correctamente.', life: 3000 });
             } catch (err) {
                 toast.add({ severity: 'error', summary: 'Error al guardar!', detail: err, life: 3000 });
@@ -350,6 +351,11 @@ async function determinarMenus() {
     }
 }
 
+
+function goToFromEditorJs(e) {
+    router.push(e.detail)
+}
+document.addEventListener('goToRoute', goToFromEditorJs);
 
 </script>
 
@@ -410,4 +416,8 @@ h2.ce-header {
         <SpeedDial :model="menuItems" direction="up" class="bottom-0 right-0 m-5" showIcon="pi pi-bars"
             hideIcon="pi pi-plus" :tooltipOptions="{ position: 'left' }" :transitionDelay="80" />
     </div>
+
+    <button class="rounded-xl bg-[#0768a0] text-white p-2 px-7" @click="guardarDocumento">
+        Guardar
+    </button>
 </template>

@@ -41,6 +41,10 @@ const ICONOS = {
     organigrama: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"><path fill="#861377" d="M16 17v2H2v-2s0-4 7-4s7 4 7 4m-3.5-9.5A3.5 3.5 0 1 0 9 11a3.5 3.5 0 0 0 3.5-3.5m3.44 5.5A5.32 5.32 0 0 1 18 17v2h4v-2s0-3.63-6.06-4M15 4a3.4 3.4 0 0 0-1.93.59a5 5 0 0 1 0 5.82A3.4 3.4 0 0 0 15 11a3.5 3.5 0 0 0 0-7"/></svg>',
 }
 
+function goToRoute(path) {
+    const event = new CustomEvent("goToRoute", { detail: path });
+    document.dispatchEvent(event);
+}
 
 
 export class AudiReferencias {
@@ -82,7 +86,8 @@ export class AudiReferencias {
         const objeto = await this._infoObjeto(this.data.id)
 
         idObj.value = this.data.id;
-        izq.href = `${this.urlVista}/${this.data.id}`
+        // izq.href = `${this.urlVista}/${this.data.id}`
+        izq.addEventListener('click', () => goToRoute(`${this.urlVista}/${this.data.id}`))
 
         der.appendChild(titulo)
 
@@ -102,7 +107,8 @@ export class AudiReferencias {
         const objeto = await this._infoObjeto(this.data.id)
 
         idObj.value = this.data.id;
-        izq.href = `${this.urlVista}/${this.data.id}`
+        // izq.href = `${this.urlVista}/${this.data.id}`
+        izq.addEventListener('click', () => goToRoute(`${this.urlVista}/${this.data.id}`))
 
         buscadorNombre.value = objeto.nombre
         descripcion.innerHTML = objeto.descripcion
@@ -124,7 +130,7 @@ export class AudiReferencias {
 
         const izq = document.createElement('a');
         izq.id = 'izq';
-        izq.target = '_blank';
+        // izq.target = '_blank';
         izq.className = `min-w-12 flex justify-center border-r-[1px] place-items-center rounded-l-md`
         izq.style.borderColor = `${this.colores[400]}`
         izq.style.backgroundColor = `${this.colores[300]}`
@@ -162,7 +168,7 @@ export class AudiReferencias {
 
         const izq = document.createElement('a');
         izq.id = 'izq';
-        izq.target = '_blank';
+        // izq.target = '_blank';
         izq.className = `min-w-12 flex justify-center border-r-[1px] place-items-center rounded-l-md`
         izq.style.borderColor = `${this.colores[400]}`
         izq.style.backgroundColor = `${this.colores[300]}`
@@ -201,8 +207,9 @@ export class AudiReferencias {
         const btnNuevo = document.createElement('a');
         btnNuevo.className = 'bg-green-500 hover:bg-green-700 text-white px-4 py-1 rounded-md font-semibold text-sm';
         btnNuevo.setAttribute('style', 'text-decoration:none !important');
-        btnNuevo.target = '_blank';
-        btnNuevo.href = this.urlNuevo;
+        // btnNuevo.target = '_blank';
+        // btnNuevo.href = this.urlNuevo;
+        btnNuevo.addEventListener('click', () => goToRoute(this.urlNuevo))
         btnNuevo.innerHTML = 'Nuevo';
         botonera.appendChild(btnNuevo);
 
