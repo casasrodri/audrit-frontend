@@ -61,27 +61,28 @@ class Api {
   }
 
   get(url, config) {
-    // console.log(`%cGET %c${url}`, 'color: cyan;', 'color: lightgreen;')
     const promise = this.api.get(url, config)
-
     this.mostrarRespuesta('get', url, promise)
     return promise
   }
 
 
   post(url, data, config) {
-    console.log(`%cPOST %c${url}`, 'color: teal;', 'color: lightgreen;')
-    return this.api.post(url, data, config)
+    const promise = this.api.post(url, data, config)
+    this.mostrarRespuesta('post', url, promise)
+    return promise
   }
 
   put(url, data, config) {
-    console.log(`%cPUT %c${url}`, 'color: gold;', 'color: lightgreen;')
-    return this.api.put(url, data, config)
+    const promise = this.api.put(url, data, config)
+    this.mostrarRespuesta('put', url, promise)
+    return promise
   }
 
   delete(url, config) {
-    console.log(`%cDELETE %c${url}`, 'color: red;', 'color: lightgreen;')
-    return this.api.delete(url, config)
+    const promise = this.api.delete(url, data, config)
+    this.mostrarRespuesta('delete', url, promise)
+    return promise
   }
 }
 

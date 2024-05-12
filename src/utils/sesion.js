@@ -25,7 +25,7 @@ export function irAHome(router) {
 
 
 export function verificarSesion(router, route) {
-    // console.log('Verificando sesión')
+    // console.log('Sesión expirada?:', isSessionExpired())
     if (isSessionExpired()) {
         removeToken()
         router.push('/login')
