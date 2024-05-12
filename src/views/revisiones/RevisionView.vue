@@ -54,10 +54,10 @@ async function getIds() {
 }
 
 onMounted(async () => {
-    document.title = 'Revisión'
     selectTab()
     await getIds()
     setTitulo(idsActivos.value.revision.obj.nombre)
+    document.title = `Revisión - ${idsActivos.value.revision.obj.nombre}`
 })
 
 watchEffect(() => {

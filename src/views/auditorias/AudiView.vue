@@ -22,6 +22,7 @@ async function getAuditoria() {
     // console.log(res);
     auditoria.value = res.data;
     setTitulo(res.data.nombre);
+    document.title = `Auditoría - ${res.data.nombre}`
 
 
     res = await api.get(`/revisiones/auditoria/${auditoria.value.id}/nodos`);

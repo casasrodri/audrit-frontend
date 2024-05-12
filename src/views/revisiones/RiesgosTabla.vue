@@ -32,10 +32,6 @@ watchEffect(() => {
     if (props.ids.revision.obj) {
         setTitulo(props.ids.revision.obj.nombre)
     }
-
-    if (props.ids.revision.obj) {
-        document.title = 'Riesgos - ' + props.ids.revision.obj.nombre;
-    }
 })
 
 
@@ -51,9 +47,17 @@ const onRowSelect = (row) => {
 </script>
 
 <template>
-    <DataTable :value="riesgos" tableStyle="min-width: 50rem" stripedRows selectionMode="single"
+    <DataTable id="tablaRiesgos" :value="riesgos" tableStyle="min-width: 50rem" stripedRows selectionMode="single"
         @rowSelect="onRowSelect">
         <Column field="id" header="ID"></Column>
         <Column field="nombre" header="Nombre"></Column>
     </DataTable>
 </template>
+
+
+<style>
+#tablaRiesgos thead>tr>th,
+#tablaRiesgos tbody>tr>td {
+    padding: 0.5rem !important;
+}
+</style>

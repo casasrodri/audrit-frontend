@@ -4,7 +4,6 @@ import { useDialog } from 'primevue/usedialog';
 import ListaDemo from './ListaDemo.vue';
 
 const dialog = useDialog();
-
 const showProducts = () => {
   dialog.open(ListaDemo, {
     data: {
@@ -34,5 +33,10 @@ const showProducts = () => {
 
 <template>
   Observaciones
-  <div @click="showProducts">Abrir</div>
+
+  <button class="rounded-xl bg-[#0768a0] text-white p-2 px-7" @click="showProducts">
+    Abrir
+  </button>
+
+
 </template>

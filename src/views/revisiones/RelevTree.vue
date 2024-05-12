@@ -54,10 +54,6 @@ watchEffect(() => {
     if (props.ids.revision.obj) {
         setTitulo(props.ids.revision.obj.nombre)
     }
-
-    if (props.ids.revision.obj) {
-        document.title = 'Relevamientos - ' + props.ids.revision.obj.nombre;
-    }
 })
 
 </script>
@@ -66,8 +62,8 @@ watchEffect(() => {
     <div class="max-w-xl">
         <TreeTable :value="relevamientos" v-model:expandedKeys="expandedKeys" stripedRows
             :style="`min-width: ${relevamientos.length * 20}rem`"
-            :pt="{ headerrow: 'hidden', row: 'flex gap-4', column: { bodycell: 'flex' } }"
-            selectionMode="single" @nodeSelect="onRowSelect">
+            :pt="{ headerrow: 'hidden', row: 'flex gap-4', column: { bodycell: 'flex' } }" selectionMode="single"
+            @nodeSelect="onRowSelect">
             <Column header="Sigla" expander headerStyle="max-width: rem">
                 <template #body="slotProps">
                     <div class="flex place-items-center justify-between min-w-20">
