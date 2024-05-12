@@ -5,6 +5,8 @@ import Textarea from 'primevue/textarea';
 import Dropdown from 'primevue/dropdown';
 import Checkbox from 'primevue/checkbox';
 import Button from 'primevue/button';
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 import api from '@/services/api.js';
 import { useToast } from 'primevue/usetoast';
 import { useRoute, useRouter } from 'vue-router';
@@ -37,6 +39,21 @@ const obtenerInfoRiesgo = async () => {
 
     riesgo.value.oc = { ...riesgo.value.objetivos_control }
     riesgo.value.objetivos_control = riesgo.value.objetivos_control.map(objCtrl => objCtrl.id)
+
+    // Se determinan los documentos asociados al riesgo
+    documentosAsociados.value = riesgo.value.documentos.map(doc => {
+        const id = doc.relevamiento.id
+        const nombre = doc.relevamiento.nombre
+        const ries = riesgo.value
+        const siglaAudit = ries.revision.auditoria.sigla
+        const siglaRev = ries.revision.sigla
+
+        return {
+            id,
+            nombre,
+            link: `/auditorias/${siglaAudit}/revisiones/${siglaRev}/relevamientos/${id}`
+        }
+    })
 }
 
 const establecerTitulo = async () => {
@@ -106,6 +123,8 @@ const riesgo = ref({
     objetivos_control: [],
     revision_id: null
 })
+
+const documentosAsociados = ref([])
 
 function handleGuardarBoton() {
     if (accion.value === 'nuevo') {
@@ -218,7 +237,7 @@ const verDescripObjCtrl = ref(true)
                 <label for="objetivosControl" class="font-semibold cursor-help"
                     @click="verDescripObjCtrl = !verDescripObjCtrl"
                     :title="verDescripObjCtrl ? 'Ocultar descripciones' : 'Mostrar descripciones'">Objetivos de
-                    control</label>
+                    control:</label>
 
 
                 <ul class="mt-2 ml-6 list-disc" v-for="objetivo of riesgo.oc" :key="objetivo.id">
@@ -231,10 +250,30 @@ const verDescripObjCtrl = ref(true)
                 </ul>
             </div>
 
-            <div class="flex justify-end">
+            <div class="flex justify-end mt-2">
                 <Button label="Editar" @click="editarRiesgo" />
             </div>
+
+            <div id="riesgosAsoc" class="max-w-2xl">
+                <h3 class="font-semibold mb-2">Relevamientos asociados:</h3>
+                <template v-if="documentosAsociados.length > 0">
+                    <DataTable :value="documentosAsociados" class="border-x-[1px] border-t-[1px]">
+                        <Column field="id" header="ID"></Column>
+                        <Column header="Nombre">
+                            <template #body="slotProps">
+                                <RouterLink :to="slotProps.data.link">
+                                    {{ slotProps.data.nombre }}
+                                </RouterLink>
+                            </template>
+                        </Column>
+                    </DataTable>
+                </template>
+                <template v-else>
+                    <p>No hay relevamientos asociados a este riesgo.</p>
+                </template>
+            </div>
         </div>
+
     </template>
 
 
@@ -286,11 +325,21 @@ const verDescripObjCtrl = ref(true)
     </template>
     <!-- {{ $route.params }} -->
     <!-- <hr> -->
-    <!-- {{ riesgo }} -->
+    <!-- {{ riesgo.documentos }} -->
+
+
+
+
+
 </template>
 
-<style scoped>
+<style>
 #descripRies {
     line-height: 1.4rem;
+}
+
+#riesgosAsoc thead>tr>th,
+#riesgosAsoc tbody>tr>td {
+    padding: 0.5rem !important;
 }
 </style>
