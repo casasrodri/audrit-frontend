@@ -15,11 +15,11 @@ const props = defineProps({
 
 const router = useRouter();
 const route = useRoute();
-const riesgos = ref([]);
+const pruebas = ref([]);
 
-async function getRiesgos() {
-    const { data: listRiesgos } = await api.get(`/riesgos/revision/${props.ids.revision.id}`);
-    riesgos.value = listRiesgos;
+async function getPruebas() {
+    const { data: listPruebas } = await api.get(`/pruebas/revision/${props.ids.revision.id}`);
+    pruebas.value = listPruebas;
 }
 
 watchEffect(() => {
@@ -27,7 +27,7 @@ watchEffect(() => {
     route.params
 
     if (props.ids.revision.id != null) {
-        getRiesgos()
+        getPruebas()
     }
 
     if (props.ids.revision.obj) {
@@ -39,38 +39,33 @@ watchEffect(() => {
 const onRowSelect = (row) => {
     const siglaAudit = props.ids.auditoria.sigla;
     const siglaRevision = props.ids.revision.sigla;
-    const idRiesgo = row.data.id;
+    const idControl = row.data.id;
     const nombre = adaptarTextoParaUrl(row.data.nombre);
 
-    router.push(`/auditorias/${siglaAudit}/revisiones/${siglaRevision}/riesgos/${idRiesgo}/${nombre}`);
+    router.push(`/auditorias/${siglaAudit}/revisiones/${siglaRevision}/pruebas/${idControl}/${nombre}`);
 };
 
-
-const colores = {
-    'Bajo': 'success',
-    'Medio': 'warning',
-    'Alto': 'danger',
-}
 
 </script>
 
 <template>
-    <DataTable id="tablaRiesgos" :value="riesgos" tableStyle="min-width: 50rem" stripedRows selectionMode="single"
+    <DataTable id="tablaPruebas" :value="pruebas" tableStyle="min-width: 50rem" stripedRows selectionMode="single"
         @rowSelect="onRowSelect">
         <Column field="id" header="ID"></Column>
         <Column field="nombre" header="Nombre"></Column>
-        <Column header="Nivel de riesgo">
+        <Column header="Sector">
             <template #body="slotProps">
-                <Tag :severity="colores[slotProps.data.nivel]" :value="slotProps.data.nivel"></Tag>
+                {{ slotProps.data.sector }}
             </template>
         </Column>
+
     </DataTable>
 </template>
 
 
 <style>
-#tablaRiesgos thead>tr>th,
-#tablaRiesgos tbody>tr>td {
+#tablaPruebas thead>tr>th,
+#tablaPruebas tbody>tr>td {
     padding: 0.5rem !important;
 }
 </style>

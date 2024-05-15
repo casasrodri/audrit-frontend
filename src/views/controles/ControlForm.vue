@@ -119,6 +119,7 @@ const control = ref({
 })
 
 const documentosAsociados = ref([])
+const pruebasAsociadas = ref([])
 
 function handleGuardarBoton() {
     if (accion.value === 'nuevo') {
@@ -208,7 +209,6 @@ function editarControl() {
 
 
 
-const niveles = ['Alto', 'Medio', 'Bajo']
 const oportunidadOpts = ['Preventivo', 'Correctivo', 'Detectivo']
 const periodicidadOpts = ['Permanente', 'Periódico', 'Ocasional']
 const automatizacionOpts = ['Automatizado', 'Semi-automatizado', 'Manual']
@@ -259,8 +259,8 @@ const automatizacionOpts = ['Automatizado', 'Semi-automatizado', 'Manual']
                 <Button label="Editar" @click="editarControl" />
             </div>
 
-            <div id="relevamientosAsoc" class="max-w-2xl">
-                <h3 class="font-semibold mb-2">Relevamientos asociados:</h3>
+            <div id="relevamientosAsoc" class="max-w-2xl my-2">
+                <h3 class="font-semibold">Relevamientos asociados:</h3>
                 <template v-if="documentosAsociados.length > 0">
                     <DataTable :value="documentosAsociados" class="border-x-[1px] border-t-[1px]">
                         <Column field="id" header="ID"></Column>
@@ -274,7 +274,27 @@ const automatizacionOpts = ['Automatizado', 'Semi-automatizado', 'Manual']
                     </DataTable>
                 </template>
                 <template v-else>
-                    <p>No hay relevamientos asociados a este riesgo.</p>
+                    <p>No hay relevamientos asociados a este control relevante.</p>
+                </template>
+            </div>
+
+            <!-- ---------------------------------------------------------------------------------- -->
+            <div id="pruebasAsoc" class="max-w-2xl my-2">
+                <h3 class="font-semibold mb-2">Pruebas de auditoría relacionadas:</h3>
+                <template v-if="pruebasAsociadas.length > 0">
+                    <DataTable :value="pruebasAsociadas" class="border-x-[1px] border-t-[1px]">
+                        <Column field="id" header="ID"></Column>
+                        <Column header="Nombre">
+                            <template #body="slotProps">
+                                <RouterLink :to="slotProps.data.link">
+                                    {{ slotProps.data.nombre }}
+                                </RouterLink>
+                            </template>
+                        </Column>
+                    </DataTable>
+                </template>
+                <template v-else>
+                    <p>No hay pruebas asociadas a este control relevante.</p>
                 </template>
             </div>
         </div>
@@ -328,6 +348,8 @@ const automatizacionOpts = ['Automatizado', 'Semi-automatizado', 'Manual']
     line-height: 1.4rem;
 }
 
+#pruebasAsoc thead>tr>th,
+#pruebasAsoc tbody>tr>td,
 #relevamientosAsoc thead>tr>th,
 #relevamientosAsoc tbody>tr>td {
     padding: 0.5rem !important;
