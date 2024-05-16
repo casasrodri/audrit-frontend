@@ -45,6 +45,7 @@ async function login() {
         }
     } catch (error) {
         console.error(error.response)
+        console.error(error)
 
         toast.add({
             severity: 'error',

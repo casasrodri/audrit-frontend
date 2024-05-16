@@ -51,6 +51,19 @@ const obtenerInfoControl = async () => {
             link: `/auditorias/${siglaAudit}/revisiones/${siglaRev}/relevamientos/${id}`
         }
     })
+
+    control.value.riesgos = control.value.riesgos.map(riesgo => {
+        const id = riesgo.id
+        const nombre = riesgo.nombre
+        const siglaAudit = control.value.revision.auditoria.sigla
+        const siglaRev = control.value.revision.sigla
+
+        return {
+            id,
+            nombre,
+            link: `/auditorias/${siglaAudit}/revisiones/${siglaRev}/riesgos/${id}`
+        }
+    })
 }
 
 const establecerTitulo = async () => {
@@ -99,6 +112,7 @@ async function getIds() {
 async function inicializar() {
     await getIds()
     establecerTitulo()
+    document.title = 'Control'
 }
 
 onMounted(inicializar)
@@ -115,7 +129,8 @@ const control = ref({
     oportunidad: '',
     periodicidad: '',
     automatizacion: '',
-    revision_id: null
+    revision_id: null,
+    riesgos: [],
 })
 
 const documentosAsociados = ref([])
@@ -259,7 +274,7 @@ const automatizacionOpts = ['Automatizado', 'Semi-automatizado', 'Manual']
                 <Button label="Editar" @click="editarControl" />
             </div>
 
-            <div id="relevamientosAsoc" class="max-w-2xl my-2">
+            <div id="relevamientosAsoc" class="tabla-links max-w-2xl my-2">
                 <h3 class="font-semibold">Relevamientos asociados:</h3>
                 <template v-if="documentosAsociados.length > 0">
                     <DataTable :value="documentosAsociados" class="border-x-[1px] border-t-[1px]">
@@ -274,12 +289,31 @@ const automatizacionOpts = ['Automatizado', 'Semi-automatizado', 'Manual']
                     </DataTable>
                 </template>
                 <template v-else>
-                    <p>No hay relevamientos asociados a este control relevante.</p>
+                    <p>No existen asociaciones.</p>
+                </template>
+            </div>
+
+            <div id="riesgosAsoc" class="tabla-links max-w-2xl my-2">
+                <h3 class="font-semibold">Riesgos asociados:</h3>
+                <template v-if="control.riesgos.length > 0">
+                    <DataTable :value="control.riesgos" class="border-x-[1px] border-t-[1px]">
+                        <Column field="id" header="ID"></Column>
+                        <Column header="Nombre">
+                            <template #body="slotProps">
+                                <RouterLink :to="slotProps.data.link">
+                                    {{ slotProps.data.nombre }}
+                                </RouterLink>
+                            </template>
+                        </Column>
+                    </DataTable>
+                </template>
+                <template v-else>
+                    <p>No existen asociaciones.</p>
                 </template>
             </div>
 
             <!-- ---------------------------------------------------------------------------------- -->
-            <div id="pruebasAsoc" class="max-w-2xl my-2">
+            <div id="pruebasAsoc" class="tabla-links max-w-2xl my-2">
                 <h3 class="font-semibold mb-2">Pruebas de auditoría relacionadas:</h3>
                 <template v-if="pruebasAsociadas.length > 0">
                     <DataTable :value="pruebasAsociadas" class="border-x-[1px] border-t-[1px]">
@@ -294,7 +328,7 @@ const automatizacionOpts = ['Automatizado', 'Semi-automatizado', 'Manual']
                     </DataTable>
                 </template>
                 <template v-else>
-                    <p>No hay pruebas asociadas a este control relevante.</p>
+                    <p>No existen asociaciones.</p>
                 </template>
             </div>
         </div>
@@ -348,10 +382,9 @@ const automatizacionOpts = ['Automatizado', 'Semi-automatizado', 'Manual']
     line-height: 1.4rem;
 }
 
-#pruebasAsoc thead>tr>th,
-#pruebasAsoc tbody>tr>td,
-#relevamientosAsoc thead>tr>th,
-#relevamientosAsoc tbody>tr>td {
+
+.tabla-links th,
+.tabla-links td {
     padding: 0.5rem !important;
 }
 </style>

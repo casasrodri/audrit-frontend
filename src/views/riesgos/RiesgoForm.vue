@@ -11,6 +11,8 @@ import api from '@/services/api.js';
 import { useToast } from 'primevue/usetoast';
 import { useRoute, useRouter } from 'vue-router';
 import { setTitulo } from '@/stores/titulo.js';
+import { useDialog } from 'primevue/usedialog';
+import AsociadorElem from '@/components/AsociadorElem.vue';
 
 const toast = useToast();
 const route = useRoute();
@@ -52,6 +54,20 @@ const obtenerInfoRiesgo = async () => {
             id,
             nombre,
             link: `/auditorias/${siglaAudit}/revisiones/${siglaRev}/relevamientos/${id}`
+        }
+    })
+
+    riesgo.value.controles = riesgo.value.controles.map(ctrl => {
+        const id = ctrl.id
+        const nombre = ctrl.nombre
+        const ries = riesgo.value
+        const siglaAudit = ries.revision.auditoria.sigla
+        const siglaRev = ries.revision.sigla
+
+        return {
+            id,
+            nombre,
+            link: `/auditorias/${siglaAudit}/revisiones/${siglaRev}/controles/${id}`
         }
     })
 }
@@ -107,6 +123,7 @@ async function inicializar() {
     await getIds()
     establecerTitulo()
     getObjetivosControlDisponibles()
+    document.title = 'Riesgo'
 }
 
 onMounted(inicializar)
@@ -121,7 +138,8 @@ const riesgo = ref({
     descripcion: '',
     nivel: '',
     objetivos_control: [],
-    revision_id: null
+    revision_id: null,
+    controles: [],
 })
 
 const documentosAsociados = ref([])
@@ -205,6 +223,36 @@ function editarRiesgo() {
     router.push({ params: { nombre: 'editar' } })
 }
 
+const dialog = useDialog();
+const showProducts = () => {
+    dialog.open(AsociadorElem, {
+        data: {
+            tipoOrigen: 'riesgo',
+            origenId: idsActivos.value.riesgo.id,
+            entidad: 'control',
+            entidades: 'controles',
+            revisionId: idsActivos.value.revision.id,
+        },
+        onClose: (opt) => {
+            // console.log(opt)
+            // const callbackParams = opt.data; // {selectedId: 12}
+            // console.log(callbackParams)
+            if (opt.type == 'config-close') obtenerInfoRiesgo()
+        },
+        props: {
+            header: 'Asociar control relevante:',
+            style: {
+                width: '50vw',
+            },
+            breakpoints: {
+                '960px': '75vw',
+                '640px': '90vw'
+            },
+            modal: true,
+            maximizable: false,
+        }
+    });
+}
 
 
 const niveles = ['Alto', 'Medio', 'Bajo']
@@ -254,7 +302,7 @@ const verDescripObjCtrl = ref(true)
                 <Button label="Editar" @click="editarRiesgo" />
             </div>
 
-            <div id="relevamientosAsoc" class="max-w-2xl">
+            <div id="relevamientosAsoc" class="tabla-links max-w-2xl my-2">
                 <h3 class="font-semibold mb-2">Relevamientos asociados:</h3>
                 <template v-if="documentosAsociados.length > 0">
                     <DataTable :value="documentosAsociados" class="border-x-[1px] border-t-[1px]">
@@ -269,9 +317,32 @@ const verDescripObjCtrl = ref(true)
                     </DataTable>
                 </template>
                 <template v-else>
-                    <p>No hay relevamientos asociados a este riesgo.</p>
+                    <p>No existen asociaciones.</p>
                 </template>
             </div>
+
+            <div id="controlesAsoc" class="tabla-links max-w-2xl my-2">
+                <h3 class="font-semibold">Controles relevantes asociados:</h3>
+                <template v-if="riesgo.controles.length > 0">
+                    <DataTable :value="riesgo.controles" class="border-x-[1px] border-t-[1px]">
+                        <Column field="id" header="ID"></Column>
+                        <Column header="Nombre">
+                            <template #body="slotProps">
+                                <RouterLink :to="slotProps.data.link">
+                                    {{ slotProps.data.nombre }}
+                                </RouterLink>
+                            </template>
+                        </Column>
+                    </DataTable>
+                </template>
+                <template v-else>
+                    <p>No existen asociaciones.</p>
+                </template>
+            </div>
+
+            <button class="rounded-xl bg-[#0768a0] text-white p-2 px-7" @click="showProducts">
+                + Asociar
+            </button>
         </div>
 
     </template>

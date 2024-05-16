@@ -99,6 +99,7 @@ async function getIds() {
 async function inicializar() {
     await getIds()
     establecerTitulo()
+    document.title = 'Prueba'
 }
 
 onMounted(inicializar)
