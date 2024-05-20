@@ -408,8 +408,6 @@ h2.ce-header {
 </style>
 
 <template>
-    <!-- {{ idsActivos }} -->
-
     <div id="editorjs"></div>
 
     <div id="containerSpeedDial" class="flex bg-red-500 h-lvh fixed bottom-0 right-0">

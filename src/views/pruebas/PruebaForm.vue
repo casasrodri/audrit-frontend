@@ -3,10 +3,8 @@ import { ref, onMounted, watchEffect } from 'vue'
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Dropdown from 'primevue/dropdown';
-import Checkbox from 'primevue/checkbox';
 import Button from 'primevue/button';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
+import TablaElementosAsociados from '@/components/layout/TablaElementosAsociados.vue';
 import api from '@/services/api.js';
 import { useToast } from 'primevue/usetoast';
 import { useRoute, useRouter } from 'vue-router';
@@ -36,21 +34,6 @@ const obtenerInfoPrueba = async () => {
 
     const { data } = await api.get(`/pruebas/${idPrueba}`);
     prueba.value = data;
-
-    // // Se determinan los documentos asociados al prueba
-    // documentosAsociados.value = control.value.documentos.map(doc => {
-    //     const id = doc.relevamiento.id
-    //     const nombre = doc.relevamiento.nombre
-    //     const ctrl = control.value
-    //     const siglaAudit = ctrl.revision.auditoria.sigla
-    //     const siglaRev = ctrl.revision.sigla
-
-    //     return {
-    //         id,
-    //         nombre,
-    //         link: `/auditorias/${siglaAudit}/revisiones/${siglaRev}/relevamientos/${id}`
-    //     }
-    // })
 }
 
 const establecerTitulo = async () => {
@@ -116,9 +99,6 @@ const prueba = ref({
     informe: '',
     revision_id: null
 })
-
-// const documentosAsociados = ref([])
-// const pruebasAsociadas = ref([])
 
 function handleGuardarBoton() {
     if (accion.value === 'nuevo') {
@@ -196,8 +176,6 @@ function editarPrueba() {
     router.push({ params: { nombre: 'editar' } })
 }
 
-
-
 const sectorOpts = ['Auditoría Centralizada', 'Auditoría Continua', 'Auditoría Sistemas', 'Auditoría Sucursales']
 
 
@@ -208,7 +186,7 @@ const sectorOpts = ['Auditoría Centralizada', 'Auditoría Continua', 'Auditorí
         <div id="container" class="flex flex-col max-w-2xl mb-5">
             <div id="descripcion" class="my-2 flex flex-col">
                 <label for="descripcion" class="font-semibold">Descripción:</label>
-                <div>
+                <div style="white-space: pre;">
                     {{ prueba.descripcion }}
                 </div>
             </div>
@@ -231,45 +209,8 @@ const sectorOpts = ['Auditoría Centralizada', 'Auditoría Continua', 'Auditorí
                 <Button label="Editar" @click="editarPrueba" />
             </div>
 
-            <!-- TODO
-            <div id="relevamientosAsoc" class="max-w-2xl my-2">
-                <h3 class="font-semibold">Relevamientos asociados:</h3>
-                <template v-if="documentosAsociados.length > 0">
-                    <DataTable :value="documentosAsociados" class="border-x-[1px] border-t-[1px]">
-                        <Column field="id" header="ID"></Column>
-                        <Column header="Nombre">
-                            <template #body="slotProps">
-                                <RouterLink :to="slotProps.data.link">
-                                    {{ slotProps.data.nombre }}
-                                </RouterLink>
-                            </template>
-</Column>
-</DataTable>
-</template>
-<template v-else>
-                    <p>No hay relevamientos asociados a este control relevante.</p>
-                </template>
-</div> -->
-
-            <!-- ---------------------------------------------------------------------------------- -->
-            <!-- <div id="pruebasAsoc" class="max-w-2xl my-2">
-                <h3 class="font-semibold mb-2">Pruebas de auditoría relacionadas:</h3>
-                <template v-if="pruebasAsociadas.length > 0">
-                    <DataTable :value="pruebasAsociadas" class="border-x-[1px] border-t-[1px]">
-                        <Column field="id" header="ID"></Column>
-                        <Column header="Nombre">
-                            <template #body="slotProps">
-                                <RouterLink :to="slotProps.data.link">
-                                    {{ slotProps.data.nombre }}
-                                </RouterLink>
-                            </template>
-                        </Column>
-                    </DataTable>
-                </template>
-                <template v-else>
-                    <p>No hay pruebas asociadas a este control relevante.</p>
-                </template>
-            </div> -->
+            <TablaElementosAsociados :auditoria="idsActivos.auditoria" :revision="idsActivos.revision" tipo="prueba"
+                :objeto="prueba" :funcionRecargarObjeto="obtenerInfoPrueba" />
         </div>
 
     </template>

@@ -80,7 +80,7 @@ class Api {
   }
 
   delete(url, config) {
-    const promise = this.api.delete(url, data, config)
+    const promise = this.api.delete(url, config)
     this.mostrarRespuesta('delete', url, promise)
     return promise
   }

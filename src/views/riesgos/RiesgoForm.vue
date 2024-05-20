@@ -5,14 +5,14 @@ import Textarea from 'primevue/textarea';
 import Dropdown from 'primevue/dropdown';
 import Checkbox from 'primevue/checkbox';
 import Button from 'primevue/button';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
+
 import api from '@/services/api.js';
 import { useToast } from 'primevue/usetoast';
 import { useRoute, useRouter } from 'vue-router';
 import { setTitulo } from '@/stores/titulo.js';
-import { useDialog } from 'primevue/usedialog';
-import AsociadorElem from '@/components/AsociadorElem.vue';
+
+
+import TablaElementosAsociados from '@/components/layout/TablaElementosAsociados.vue';
 
 const toast = useToast();
 const route = useRoute();
@@ -33,42 +33,30 @@ const idsActivos = ref({
     },
 })
 
+const riesgo = ref({
+    nombre: '',
+    descripcion: '',
+    nivel: '',
+    objetivos_control: [],
+    revision_id: null,
+    controles: [],
+})
+
 const obtenerInfoRiesgo = async () => {
     const idRiesgo = idsActivos.value.riesgo.id
 
     const { data } = await api.get(`/riesgos/${idRiesgo}`);
     riesgo.value = data;
 
-    riesgo.value.oc = { ...riesgo.value.objetivos_control }
-    riesgo.value.objetivos_control = riesgo.value.objetivos_control.map(objCtrl => objCtrl.id)
 
-    // Se determinan los documentos asociados al riesgo
-    documentosAsociados.value = riesgo.value.documentos.map(doc => {
-        const id = doc.relevamiento.id
-        const nombre = doc.relevamiento.nombre
-        const ries = riesgo.value
-        const siglaAudit = ries.revision.auditoria.sigla
-        const siglaRev = ries.revision.sigla
+    riesgo.value.objetivos_control = data.links
+        .filter(li => li.entidad === 'objetivo_control')
+        .map(oc => oc.id)
 
-        return {
-            id,
-            nombre,
-            link: `/auditorias/${siglaAudit}/revisiones/${siglaRev}/relevamientos/${id}`
-        }
-    })
-
-    riesgo.value.controles = riesgo.value.controles.map(ctrl => {
-        const id = ctrl.id
-        const nombre = ctrl.nombre
-        const ries = riesgo.value
-        const siglaAudit = ries.revision.auditoria.sigla
-        const siglaRev = ries.revision.sigla
-
-        return {
-            id,
-            nombre,
-            link: `/auditorias/${siglaAudit}/revisiones/${siglaRev}/controles/${id}`
-        }
+    // Los riesgo.oc tienen los datos de id, nombre, descripcion
+    riesgo.value.oc = riesgo.value.objetivos_control.map(oc_id => {
+        const ocEncontrado = objetivosControlDisponibles.value.find(oc => oc.id == oc_id)
+        return { ...ocEncontrado }
     })
 }
 
@@ -121,8 +109,8 @@ async function getObjetivosControlDisponibles() {
 
 async function inicializar() {
     await getIds()
-    establecerTitulo()
     getObjetivosControlDisponibles()
+    establecerTitulo()
     document.title = 'Riesgo'
 }
 
@@ -133,16 +121,7 @@ watchEffect(() => {
     inicializar()
 })
 
-const riesgo = ref({
-    nombre: '',
-    descripcion: '',
-    nivel: '',
-    objetivos_control: [],
-    revision_id: null,
-    controles: [],
-})
 
-const documentosAsociados = ref([])
 
 function handleGuardarBoton() {
     if (accion.value === 'nuevo') {
@@ -223,36 +202,7 @@ function editarRiesgo() {
     router.push({ params: { nombre: 'editar' } })
 }
 
-const dialog = useDialog();
-const showProducts = () => {
-    dialog.open(AsociadorElem, {
-        data: {
-            tipoOrigen: 'riesgo',
-            origenId: idsActivos.value.riesgo.id,
-            entidad: 'control',
-            entidades: 'controles',
-            revisionId: idsActivos.value.revision.id,
-        },
-        onClose: (opt) => {
-            // console.log(opt)
-            // const callbackParams = opt.data; // {selectedId: 12}
-            // console.log(callbackParams)
-            if (opt.type == 'config-close') obtenerInfoRiesgo()
-        },
-        props: {
-            header: 'Asociar control relevante:',
-            style: {
-                width: '50vw',
-            },
-            breakpoints: {
-                '960px': '75vw',
-                '640px': '90vw'
-            },
-            modal: true,
-            maximizable: false,
-        }
-    });
-}
+
 
 
 const niveles = ['Alto', 'Medio', 'Bajo']
@@ -269,7 +219,7 @@ const verDescripObjCtrl = ref(true)
         <div id="container" class="flex flex-col max-w-2xl mb-5">
             <div id="descripcion" class="my-2 flex flex-col">
                 <label for="descripcion" class="font-semibold">Descripción:</label>
-                <div>
+                <div style="white-space: pre;">
                     {{ riesgo.descripcion }}
                 </div>
             </div>
@@ -287,7 +237,6 @@ const verDescripObjCtrl = ref(true)
                     :title="verDescripObjCtrl ? 'Ocultar descripciones' : 'Mostrar descripciones'">Objetivos de
                     control:</label>
 
-
                 <ul class="mt-2 ml-6 list-disc" v-for="objetivo of riesgo.oc" :key="objetivo.id">
                     <li :title="objetivo.descripcion">
                         {{ objetivo.nombre }}
@@ -302,48 +251,12 @@ const verDescripObjCtrl = ref(true)
                 <Button label="Editar" @click="editarRiesgo" />
             </div>
 
-            <div id="relevamientosAsoc" class="tabla-links max-w-2xl my-2">
-                <h3 class="font-semibold mb-2">Relevamientos asociados:</h3>
-                <template v-if="documentosAsociados.length > 0">
-                    <DataTable :value="documentosAsociados" class="border-x-[1px] border-t-[1px]">
-                        <Column field="id" header="ID"></Column>
-                        <Column header="Nombre">
-                            <template #body="slotProps">
-                                <RouterLink :to="slotProps.data.link">
-                                    {{ slotProps.data.nombre }}
-                                </RouterLink>
-                            </template>
-                        </Column>
-                    </DataTable>
-                </template>
-                <template v-else>
-                    <p>No existen asociaciones.</p>
-                </template>
-            </div>
+            <TablaElementosAsociados :auditoria="idsActivos.auditoria" :revision="idsActivos.revision" tipo="riesgo"
+                :objeto="riesgo" :funcionRecargarObjeto="obtenerInfoRiesgo" />
 
-            <div id="controlesAsoc" class="tabla-links max-w-2xl my-2">
-                <h3 class="font-semibold">Controles relevantes asociados:</h3>
-                <template v-if="riesgo.controles.length > 0">
-                    <DataTable :value="riesgo.controles" class="border-x-[1px] border-t-[1px]">
-                        <Column field="id" header="ID"></Column>
-                        <Column header="Nombre">
-                            <template #body="slotProps">
-                                <RouterLink :to="slotProps.data.link">
-                                    {{ slotProps.data.nombre }}
-                                </RouterLink>
-                            </template>
-                        </Column>
-                    </DataTable>
-                </template>
-                <template v-else>
-                    <p>No existen asociaciones.</p>
-                </template>
-            </div>
-
-            <button class="rounded-xl bg-[#0768a0] text-white p-2 px-7" @click="showProducts">
-                + Asociar
-            </button>
         </div>
+
+
 
     </template>
 
@@ -407,10 +320,5 @@ const verDescripObjCtrl = ref(true)
 <style>
 #descripRies {
     line-height: 1.4rem;
-}
-
-#relevamientosAsoc thead>tr>th,
-#relevamientosAsoc tbody>tr>td {
-    padding: 0.5rem !important;
 }
 </style>

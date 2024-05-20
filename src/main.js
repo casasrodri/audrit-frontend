@@ -39,5 +39,9 @@ app.component('PrimeButton', Button)
 import DialogService from 'primevue/dialogservice'
 app.use(DialogService)
 
+//ConfirmPopup Service
+import ConfirmationService from 'primevue/confirmationservice';
+app.use(ConfirmationService);
+
 // Mount
 app.mount('#app')

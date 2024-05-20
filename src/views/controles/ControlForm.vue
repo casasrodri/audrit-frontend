@@ -3,10 +3,8 @@ import { ref, onMounted, watchEffect } from 'vue'
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Dropdown from 'primevue/dropdown';
-import Checkbox from 'primevue/checkbox';
 import Button from 'primevue/button';
-import DataTable from 'primevue/datatable';
-import Column from 'primevue/column';
+import TablaElementosAsociados from '@/components/layout/TablaElementosAsociados.vue';
 import api from '@/services/api.js';
 import { useToast } from 'primevue/usetoast';
 import { useRoute, useRouter } from 'vue-router';
@@ -31,39 +29,22 @@ const idsActivos = ref({
     },
 })
 
+const control = ref({
+    nombre: '',
+    descripcion: '',
+    ejecutor: '',
+    oportunidad: '',
+    periodicidad: '',
+    automatizacion: '',
+    revision_id: null,
+    riesgos: [],
+})
+
 const obtenerInfoControl = async () => {
     const idControl = idsActivos.value.control.id
 
     const { data } = await api.get(`/controles/${idControl}`);
     control.value = data;
-
-    // Se determinan los documentos asociados al control
-    documentosAsociados.value = control.value.documentos.map(doc => {
-        const id = doc.relevamiento.id
-        const nombre = doc.relevamiento.nombre
-        const ctrl = control.value
-        const siglaAudit = ctrl.revision.auditoria.sigla
-        const siglaRev = ctrl.revision.sigla
-
-        return {
-            id,
-            nombre,
-            link: `/auditorias/${siglaAudit}/revisiones/${siglaRev}/relevamientos/${id}`
-        }
-    })
-
-    control.value.riesgos = control.value.riesgos.map(riesgo => {
-        const id = riesgo.id
-        const nombre = riesgo.nombre
-        const siglaAudit = control.value.revision.auditoria.sigla
-        const siglaRev = control.value.revision.sigla
-
-        return {
-            id,
-            nombre,
-            link: `/auditorias/${siglaAudit}/revisiones/${siglaRev}/riesgos/${id}`
-        }
-    })
 }
 
 const establecerTitulo = async () => {
@@ -122,19 +103,6 @@ watchEffect(() => {
     inicializar()
 })
 
-const control = ref({
-    nombre: '',
-    descripcion: '',
-    ejecutor: '',
-    oportunidad: '',
-    periodicidad: '',
-    automatizacion: '',
-    revision_id: null,
-    riesgos: [],
-})
-
-const documentosAsociados = ref([])
-const pruebasAsociadas = ref([])
 
 function handleGuardarBoton() {
     if (accion.value === 'nuevo') {
@@ -236,7 +204,7 @@ const automatizacionOpts = ['Automatizado', 'Semi-automatizado', 'Manual']
         <div id="container" class="flex flex-col max-w-2xl mb-5">
             <div id="descripcion" class="my-2 flex flex-col">
                 <label for="descripcion" class="font-semibold">Descripción:</label>
-                <div>
+                <div style="white-space: pre;">
                     {{ control.descripcion }}
                 </div>
             </div>
@@ -274,65 +242,10 @@ const automatizacionOpts = ['Automatizado', 'Semi-automatizado', 'Manual']
                 <Button label="Editar" @click="editarControl" />
             </div>
 
-            <div id="relevamientosAsoc" class="tabla-links max-w-2xl my-2">
-                <h3 class="font-semibold">Relevamientos asociados:</h3>
-                <template v-if="documentosAsociados.length > 0">
-                    <DataTable :value="documentosAsociados" class="border-x-[1px] border-t-[1px]">
-                        <Column field="id" header="ID"></Column>
-                        <Column header="Nombre">
-                            <template #body="slotProps">
-                                <RouterLink :to="slotProps.data.link">
-                                    {{ slotProps.data.nombre }}
-                                </RouterLink>
-                            </template>
-                        </Column>
-                    </DataTable>
-                </template>
-                <template v-else>
-                    <p>No existen asociaciones.</p>
-                </template>
-            </div>
+            <TablaElementosAsociados :auditoria="idsActivos.auditoria" :revision="idsActivos.revision" tipo="control"
+                :objeto="control" :funcionRecargarObjeto="obtenerInfoControl" />
 
-            <div id="riesgosAsoc" class="tabla-links max-w-2xl my-2">
-                <h3 class="font-semibold">Riesgos asociados:</h3>
-                <template v-if="control.riesgos.length > 0">
-                    <DataTable :value="control.riesgos" class="border-x-[1px] border-t-[1px]">
-                        <Column field="id" header="ID"></Column>
-                        <Column header="Nombre">
-                            <template #body="slotProps">
-                                <RouterLink :to="slotProps.data.link">
-                                    {{ slotProps.data.nombre }}
-                                </RouterLink>
-                            </template>
-                        </Column>
-                    </DataTable>
-                </template>
-                <template v-else>
-                    <p>No existen asociaciones.</p>
-                </template>
-            </div>
-
-            <!-- ---------------------------------------------------------------------------------- -->
-            <div id="pruebasAsoc" class="tabla-links max-w-2xl my-2">
-                <h3 class="font-semibold mb-2">Pruebas de auditoría relacionadas:</h3>
-                <template v-if="pruebasAsociadas.length > 0">
-                    <DataTable :value="pruebasAsociadas" class="border-x-[1px] border-t-[1px]">
-                        <Column field="id" header="ID"></Column>
-                        <Column header="Nombre">
-                            <template #body="slotProps">
-                                <RouterLink :to="slotProps.data.link">
-                                    {{ slotProps.data.nombre }}
-                                </RouterLink>
-                            </template>
-                        </Column>
-                    </DataTable>
-                </template>
-                <template v-else>
-                    <p>No existen asociaciones.</p>
-                </template>
-            </div>
         </div>
-
     </template>
 
     <template v-else>
@@ -380,11 +293,5 @@ const automatizacionOpts = ['Automatizado', 'Semi-automatizado', 'Manual']
 <style>
 #descripCtrl {
     line-height: 1.4rem;
-}
-
-
-.tabla-links th,
-.tabla-links td {
-    padding: 0.5rem !important;
 }
 </style>
