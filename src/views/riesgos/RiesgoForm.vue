@@ -12,7 +12,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { setTitulo } from '@/stores/titulo.js';
 
 
-import TablaElementosAsociados from '@/components/layout/TablaElementosAsociados.vue';
+import TablaElementosAsociados from '@/components/TablaElementosAsociados.vue';
 
 const toast = useToast();
 const route = useRoute();

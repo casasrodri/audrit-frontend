@@ -4,7 +4,7 @@ import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Dropdown from 'primevue/dropdown';
 import Button from 'primevue/button';
-import TablaElementosAsociados from '@/components/layout/TablaElementosAsociados.vue';
+import TablaElementosAsociados from '@/components/TablaElementosAsociados.vue';
 import api from '@/services/api.js';
 import { useToast } from 'primevue/usetoast';
 import { useRoute, useRouter } from 'vue-router';
