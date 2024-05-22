@@ -2,7 +2,9 @@
 import api from '@/services/api';
 import { ref, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
+import { useMigajasStore } from '@/stores/migajas.js';
 const route = useRoute();
+const migajasStore = useMigajasStore();
 
 import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
@@ -31,8 +33,20 @@ async function getAuditoria() {
 }
 
 
+function setMigajas() {
+    const sigla = auditoria.value.sigla
+    const nombre = auditoria.value.nombre
+    const url = `/auditorias/${sigla}/${adaptarTextoParaUrl(nombre)}`
+    migajasStore.items = [
+        { nombre: 'Auditorias', url: '/auditorias', title: 'Listado de auditorías' },
+        { nombre, url, title: 'Auditoría' },
+    ];
+}
 
-onMounted(getAuditoria);
+onMounted(async () => {
+    await getAuditoria()
+    setMigajas()
+});
 
 const tagStyles = {
     iniciada: {

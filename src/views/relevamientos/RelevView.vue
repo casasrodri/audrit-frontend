@@ -5,7 +5,11 @@ import { useToast } from 'primevue/usetoast';
 import { useRouter, useRoute } from 'vue-router';
 import api from '@/services/api.js';
 import { setTitulo } from '@/stores/titulo.js';
+import { useMigajasStore } from '@/stores/migajas.js';
+import { adaptarTextoParaUrl } from '@/utils/helpers.js';
 
+
+const migajasStore = useMigajasStore();
 const toast = useToast();
 const router = useRouter();
 const route = useRoute();
@@ -34,16 +38,21 @@ const idsActivos = ref({
     auditoria: {
         id: null,
         sigla: route.params.siglaAudit,
+        obj: null
     },
     revision: {
         id: null,
         sigla: route.params.siglaRevision,
+        obj: null,
     },
-    relevamiento: {
+    revisiones: null, relevamiento: {
         id: null,
+        obj: null,
     },
+    relevamientos: null,
     documento: {
         id: null,
+        obj: null,
     }
 })
 
@@ -250,15 +259,19 @@ async function getIds() {
 
     const { data } = await api.get(`/auditorias/sigla/${siglaAudit}`);
     idsActivos.value.auditoria.id = data.id;
+    idsActivos.value.auditoria.obj = data;
 
     const { data: revisiones } = await api.get(`/revisiones/auditoria/${idsActivos.value.auditoria.id}`);
     const revision = revisiones.filter(rev => rev.sigla === siglaRevision)[0];
     idsActivos.value.revision.id = revision.id;
+    idsActivos.value.revision.obj = revision;
+
 
     idsActivos.value.relevamiento.id = parseInt(idRelev);
     const { data: documentoDB } = await api.get(`/documentos/relevamiento/${idsActivos.value.relevamiento.id}`);
 
     idsActivos.value.documento.id = documentoDB.id
+    idsActivos.value.documento.obj = documentoDB;
 
     documento.value = documentoDB
 }
@@ -279,12 +292,96 @@ async function getTitulo() {
     document.title = 'Relevamiento - ' + data.nombre;
 }
 
+async function setMigajas() {
+    const items = [
+        { nombre: 'Auditorias', url: '/auditorias', title: 'Listado de auditorías' },
+    ]
+
+    // Auditoría
+    const audit = idsActivos.value.auditoria.obj
+    const urlAud = `/auditorias/${audit.sigla}/${adaptarTextoParaUrl(audit.nombre)}`
+    items.push({
+        nombre: audit.nombre,
+        url: urlAud,
+        title: 'Auditoría',
+    })
+
+    // Revisión
+    const revision = idsActivos.value.revision.obj
+    let auxPadre = revision
+    const urlRev = `/auditorias/${audit.sigla}/revisiones`
+
+    let subitems = []
+    let relevamientoUrl
+    while (auxPadre) {
+        const texto_url = adaptarTextoParaUrl(auxPadre.nombre)
+        subitems.unshift({
+            nombre: auxPadre.nombre,
+            sigla: auxPadre.sigla,
+            url: `${urlRev}/${auxPadre.sigla}/${texto_url}`,
+            title: 'Revisión',
+        })
+        auxPadre = auxPadre.padre
+    }
+
+    items.push(...subitems)
+
+    // Procesos y macro procesos
+    subitems = []
+    const { data: relevNodos } = await api.get(`/relevamientos/revision/${revision.id}/nodos`)
+    const buscar = idsActivos.value.relevamiento.id
+
+    function findNodeByIdAndParents(node, targetId, parents = []) {
+        if (node.data.id === targetId) {
+            return [...parents, node.data];
+        }
+        if (node.children) {
+            for (const child of node.children) {
+                const result = findNodeByIdAndParents(child, targetId, [...parents, node.data]);
+                if (result) {
+                    return result;
+                }
+            }
+        }
+        return null;
+    }
+    // Buscar todos los nodos padres
+    let result = null;
+    for (const item of relevNodos) {
+        result = findNodeByIdAndParents(item, buscar);
+        if (result) break;
+    }
+
+    const urlProcesos = `/auditorias/${audit.sigla}/revisiones/${revision.sigla}/relevamientos`
+    result.forEach(node => {
+
+        const tipo = node.sigla?.startsWith('M') ? 'Macroproceso' : 'Proceso'
+
+        if (node.tipo === 'proceso') {
+            subitems.push({
+                nombre: node.sigla,
+                url: urlProcesos,
+                title: `${tipo} - ${node.nombre}`,
+            })
+        }
+    });
+
+    items.push(...subitems)
+
+    migajasStore.items = items
+}
+
+
+
+
+
 let editor = null
 onMounted(async () => {
     await getIds()
     getTitulo()
     renderDoc()
     editor = crearEditor(idsActivos.value)
+    setMigajas()
 })
 
 async function guardarDocumento() {

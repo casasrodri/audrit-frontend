@@ -2,7 +2,8 @@
 import { ref, onMounted, watchEffect } from 'vue';
 import { useRoute, useRouter, RouterLink } from 'vue-router';
 import { setTitulo } from '@/stores/titulo.js';
-
+import { useMigajasStore } from '@/stores/migajas.js';
+import { adaptarTextoParaUrl } from '@/utils/helpers.js';
 import RelevTree from '@/views/revisiones/RelevTree.vue';
 import RiesgosTabla from '@/views/revisiones/RiesgosTabla.vue';
 import ControlesTabla from '@/views/revisiones/ControlesTabla.vue';
@@ -16,6 +17,7 @@ const route = useRoute();
 const router = useRouter();
 const tabsDisponibles = ['relevamientos', 'riesgos', 'controles', 'pruebas']
 const selectedTab = ref(0);
+const migajasStore = useMigajasStore();
 
 const idsActivos = ref({
     auditoria: {
@@ -55,11 +57,48 @@ async function getIds() {
     idsActivos.value.revision.obj = revision;
 }
 
+function setMigajas() {
+    const items = [
+        { nombre: 'Auditorias', url: '/auditorias', title: 'Listado de auditorías' },
+    ]
+
+    // Auditoría
+    const audit = idsActivos.value.auditoria.obj
+    const urlAud = `/auditorias/${audit.sigla}/${adaptarTextoParaUrl(audit.nombre)}`
+    items.push({
+        nombre: audit.nombre,
+        url: urlAud,
+        title: 'Auditoría',
+    })
+
+    // Revisión
+    const revision = idsActivos.value.revision.obj
+    let auxPadre = revision
+    const urlRev = `/auditorias/${audit.sigla}/revisiones`
+
+    const subitems = []
+    while (auxPadre) {
+        const texto_url = adaptarTextoParaUrl(auxPadre.nombre)
+        subitems.unshift({
+            nombre: auxPadre.nombre,
+            sigla: auxPadre.sigla,
+            url: `${urlRev}/${auxPadre.sigla}/${texto_url}`,
+            title: 'Revisión',
+        })
+        auxPadre = auxPadre.padre
+    }
+
+    items.push(...subitems)
+
+    migajasStore.items = items
+}
+
 onMounted(async () => {
     selectTab()
     await getIds()
     setTitulo(idsActivos.value.revision.obj.nombre)
     document.title = `Revisión - ${idsActivos.value.revision.obj.nombre}`
+    setMigajas()
 })
 
 watchEffect(() => {

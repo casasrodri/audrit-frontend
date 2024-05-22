@@ -40,9 +40,11 @@ const router = createRouter({
         {
           path: '',
           name: 'home',
-          component: HomeView,
+          // component: HomeView,
+          redirect: '/auditorias'
         },
         {
+
           path: '/auditorias',
           name: 'auditorias',
           component: AudiList,

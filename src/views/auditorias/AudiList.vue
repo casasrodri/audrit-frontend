@@ -6,9 +6,11 @@ import Column from 'primevue/column';
 import Tag from 'primevue/tag';
 import { useRouter } from 'vue-router';
 import { adaptarTextoParaUrl } from '@/utils/helpers';
+import { useMigajasStore } from '@/stores/migajas.js';
+
 
 const router = useRouter();
-
+const migajasStore = useMigajasStore();
 const auditorias = ref([]);
 
 async function getAuditorias() {
@@ -17,7 +19,16 @@ async function getAuditorias() {
     auditorias.value = res.data
 }
 
-onMounted(getAuditorias);
+function setMigajas() {
+    migajasStore.items = [
+        { nombre: 'Auditorias', url: '/auditorias', title: 'Listado de auditorías' },
+    ];
+}
+
+onMounted(() => {
+    getAuditorias()
+    setMigajas()
+});
 
 const tagStyles = {
     tipos: {
