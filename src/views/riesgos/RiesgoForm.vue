@@ -10,6 +10,8 @@ import api from '@/services/api.js';
 import { useToast } from 'primevue/usetoast';
 import { useRoute, useRouter } from 'vue-router';
 import { setTitulo } from '@/stores/titulo.js';
+import { useMigajasStore } from '@/stores/migajas.js';
+import { adaptarTextoParaUrl } from '@/utils/helpers.js';
 
 
 import TablaElementosAsociados from '@/components/TablaElementosAsociados.vue';
@@ -18,14 +20,17 @@ const toast = useToast();
 const route = useRoute();
 const router = useRouter();
 const accion = ref('ver')
+const migajasStore = useMigajasStore();
 const idsActivos = ref({
     auditoria: {
         id: null,
         sigla: route.params.siglaAudit,
+        obj: null
     },
     revision: {
         id: null,
         sigla: route.params.siglaRevision,
+        obj: null
     },
     riesgo: {
         id: null,
@@ -88,10 +93,12 @@ async function getIds() {
 
     const { data } = await api.get(`/auditorias/sigla/${siglaAudit}`);
     idsActivos.value.auditoria.id = data.id;
+    idsActivos.value.auditoria.obj = data;
 
     const { data: revisiones } = await api.get(`/revisiones/auditoria/${idsActivos.value.auditoria.id}`);
     const revision = revisiones.filter(rev => rev.sigla === siglaRevision)[0];
     idsActivos.value.revision.id = revision.id;
+    idsActivos.value.revision.obj = revision;
     riesgo.value.revision_id = revision.id;
 
     if (idRiesgo === 'nuevo') {
@@ -107,9 +114,45 @@ async function getObjetivosControlDisponibles() {
     objetivosControlDisponibles.value = data;
 }
 
+function setMigajas() {
+    const items = [
+        { nombre: 'Auditorias', url: '/auditorias', title: 'Listado de auditorías' },
+    ]
+
+    // Auditoría
+    const audit = idsActivos.value.auditoria.obj
+    const urlAud = `/auditorias/${audit.sigla}/${adaptarTextoParaUrl(audit.nombre)}`
+    items.push({
+        nombre: audit.nombre,
+        url: urlAud,
+        title: 'Auditoría',
+    })
+
+    // Revisión
+    const revision = idsActivos.value.revision.obj
+    const urlRev = `/auditorias/${audit.sigla}/revisiones/${revision.sigla}/${adaptarTextoParaUrl(revision.nombre)}`
+    items.push({
+        nombre: revision.nombre,
+        url: urlRev,
+        title: 'Revisión',
+    })
+
+    const urlRiesgos = `/auditorias/${audit.sigla}/revisiones/${revision.sigla}/riesgos`
+
+    items.push({
+        nombre: 'Riesgos',
+        url: urlRiesgos,
+        title: 'Listado de riesgos',
+    })
+
+    migajasStore.items = items
+}
+
+
 async function inicializar() {
     await getIds()
     getObjetivosControlDisponibles()
+    setMigajas()
     establecerTitulo()
     document.title = 'Riesgo'
 }
