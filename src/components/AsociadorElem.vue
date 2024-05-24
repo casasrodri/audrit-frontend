@@ -12,18 +12,20 @@ const items = ref([])
 const toast = useToast();
 
 const ASOCIACIONES_VALIDAS = {
-    riesgo: ['Control', 'Prueba', 'Normativa', 'Aplicación', 'Organigrama'],
-    control: ['Riesgo', 'Prueba', 'Normativa', 'Aplicación', 'Organigrama'],
-    prueba: ['Riesgo', 'Control', 'Normativa', 'Aplicación', 'Organigrama'],
-    normativa: ['Riesgo', 'Control', 'Prueba', 'Aplicación', 'Organigrama'],
-    aplicacion: ['Riesgo', 'Control', 'Prueba', 'Normativa', 'Organigrama'],
-    organigrama: ['Riesgo', 'Control', 'Prueba', 'Normativa', 'Aplicación'],
+    riesgo: ['Control', 'Prueba', 'Observación', 'Normativa', 'Aplicación', 'Organigrama'],
+    control: ['Riesgo', 'Prueba', 'Observación', 'Normativa', 'Aplicación', 'Organigrama'],
+    prueba: ['Riesgo', 'Control', 'Observación', 'Normativa', 'Aplicación', 'Organigrama'],
+    observacion: ['Riesgo', 'Control', 'Prueba', 'Normativa', 'Aplicación', 'Organigrama'],
+    normativa: ['Riesgo', 'Control', 'Prueba', 'Observación', 'Aplicación', 'Organigrama'],
+    aplicacion: ['Riesgo', 'Control', 'Prueba', 'Observación', 'Normativa', 'Organigrama'],
+    organigrama: ['Riesgo', 'Control', 'Prueba', 'Observación', 'Normativa', 'Aplicación'],
 }
 
 const ENTIDADES = {
     Riesgo: 'riesgos',
     Control: 'controles',
     Prueba: 'pruebas',
+    Observación: 'observaciones',
     Normativa: 'normativas',
     Aplicación: 'aplicaciones',
     Organigrama: 'organigramas',
@@ -33,6 +35,7 @@ const TIPOS = {
     Riesgo: 'riesgo',
     Control: 'control',
     Prueba: 'prueba',
+    Observación: 'observacion',
     Normativa: 'normativa',
     Aplicación: 'aplicacion',
     Organigrama: 'organigrama',
@@ -48,7 +51,6 @@ async function buscar() {
     const { data } = await api.get(url)
     items.value = data
 }
-
 
 async function crearAsociacion() {
     const ent1 = dialogRef.value.data.tipo

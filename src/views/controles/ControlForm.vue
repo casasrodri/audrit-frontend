@@ -223,7 +223,7 @@ async function crearControl() {
         const { data } = await api.post('/controles', nuevoControl);
         toast.add({ severity: 'success', summary: 'Control creado', detail: 'El control ha sido creado correctamente', life: 3000 });
         // console.log(data);
-        router.push({ params: { idControl: data.id.toString(), nombre: data.nombre } })
+        router.push({ params: { idControl: data.id.toString(), nombre: adaptarTextoParaUrl(data.nombre) } })
     } catch (error) {
         console.error(error);
         toast.add({ severity: 'error', summary: 'Error', detail: 'Ha ocurrido un error al crear el control' + error, life: 3000 });

@@ -18,6 +18,7 @@ import ReqView from '@/views/requerimientos/ReqView.vue'
 import RiesgoForm from '@/views/riesgos/RiesgoForm.vue'
 import ControlForm from '@/views/controles/ControlForm.vue'
 import PruebaForm from '@/views/pruebas/PruebaForm.vue'
+import ObservForm from '@/views/observaciones/ObservForm.vue'
 
 import ParamMenu from '@/views/parametros/ParamMenu.vue'
 import ParamCiclos from '@/views/parametros/ParamCiclos.vue'
@@ -79,6 +80,11 @@ const router = createRouter({
           path: '/auditorias/:siglaAudit/revisiones/:siglaRevision/pruebas/:idPrueba/:nombre?',
           name: 'pruebaForm',
           component: PruebaForm,
+        },
+        {
+          path: '/auditorias/:siglaAudit/revisiones/:siglaRevision/observaciones/:idObservacion/:nombre?',
+          name: 'observacionForm',
+          component: ObservForm,
         },
         {
           path: '/observaciones',

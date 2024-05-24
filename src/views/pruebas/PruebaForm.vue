@@ -207,7 +207,7 @@ async function crearPrueba() {
         const { data } = await api.post('/pruebas', nuevaPrueba);
         toast.add({ severity: 'success', summary: 'Prueba creada', detail: 'La prueba ha sido creada correctamente', life: 3000 });
         // console.log(data);
-        router.push({ params: { idPrueba: data.id.toString(), nombre: data.nombre } })
+        router.push({ params: { idPrueba: data.id.toString(), nombre: adaptarTextoParaUrl(data.nombre) } })
     } catch (error) {
         console.error(error);
         toast.add({ severity: 'error', summary: 'Error', detail: 'Ha ocurrido un error al crear la prueba' + error, life: 3000 });
@@ -228,7 +228,7 @@ const sectorOpts = ['Auditoría Centralizada', 'Auditoría Continua', 'Auditorí
         <div id="container" class="flex flex-col max-w-2xl mb-5">
             <div id="descripcion" class="my-2 flex flex-col">
                 <label for="descripcion" class="font-semibold">Descripción:</label>
-                <div style="white-space: pre;">
+                <div style="white-space: pre;" class="text-pretty">
                     {{ prueba.descripcion }}
                 </div>
             </div>

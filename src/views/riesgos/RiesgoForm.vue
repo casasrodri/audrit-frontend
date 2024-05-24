@@ -233,7 +233,7 @@ async function crearRiesgo() {
         const { data } = await api.post('/riesgos', nuevoRiesgo);
         toast.add({ severity: 'success', summary: 'Riesgo creado', detail: 'El riesgo ha sido creado correctamente', life: 3000 });
         // console.log(data);
-        router.push({ params: { idRiesgo: data.id.toString(), nombre: data.nombre } })
+        router.push({ params: { idRiesgo: data.id.toString(), nombre: adaptarTextoParaUrl(data.nombre) } })
     } catch (error) {
         console.error(error);
         toast.add({ severity: 'error', summary: 'Error', detail: 'Ha ocurrido un error al crear el riesgo' + error, life: 3000 });

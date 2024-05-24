@@ -28,6 +28,7 @@ const PLURALES = {
     control: 'controles',
     riesgo: 'riesgos',
     prueba: 'pruebas',
+    observacion: 'observaciones',
 }
 
 const TIPOS_VISUALES = {
@@ -35,6 +36,7 @@ const TIPOS_VISUALES = {
     control: 'Controles',
     riesgo: 'Riesgos',
     prueba: 'Pruebas',
+    observacion: 'Observaciones',
 }
 
 function obtenerObjetoLink(obj) {
@@ -137,7 +139,8 @@ const eliminarAsociacion = (event, slot) => {
                 <Column field="id" header="ID" style="min-width: 10px; max-width: 20px;"></Column>
                 <Column field="nombre" header="Nombre">
                     <template #body="slotProps">
-                        <RouterLink :to="slotProps.data.link">
+                        <RouterLink :to="slotProps.data.link"
+                            :class="{ 'text-red-500': slotProps.data.tipo === 'Observaciones' }">
                             {{ slotProps.data.nombre }}
                         </RouterLink>
                     </template>

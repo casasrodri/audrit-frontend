@@ -8,14 +8,16 @@ import RelevTree from '@/views/revisiones/RelevTree.vue';
 import RiesgosTabla from '@/views/revisiones/RiesgosTabla.vue';
 import ControlesTabla from '@/views/revisiones/ControlesTabla.vue';
 import PruebasTabla from '@/views/revisiones/PruebasTabla.vue';
+import ObservTabla from '@/views/revisiones/ObservTabla.vue';
 
 import api from '@/services/api.js';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
+import Button from 'primevue/button';
 
 const route = useRoute();
 const router = useRouter();
-const tabsDisponibles = ['relevamientos', 'riesgos', 'controles', 'pruebas']
+const tabsDisponibles = ['relevamientos', 'riesgos', 'controles', 'pruebas', 'observaciones']
 const selectedTab = ref(0);
 const migajasStore = useMigajasStore();
 
@@ -106,21 +108,37 @@ watchEffect(() => {
     router.replace({ params: { tab: seleccionada } })
 })
 
+function nuevo() {
+    if (route.params.tab == 'relevamientos') {
+        alert('Ver como los creamos!')
+    } else {
+        router.push(route.fullPath + '/nuevo')
+    }
+}
+
 </script>
 
 <template>
-    <TabView v-model:activeIndex="selectedTab">
-        <TabPanel header="Relevamientos">
-            <RelevTree :ids="idsActivos" />
-        </TabPanel>
-        <TabPanel header="Riesgos">
-            <RiesgosTabla :ids="idsActivos" />
-        </TabPanel>
-        <TabPanel header="Controles">
-            <ControlesTabla :ids="idsActivos" />
-        </TabPanel>
-        <TabPanel header="Pruebas">
-            <PruebasTabla :ids="idsActivos" />
-        </TabPanel>
-    </TabView>
+    <div class="flex flex-row">
+        <TabView v-model:activeIndex="selectedTab">
+            <TabPanel header="Relevamientos">
+                <RelevTree :ids="idsActivos" />
+            </TabPanel>
+            <TabPanel header="Riesgos">
+                <RiesgosTabla :ids="idsActivos" />
+            </TabPanel>
+            <TabPanel header="Controles">
+                <ControlesTabla :ids="idsActivos" />
+            </TabPanel>
+            <TabPanel header="Pruebas">
+                <PruebasTabla :ids="idsActivos" />
+            </TabPanel>
+            <TabPanel header="Observaciones">
+                <ObservTabla :ids="idsActivos" />
+            </TabPanel>
+        </TabView>
+        <div class="mt-1 ml-4">
+            <Button label="Nuevo" @click="nuevo" />
+        </div>
+    </div>
 </template>
