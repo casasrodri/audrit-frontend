@@ -139,7 +139,18 @@ const router = createRouter({
       component: LoginView,
       meta: { title: 'Iniciar sesión' },
     }
-  ]
+  ],
+  scrollBehavior(to, from, savedPosition) {
+    // Siempre desplaza a la parte superior de la página
+    // return { top: 0 }
+
+    // si hay una posición guardada (por ejemplo, al usar los botones de navegación del navegador), se desplazará a esa posición. Si no, se desplazará a la parte superior de la página.
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { top: 0 }
+    }
+  }
 })
 
 router.beforeEach((to, from, next) => {
