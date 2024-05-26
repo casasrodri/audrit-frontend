@@ -4,7 +4,7 @@ export function isObjectEmpty(obj) {
 
 
 export function adaptarTextoParaUrl(texto) {
-    return texto.toLowerCase().replace(/ /g, '-').normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    return texto.toLowerCase().replace(/ /g, '-').normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace('/', '-')
 }
 
 export function fechaFormato(fecha) {
