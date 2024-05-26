@@ -21,6 +21,7 @@ const dataEjemplo = {
 }
 
 import EditorJS from '@editorjs/editorjs';
+import Paragraph from '@editorjs/paragraph';
 import HeaderEditorJs from '@editorjs/header';
 import ChecklistEditorJs from '@editorjs/checklist';
 import DelimiterEditorJs from '@editorjs/delimiter';
@@ -148,13 +149,20 @@ function crearEditor({ auditoria, revision }) {
 
         // Tools connection
         tools: {
+            paragraph: {
+                class: Paragraph,
+                inlineToolbar: true,
+                config: {
+                    preserveBlank: true,
+                }
+            },
             header: {
                 class: HeaderEditorJs,
                 inlineToolbar: true,
                 config: {
                     placeholder: 'Ingresa un título...',
                     levels: [1, 2, 3, 4],
-                    defaultLevel: 1
+                    defaultLevel: 2
                 },
                 toolbox: {
                     title: 'Título'
@@ -452,8 +460,13 @@ async function determinarMenus() {
 function goToFromEditorJs(e) {
     router.push(e.detail)
 }
-document.addEventListener('goToRoute', goToFromEditorJs);
 
+function openFromEditorJs(e) {
+    window.open(e.detail, '_blank');
+}
+
+document.addEventListener('goToRoute', goToFromEditorJs);
+document.addEventListener('openRoute', openFromEditorJs);
 </script>
 
 

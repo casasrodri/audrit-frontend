@@ -46,6 +46,10 @@ function goToRoute(path) {
     document.dispatchEvent(event);
 }
 
+function openRoute(path) {
+    const event = new CustomEvent("openRoute", { detail: path });
+    document.dispatchEvent(event);
+}
 
 export class AudiReferencias {
     static get toolbox() {
@@ -103,15 +107,16 @@ export class AudiReferencias {
         wrapper.appendChild(der)
     }
 
-    async _setCamposInfoObjEdicion(idObj, buscadorNombre, descripcion, izq) {
+    async _setCamposInfoObjEdicion(idObj, buscadorNombre, descripcion, izq, btnNuevo) {
         const objeto = await this._infoObjeto(this.data.id)
 
         idObj.value = this.data.id;
         // izq.href = `${this.urlVista}/${this.data.id}`
-        izq.addEventListener('click', () => goToRoute(`${this.urlVista}/${this.data.id}`))
+        izq.addEventListener('click', () => openRoute(`${this.urlVista}/${this.data.id}`))
 
         buscadorNombre.value = objeto.nombre
         descripcion.innerHTML = objeto.descripcion
+        btnNuevo.style.display = 'none'
     }
 
     renderLectura() {
@@ -182,11 +187,13 @@ export class AudiReferencias {
         wrapper.appendChild(der)
 
         const titulo = document.createElement('h3');
+        titulo.id = 'tituloObj'
         titulo.className = 'font-semibold underline';
         titulo.innerHTML = `${this.titulo}:`;
         der.appendChild(titulo)
 
         const buscadorNombre = document.createElement('input');
+        buscadorNombre.id = 'buscadorNombre';
         buscadorNombre.className = 'w-full p-1 border border-gray-300 rounded-md mt-2 text-sm';
         buscadorNombre.placeholder = 'Buscar...';
         der.appendChild(buscadorNombre);
@@ -196,8 +203,8 @@ export class AudiReferencias {
         der.appendChild(opciones)
 
         const descripcion = document.createElement('div');
+        descripcion.id = 'descripcionObj'
         descripcion.className = 'mt-2 text-sm';
-        descripcion.id = 'descripcion'
         der.appendChild(descripcion)
 
         const botonera = document.createElement('div');
@@ -207,9 +214,9 @@ export class AudiReferencias {
         const btnNuevo = document.createElement('a');
         btnNuevo.className = 'bg-green-500 hover:bg-green-700 text-white px-4 py-1 rounded-md font-semibold text-sm';
         btnNuevo.setAttribute('style', 'text-decoration:none !important');
-        // btnNuevo.target = '_blank';
-        // btnNuevo.href = this.urlNuevo;
-        btnNuevo.addEventListener('click', () => goToRoute(this.urlNuevo))
+        btnNuevo.target = '_blank';
+        btnNuevo.href = this.urlNuevo;
+        // btnNuevo.addEventListener('click', () => goToRoute(this.urlNuevo))
         btnNuevo.innerHTML = 'Nuevo';
         botonera.appendChild(btnNuevo);
 
@@ -234,12 +241,13 @@ export class AudiReferencias {
                     buscadorNombre.value = objeto.nombre;
                     descripcion.innerHTML = objeto.descripcion;
                     opciones.innerHTML = '';
+                    btnNuevo.style.display = 'none'
                 });
                 opciones.appendChild(div);
             });
         });
 
-        if (this.data && this.data.id) this._setCamposInfoObjEdicion(idObj, buscadorNombre, descripcion, izq)
+        if (this.data && this.data.id) this._setCamposInfoObjEdicion(idObj, buscadorNombre, descripcion, izq, btnNuevo)
 
         return wrapper
 
@@ -255,8 +263,13 @@ export class AudiReferencias {
 
     save(blockContent) {
         const input = blockContent.querySelector('#idObj');
+        const titulo = blockContent.querySelector('#buscadorNombre');
+        const descripcion = blockContent.querySelector('#descripcionObj');
+
         return {
-            id: input.value
+            id: input.value,
+            nombre: titulo.value,
+            descripcion: descripcion.innerHTML
         }
     }
 
