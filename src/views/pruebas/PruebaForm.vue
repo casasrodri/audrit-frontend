@@ -228,7 +228,7 @@ const sectorOpts = ['Auditoría Centralizada', 'Auditoría Continua', 'Auditorí
         <div id="container" class="flex flex-col max-w-2xl mb-5">
             <div id="descripcion" class="my-2 flex flex-col">
                 <label for="descripcion" class="font-semibold">Descripción:</label>
-                <div style="white-space: pre;" class="text-pretty">
+                <div class="max-w-2xl text-wrap whitespace-pre">
                     {{ prueba.descripcion }}
                 </div>
             </div>

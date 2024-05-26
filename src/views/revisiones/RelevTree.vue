@@ -60,8 +60,7 @@ watchEffect(() => {
 
 <template>
     <div class="max-w-xl">
-        <TreeTable :value="relevamientos" v-model:expandedKeys="expandedKeys" stripedRows
-            :style="`min-width: ${relevamientos.length * 20}rem`"
+        <TreeTable :value="relevamientos" v-model:expandedKeys="expandedKeys" stripedRows :style="`min-width: 6rem`"
             :pt="{ headerrow: 'hidden', row: 'flex gap-4', column: { bodycell: 'flex' } }" selectionMode="single"
             @nodeSelect="onRowSelect">
             <Column header="Sigla" expander headerStyle="max-width: rem">

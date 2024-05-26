@@ -145,7 +145,7 @@ const observacion = ref({
     sector_auditoria: '',
     efectos: '',
     recomendaciones: '',
-    fecha_alta: null,
+    fecha_alta: new Date(),
     fecha_solucion: null,
     revision_id: null
 })
@@ -274,7 +274,7 @@ const riesgoOpts = ['Alto', 'Medio', 'Bajo']
         <div id="container" class="flex flex-col max-w-2xl mb-5">
             <div id="descripcion" class="my-2 flex flex-col">
                 <label for="descripcion" class="font-semibold">Descripción:</label>
-                <div style="white-space: pre;" class="text-pretty">
+                <div class="max-w-2xl text-wrap whitespace-pre">
                     {{ observacion.descripcion }}
                 </div>
             </div>
@@ -309,14 +309,14 @@ const riesgoOpts = ['Alto', 'Medio', 'Bajo']
 
             <div id="efectos" class="my-2 flex flex-col">
                 <label for="efectos" class="font-semibold">Efectos:</label>
-                <div style="white-space: pre;">
+                <div class="max-w-2xl text-wrap whitespace-pre">
                     {{ observacion.efectos }}
                 </div>
             </div>
 
             <div id="recomendaciones" class="my-2 flex flex-col">
                 <label for="recomendaciones" class="font-semibold">Recomendaciones:</label>
-                <div style="white-space: pre;">
+                <div class="max-w-2xl text-wrap whitespace-pre">
                     {{ observacion.recomendaciones }}
                 </div>
             </div>
@@ -408,7 +408,7 @@ const riesgoOpts = ['Alto', 'Medio', 'Bajo']
                 <Button :label="accion === 'nuevo' ? 'Crear' : 'Guardar'" @click="handleGuardarBoton" />
             </div>
 
-            {{ observacion }}
+            <!-- {{ observacion }} -->
         </div>
     </template>
 </template>
