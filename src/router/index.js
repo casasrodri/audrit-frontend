@@ -14,6 +14,7 @@ import RelevView from '@/views/relevamientos/RelevView.vue'
 
 import ObservView from '@/views/observaciones/ObservView.vue'
 import ReqView from '@/views/requerimientos/ReqView.vue'
+import ReqForm from '@/views/requerimientos/ReqForm.vue'
 
 import RiesgoForm from '@/views/riesgos/RiesgoForm.vue'
 import ControlForm from '@/views/controles/ControlForm.vue'
@@ -97,6 +98,13 @@ const router = createRouter({
           name: 'requerimientos',
           component: ReqView,
           meta: { title: 'Requerimientos' },
+        },
+
+        {
+          path: '/requerimientos/:idRequerimiento/:nombre?',
+          name: 'requerimiento',
+          component: ReqForm,
+          meta: { title: 'Requerimiento' },
         },
         {
           path: '/parametros',
