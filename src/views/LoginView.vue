@@ -28,12 +28,23 @@ const user = ref({
 
 async function login() {
     try {
-        const response = await api.post('/jwt', user.value)
+        const response = await api.post('/sesiones/jwt', user.value)
 
         if (response.data.status === 'ok') {
             // TODO: Acá habría que pedir los menus del usuario
             setToken(response.data.jwt)
-            router.push('/')
+            if (route.query.redirect) {
+                router.push(route.query.redirect)
+            } else {
+                router.push('/')
+            }
+
+            toast.add({
+                severity: 'success',
+                summary: 'Bienvenido!',
+                detail: 'Bienvenido de nuevo a Audrit!',
+                life: 3000
+            });
 
         } else {
             toast.add({

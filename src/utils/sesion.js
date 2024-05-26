@@ -28,7 +28,12 @@ export function verificarSesion(router, route) {
     // console.log('Sesión expirada?:', isSessionExpired())
     if (isSessionExpired()) {
         removeToken()
-        router.push('/login')
+
+        if (route.fullPath.includes('login') ||
+            route.fullPath.includes('registro') ||
+            route.fullPath === '/') return
+
+        router.push(`/login?redirect=${route.fullPath}`)
         return
     }
 
