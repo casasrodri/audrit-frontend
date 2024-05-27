@@ -1,12 +1,14 @@
 <script setup>
 import { ref, onMounted, watchEffect } from 'vue'
+import api from '@/services/api.js';
+
 import InputText from 'primevue/inputtext';
 import Textarea from 'primevue/textarea';
 import Dropdown from 'primevue/dropdown';
 import Button from 'primevue/button';
 import Calendar from 'primevue/calendar';
-import TablaElementosAsociados from '@/components/TablaElementosAsociados.vue';
-import api from '@/services/api.js';
+import ComentariosRequerim from '@/components/ComentariosRequerim.vue';
+
 import { useToast } from 'primevue/usetoast';
 import { useRoute, useRouter } from 'vue-router';
 import { setTitulo } from '@/stores/titulo.js';
@@ -26,9 +28,14 @@ const pedido = ref({
     estado: 'Solicitado',
     fecha_vencimiento: '',
     creador_id: '',
-    creador: '',
+    creador: {
+        rol: '',
+    },
     destinatario_id: '',
-    destinatario: '',
+    destinatario: {
+        nombre_completo: '',
+        rol: '',
+    },
 })
 
 const obtenerInfoPedido = async () => {
@@ -49,6 +56,8 @@ const establecerTitulo = async () => {
     if (route.params.nombre === 'editar') {
         setTitulo('Editar requerimiento')
         accion.value = 'editar'
+        usuarioBuscado.value = pedido.value.destinatario.nombre_completo
+        pedido.value.fecha_vencimiento = new Date(pedido.value.fecha_vencimiento.replace('-', ','))
         return
     }
 
@@ -80,35 +89,37 @@ function handleGuardarBoton() {
     if (accion.value === 'nuevo') {
         crearPedido()
     } else if (accion.value === 'editar') {
-        // actualizarObservacion()
+        actualizarPedido()
     }
 }
 
-// async function actualizarObservacion() {
-//     try {
-//         const observActualizada = validarInputs()
-//         if (!observActualizada) return
+async function actualizarPedido() {
+    try {
+        const pedidoActualizado = validarInputs()
+        if (!pedidoActualizado) return
 
-//         // Se acondicionan los campos a los tipos esperados por la API
-//         observActualizada.revision_id = idsActivos.value.revision.id
+        // Se acondicionan los campos a los tipos esperados por la API
+        pedidoActualizado.destinatario_id = pedidoActualizado.destinatario.id
 
-//         if (observActualizada.fecha_solucion) {
-//             observActualizada.fecha_solucion = observActualizada.fecha_solucion.toISOString().slice(0, 10)
-//         }
+        if (pedidoActualizado.fecha_vencimiento) {
+            pedidoActualizado.fecha_vencimiento = pedidoActualizado.fecha_vencimiento.toISOString().slice(0, 10)
+        }
 
-//         console.log(observActualizada.fecha_solucion)
-//         const { data } = await api.put(`/observaciones/${observActualizada.id}`, observActualizada);
-//         toast.add({ severity: 'success', summary: 'Observacion actualizada', detail: 'La observación ha sido actualizada.', life: 3000 });
-//         // console.log(data);
-//         router.push({ params: { idObservacion: data.id.toString(), nombre: data.nombre } })
-//     } catch (error) {
-//         console.error(error);
-//         toast.add({ severity: 'error', summary: 'Error', detail: 'Ha ocurrido un error al guardar la observación' + error, life: 3000 });
-//     }
-// }
+        // console.log(pedidoActualizado)
+
+        const { data } = await api.put(`/pedidos/${pedidoActualizado.id}`, pedidoActualizado);
+        toast.add({ severity: 'success', summary: 'Requerimiento actualizado', detail: 'El requerimiento ha sido actualizado.', life: 3000 });
+        // console.log(data);
+        router.push({ params: { idRequerimiento: data.id.toString(), nombre: data.nombre } })
+    } catch (error) {
+        console.error(error);
+        toast.add({ severity: 'error', summary: 'Error', detail: 'Ha ocurrido un error al guardar el requerimiento' + error, life: 3000 });
+    }
+}
 
 function validarInputs() {
     const pedidoEnviar = { ...pedido.value }
+    console.log({ pedidoEnviar })
     let errors = false
 
     if (pedidoEnviar.nombre === '') {
@@ -172,9 +183,9 @@ async function crearPedido() {
     }
 }
 
-// function editarObservacion() {
-//     router.push({ params: { nombre: 'editar' } })
-// }
+function editarPedido() {
+    router.push({ params: { nombre: 'editar' } })
+}
 
 const estadoOpts = [
     'Solicitado',
@@ -193,28 +204,25 @@ async function buscarUsuario() {
     const texto = usuarioBuscado.value
     const url = `/usuarios/buscar/${texto}`
     const { data } = await api.get(url)
-    data.forEach(item => {
-        item.nombre = `${item.nombre} ${item.apellido}`
-    })
-
     sugerenciasUsuarios.value = data
 }
 
 watchEffect(() => {
-    usuarioBuscado.value
-    pedido.value.destinatario = usuarioBuscado.value
-    pedido.value.destinatario_id = usuarioBuscado.value.id
+    if (accion.value !== 'ver') {
+        if (usuarioBuscado.value.id) {
+            pedido.value.destinatario = usuarioBuscado.value
+            pedido.value.destinatario_id = usuarioBuscado.value.id
+        }
+    }
 })
 
 </script>
 
 <template>
-
-    <!-- {{ pedido }} -->
-
+    <!-- <pre>{{ JSON.stringify(pedido, null, 2) }}</pre>
+    <div class="font-bold">Variable: usuarioBuscado</div>
+    <pre>{{ JSON.stringify(usuarioBuscado, null, 2) }}</pre> -->
     <template v-if="accion === 'ver'">
-        <pre>{{ JSON.stringify(pedido, null, 2) }}</pre>
-        <!--
         <div id="container" class="flex flex-col max-w-2xl mb-5">
             <div id="descripcion" class="my-2 flex flex-col">
                 <label for="descripcion" class="font-semibold">Descripción:</label>
@@ -223,70 +231,45 @@ watchEffect(() => {
                 </div>
             </div>
 
-            <div id="riesgo" class="my-2 flex flex-col">
-                <label for="riesgo" class="font-semibold">Riesgo:</label>
-                <div>
-                    {{ pedido.riesgo }}
-                </div>
-            </div>
-
-            <div id="responsable" class="my-2 flex flex-col">
-                <label for="responsable" class="font-semibold">Responsable:</label>
-                <div>
-                    {{ pedido.responsable }}
-                </div>
-            </div>
-
             <div id="estado" class="my-2 flex flex-col">
-                <label for="estado" class="font-semibold">Estado actual:</label>
+                <label for="estado" class="font-semibold">Estado:</label>
                 <div>
                     {{ pedido.estado }}
                 </div>
             </div>
 
-            <div id="sector_auditoria" class="my-2 flex flex-col">
-                <label for="sector_auditoria" class="font-semibold">Sector de auditoría:</label>
+            <div id="fecha_vencimiento" class="my-2 flex flex-col">
+                <label for="fecha_vencimiento" class="font-semibold">Fecha de vencimiento:</label>
                 <div>
-                    {{ pedido.sector_auditoria }}
+                    {{ fechaFormato(pedido.fecha_vencimiento) }}
                 </div>
             </div>
 
-            <div id="efectos" class="my-2 flex flex-col">
-                <label for="efectos" class="font-semibold">Efectos:</label>
-                <div class="max-w-2xl text-wrap whitespace-pre">
-                    {{ pedido.efectos }}
-                </div>
-            </div>
-
-            <div id="recomendaciones" class="my-2 flex flex-col">
-                <label for="recomendaciones" class="font-semibold">Recomendaciones:</label>
-                <div class="max-w-2xl text-wrap whitespace-pre">
-                    {{ pedido.recomendaciones }}
-                </div>
-            </div>
-
-            <div id="fecha_alta" class="my-2 flex flex-col">
-                <label for="fecha_alta" class="font-semibold">Fecha de alta:</label>
+            <div id="destinatario" class="my-2 flex flex-col">
+                <label for="destinatario" class="font-semibold">Solicitado a:</label>
                 <div>
-                    {{ fechaFormato(pedido.fecha_alta) }}
+                    <span :title="pedido.destinatario.rol.nombre">
+                        {{ pedido.destinatario.nombre_completo }}
+                    </span>
                 </div>
             </div>
 
-            <div id="fecha_solucion" class="my-2 flex flex-col">
-                <label for="fecha_solucion" class="font-semibold">Fecha de solución:</label>
+            <div id="creador" class="my-2 flex flex-col">
+                <label for="creador" class="font-semibold">Solicitado por:</label>
                 <div>
-                    {{ fechaFormato(pedido.fecha_solucion) || 'Pendiente' }}
+                    <span :title="pedido.creador.rol.nombre">
+                        {{ pedido.creador.nombre_completo }}
+                    </span>
                 </div>
             </div>
 
             <div class="flex justify-end mt-2">
-                <Button label="Editar" @click="editarObservacion" />
+                <Button label="Editar" @click="editarPedido" />
             </div>
 
-            <TablaElementosAsociados :auditoria="idsActivos.auditoria" :revision="idsActivos.revision"
-                tipo="observacion" :objeto="observacion" :funcionRecargarObjeto="obtenerInfoObservacion" />
+
+            <ComentariosRequerim :comentarios="pedido.comentarios" />
         </div>
-    -->
     </template>
 
     <template v-else>
@@ -315,7 +298,7 @@ watchEffect(() => {
 
             <div id="destinatario" class="my-2 flex flex-col">
                 <label for="destinatario" class="font-semibold">Solicitado a</label>
-                <AutoComplete v-model="usuarioBuscado" :suggestions="sugerenciasUsuarios" optionLabel="nombre"
+                <AutoComplete v-model="usuarioBuscado" :suggestions="sugerenciasUsuarios" optionLabel="nombre_completo"
                     @complete="buscarUsuario" class="w-full md:w-[20rem]" />
             </div>
 

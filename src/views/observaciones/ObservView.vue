@@ -10,14 +10,6 @@ import { useRouter, useRoute } from 'vue-router';
 import { setTitulo } from '@/stores/titulo.js';
 import { useMigajasStore } from '@/stores/migajas';
 
-// const props = defineProps({
-//   ids: Object,
-// })
-
-const ids = ref({
-
-})
-
 const router = useRouter();
 const route = useRoute();
 const migajas = useMigajasStore();
@@ -85,6 +77,7 @@ function parsearEstado(estado) {
       </template>
     </Column>
   </DataTable>
+
 </template>
 
 
