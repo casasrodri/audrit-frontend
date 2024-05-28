@@ -4,7 +4,10 @@ import { Icon } from '@iconify/vue'
 import InputText from 'primevue/inputtext'
 import Dialog from 'primevue/dialog'
 import { useMenuStore } from '@/stores/menuLateral.js'
+import SeccionRtdoBusqueda from './SeccionRtdoBusqueda.vue'
+import { useRouter } from 'vue-router'
 
+const router = useRouter()
 const menuStore = useMenuStore()
 
 const config = {
@@ -25,6 +28,30 @@ document.addEventListener('keydown', (e) => {
     }
     return true
 })
+// --------------
+
+const filtrosBusq = ref([
+    { nombre: 'Archivos', activo: true }, // Despues FALSE
+    { nombre: 'Auditorías', activo: true },
+    { nombre: 'Controles', activo: true },
+    { nombre: 'Observaciones', activo: true },
+    { nombre: 'Requerimientos', activo: true },
+    { nombre: 'Pruebas', activo: true },
+    { nombre: 'Relevamientos', activo: true },
+    { nombre: 'Revisiones', activo: true },
+    { nombre: 'Riesgos', activo: true },
+    { nombre: 'Usuarios', activo: false },
+    { nombre: 'Normativas', activo: true },
+    { nombre: 'Organigrama', activo: true },
+    { nombre: 'Aplicaciones', activo: true },
+])
+
+const mostrarFiltroTipos = ref(false)
+
+function handleLinkApretado(e) {
+    visible.value = false
+    router.push(e)
+}
 
 </script>
 
@@ -48,9 +75,39 @@ document.addEventListener('keydown', (e) => {
                     @keyup.escape="visible = false" />
             </span>
         </template>
-        <p class="m-0">
-            {{ textoBuscado === '' ? '' : `Buscando: ${textoBuscado}...` }}
-        </p>
+
+
+        <!-- FILTRO DEL BUSCADOR -->
+        <div id="selectorBusqueda" class="flex justify-end text-[0.75rem]">
+            <div class="flex gap-2 bg-slate-100 max-w-min p-[0.2rem] rounded-md px-1">
+                <template v-if="!mostrarFiltroTipos">
+                    <div class="text-gray-500 cursor-pointer flex items-center"
+                        @click="mostrarFiltroTipos = !mostrarFiltroTipos">
+                        <Icon icon="ri:filter-2-fill" width="20" />
+                    </div>
+                </template>
+                <template v-else>
+                    <div class="text-gray-500 cursor-pointer flex items-center"
+                        @click="mostrarFiltroTipos = !mostrarFiltroTipos">
+                        <Icon icon="ri:arrow-right-s-line" width="20" />
+                    </div>
+                    <div class="min-w-max grid grid-cols-5 gap-1">
+                        <div v-for="fi in filtrosBusq" @click="fi.activo = !fi.activo"
+                            :class="{ 'bg-primary-200 font-semibold': fi.activo }"
+                            class="rounded-md p-1 px-1 cursor-pointer text-center">
+                            {{ fi.nombre }}
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+
+        <SeccionRtdoBusqueda titulo="Archivos" :filtros="filtrosBusq" :textoBuscado="textoBuscado"
+            @link-apretado="handleLinkApretado" />
+
+        <SeccionRtdoBusqueda titulo="Auditorías" :filtros="filtrosBusq" :textoBuscado="textoBuscado" />
+
+
     </Dialog>
 
 </template>
