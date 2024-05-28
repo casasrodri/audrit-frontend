@@ -25,6 +25,10 @@ const links = [
     url: 'https://icon-sets.iconify.design/'
   },
   {
+    name: 'Backend',
+    url: 'http://localhost:8000/docs'
+  },
+  {
     name: 'Component Party',
     url: 'https://component-party.dev/'
   }
