@@ -42,6 +42,12 @@ async function obtenerArchivos() {
     }
 }
 
+watchEffect(() => {
+    if (route.params.idRequerimiento) {
+        obtenerArchivos()
+    }
+})
+
 onMounted(() => {
     identificarUsuario()
     obtenerArchivos()
