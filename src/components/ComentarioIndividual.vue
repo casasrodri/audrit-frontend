@@ -35,7 +35,6 @@ function parsearMomento(momento) {
             <div class="flex justify-end font-light text-xs mt-1 text-gray-600 dark:text-gray-400">
                 {{ parsearMomento(props.comentario.momento) }}
             </div>
-
         </div>
     </div>
 </template>

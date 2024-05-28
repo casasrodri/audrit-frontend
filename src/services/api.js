@@ -2,7 +2,9 @@ import axios from 'axios'
 
 export const PORT = import.meta.env['API_PORT'] || 8000
 export const HOST = `http://${window.location.hostname}:${PORT}`
+// export const HOST = 'https://npmqbzfq-8000.brs.devtunnels.ms'
 export const URL = `${HOST}/api/v1`
+
 
 const OPTS = {
   log: true,
@@ -38,7 +40,6 @@ class Api {
       log = console.error
       obj = error
     }
-
 
     if (OPTS.log) {
       const out = []

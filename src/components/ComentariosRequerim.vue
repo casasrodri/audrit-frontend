@@ -10,17 +10,9 @@ import InputText from 'primevue/inputtext';
 import Button from 'primevue/button';
 import Badge from 'primevue/badge';
 
-// const props = defineProps({
-//     comentarios: {
-//         type: Array,
-//         required: true,
-//         default: []
-//     }
-// });
-
 const route = useRoute();
 const toast = useToast();
-const mostrarDetalle = ref(true);
+const mostrarDetalle = ref(false);
 const mensaje = ref('');
 const usuarioId = ref();
 const comentarios = ref([]);
@@ -96,7 +88,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <span class="cursor-pointer" @click="toggleDetalle">
+    <span class="cursor-pointer mt-2" @click="toggleDetalle">
         <span class="font-semibold" v-if="mostrarDetalle">
             Comentarios:
         </span>
@@ -116,8 +108,8 @@ onMounted(() => {
         <div v-else class="ml-2 text-sm mb-2">
             No hay comentarios.
         </div>
-        <InputGroup class="mt-1">
-            <InputText v-model="mensaje" placeholder="Escribe tu mensaje..." />
+        <InputGroup class="mt-1 mb-3">
+            <InputText v-model="mensaje" placeholder="Escribe tu mensaje..." @keyup.enter="enviarMensaje" />
             <Button icon="pi pi-send" severity="success" @click="enviarMensaje" />
         </InputGroup>
     </div>

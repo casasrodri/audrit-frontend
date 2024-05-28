@@ -8,6 +8,7 @@ import Dropdown from 'primevue/dropdown';
 import Button from 'primevue/button';
 import Calendar from 'primevue/calendar';
 import ComentariosRequerim from '@/components/ComentariosRequerim.vue';
+import ArchivosRequerim from '@/components/ArchivosRequerim.vue';
 
 import { useToast } from 'primevue/usetoast';
 import { useRoute, useRouter } from 'vue-router';
@@ -268,7 +269,8 @@ watchEffect(() => {
             </div>
 
 
-            <ComentariosRequerim :comentarios="pedido.comentarios" />
+            <ComentariosRequerim />
+            <ArchivosRequerim />
         </div>
     </template>
 
