@@ -58,12 +58,9 @@ async function enviarMensaje() {
     obtenerComentarios();
 }
 
-function identificarUsuario() {
-    document.cookie.split(';').forEach(e => {
-        if (e.includes('idUsuario')) {
-            usuarioId.value = e.split('=')[1].trim();
-        }
-    })
+async function identificarUsuario() {
+    const user = await api.me();
+    usuarioId.value = user.id
 }
 
 async function obtenerComentarios() {
@@ -81,8 +78,8 @@ async function obtenerComentarios() {
     }
 }
 
-onMounted(() => {
-    identificarUsuario()
+onMounted(async () => {
+    await identificarUsuario()
     obtenerComentarios()
 })
 </script>

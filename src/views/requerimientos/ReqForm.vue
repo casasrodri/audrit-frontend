@@ -166,11 +166,8 @@ async function crearPedido() {
         }
 
         // Se obtiene el id del usuario loggeado
-        document.cookie.split(';').forEach(e => {
-            if (e.includes('idUsuario')) {
-                nuevoPedido.creador_id = e.split('=')[1].trim();
-            }
-        })
+        const user = await api.me();
+        nuevoPedido.creador_id = user.id
 
         // console.log(nuevoPedido);
 

@@ -44,16 +44,13 @@ watchEffect(() => {
     pedidosMeHicieron.value = auxTodos.filter(pedido => pedido.destinatario.id === usuarioId.value);
 });
 
-function getUserId() {
-    document.cookie.split(';').forEach(e => {
-        if (e.includes('idUsuario')) {
-            usuarioId.value = parseInt(e.split('=')[1].trim());
-        }
-    })
+async function getUserId() {
+    const user = await api.me();
+    usuarioId.value = user.id
 }
 
 async function getPedidos() {
-    getUserId()
+    await getUserId()
     const { data: listPedidos } = await api.get(`/pedidos/usuario/${usuarioId.value}`);
     todosPedidos.value = listPedidos;
 }

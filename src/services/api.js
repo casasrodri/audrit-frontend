@@ -85,6 +85,11 @@ class Api {
     this.mostrarRespuesta('delete', url, promise)
     return promise
   }
+
+  async me() {
+    const { data } = await this.get('/sesiones/me')
+    return data
+  }
 }
 
 

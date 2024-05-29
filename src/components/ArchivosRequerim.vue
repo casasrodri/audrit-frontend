@@ -12,20 +12,12 @@ import FileUpload from 'primevue/fileupload';
 const route = useRoute();
 const toast = useToast();
 const mostrarDetalle = ref(true);
-const usuarioId = ref();
 const archivos = ref([]);
 
 function toggleDetalle() {
     mostrarDetalle.value = !mostrarDetalle.value;
 }
 
-function identificarUsuario() {
-    document.cookie.split(';').forEach(e => {
-        if (e.includes('idUsuario')) {
-            usuarioId.value = e.split('=')[1].trim();
-        }
-    })
-}
 
 async function obtenerArchivos() {
     const req = route.params.idRequerimiento
@@ -48,10 +40,7 @@ watchEffect(() => {
     }
 })
 
-onMounted(() => {
-    identificarUsuario()
-    obtenerArchivos()
-})
+onMounted(obtenerArchivos)
 
 const urlSubir = `${URL}/pedidos/${route.params.idRequerimiento}/archivos`
 

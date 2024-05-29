@@ -4,6 +4,7 @@ import { useMenuStore } from '@/stores/menuLateral.js'
 import { removeToken } from '@/utils/sesion.js'
 import { useRouter } from 'vue-router'
 import { useToast } from 'primevue/usetoast'
+import api from '@/services/api.js'
 
 const router = useRouter()
 const menuStore = useMenuStore()
@@ -20,17 +21,20 @@ const user = ref({
     cargo: '',
 })
 
+const inicial = (texto) => texto.charAt(0).toUpperCase()
 
 // TODO Cambiar por los datos del usuario logueado
-onMounted(() => {
-    user.value.nombre = 'Rodrigo Casas'
-    user.value.siglas = 'RC'
-    user.value.cargo = 'Auditor Analista'
+onMounted(async () => {
+    const usuario = await api.me()
+    user.value.nombre = usuario.nombre_completo
+    user.value.siglas = `${inicial(usuario.nombre)}${inicial(usuario.apellido)}`
+    user.value.cargo = usuario.rol.nombre
 })
 
-function cerrarSesion() {
+async function cerrarSesion() {
     menuStore.cerrar()
     removeToken()
+    await api.post('/sesiones/logout')
     router.push('/login')
 
     toast.add({
