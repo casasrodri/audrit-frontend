@@ -1,48 +1,93 @@
 <script setup>
-import { ref, onMounted, watchEffect } from 'vue';
-import { RouterLink } from 'vue-router';
+import { ref, watchEffect } from 'vue';
+import { useRouter } from 'vue-router';
 
 const props = defineProps({
     buscado: String,
     resultado: Object
 })
 
-const emit = defineEmits(['linkApretado'])
-
+const emit = defineEmits(['cerrarModal'])
+const router = useRouter()
 const rtdo = ref(props.resultado)
+
+const replaceFunction = (match) => {
+    return `<rbr>${match}</rbr>`;
+};
 
 watchEffect(() => {
     if (props.resultado.texto) {
-        rtdo.value.texto = props.resultado.texto.replace(new RegExp(props.buscado, 'gi'), `<rbr>${props.buscado}</rbr>`)
+        rtdo.value.texto = props.resultado.texto.replace(new RegExp(props.buscado, 'gi'), replaceFunction);
     }
-    crearLink()
+
+    if (props.resultado.nombre) {
+        rtdo.value.nombre = props.resultado.nombre.replace(new RegExp(props.buscado, 'gi'), replaceFunction);
+    }
+
+    rtdo.value.link = crearLink()
 })
 
 function crearLink() {
-    const tipo = rtdo.value.objeto
-    const id = rtdo.value.objeto_id
+    const tipo = rtdo.value.tipo
+    const obj = rtdo.value.objeto
+
+    if (tipo === 'auditoria') {
+        return `/auditorias/${obj.siglaAudit}`
+    }
+
+    if (tipo === 'revision') {
+        return `/auditorias/${obj.siglaAudit}/revisiones/${obj.siglaRev}`
+    }
+
+    if (tipo === 'documento') {
+        return `/auditorias/${obj.siglaAudit}/revisiones/${obj.siglaRev}/relevamientos/${obj.relevId}`
+    }
+
+    if (tipo === 'riesgo') {
+        return `/auditorias/${obj.siglaAudit}/revisiones/${obj.siglaRev}/riesgos/${obj.id}`
+    }
+
+    if (tipo === 'control') {
+        return `/auditorias/${obj.siglaAudit}/revisiones/${obj.siglaRev}/controles/${obj.id}`
+    }
+
+    if (tipo === 'prueba') {
+        return `/auditorias/${obj.siglaAudit}/revisiones/${obj.siglaRev}/pruebas/${obj.id}`
+    }
+
+    if (tipo === 'observacion') {
+        return `/auditorias/${obj.siglaAudit}/revisiones/${obj.siglaRev}/observaciones/${obj.id}`
+    }
 
     if (tipo === 'requerimiento') {
-        rtdo.value.link = `/requerimientos/${id}`
+        return `/requerimientos/${obj.id}`
     }
+
+    if (tipo === 'archivo') {
+        return `/requerimientos/${obj.requerimId}`
+    }
+
+    if (tipo === 'usuario') {
+        return `#`
+    }
+
+    console.error('No se encontró el tipo de objeto:', tipo, obj)
+    return '/'
 }
 
 function irLink() {
-    emit('linkApretado', rtdo.value.link)
+    router.push(rtdo.value.link)
+    emit('cerrarModal')
 }
 
 </script>
 
 <template>
-    <div class="border-[1px] rounded-md p-1 ml-1 pl-2 hover:bg-primary-100">
-        <a :href="rtdo.link" @click.prevent="irLink">
-            <div class="font-medium">
-                {{ rtdo.nombre }}
-            </div>
-            <div class="text-sm text-gray-400" v-html="rtdo.texto" />
-        </a>
-    </div>
-    <!-- {{ rtdo }} -->
+    <a :href="rtdo.link" @click.prevent="irLink"
+        class="border-[1px] rounded-md p-1 ml-1 pl-2 hover:bg-primary-100 cursor-pointer">
+        <div class="font-medium" v-html="rtdo.nombre" />
+        <div class="text-sm text-gray-400" v-html="rtdo.texto" />
+    </a>
 </template>
 
 

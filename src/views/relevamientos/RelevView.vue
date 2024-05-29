@@ -440,7 +440,6 @@ async function determinarMenus() {
         command: async () => {
             try {
                 guardarDocumento()
-                // TODO volver a bloquear...
                 bloquearEditor()
                 toast.add({ severity: 'success', summary: 'Documento', detail: 'Guardado correctamente.', life: 3000 });
             } catch (err) {

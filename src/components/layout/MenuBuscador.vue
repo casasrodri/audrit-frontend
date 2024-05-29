@@ -31,7 +31,7 @@ document.addEventListener('keydown', (e) => {
 // --------------
 
 const filtrosBusq = ref([
-    { nombre: 'Archivos', activo: true }, // Despues FALSE
+    { nombre: 'Archivos', activo: false },
     { nombre: 'Auditorías', activo: true },
     { nombre: 'Controles', activo: true },
     { nombre: 'Observaciones', activo: true },
@@ -41,9 +41,10 @@ const filtrosBusq = ref([
     { nombre: 'Revisiones', activo: true },
     { nombre: 'Riesgos', activo: true },
     { nombre: 'Usuarios', activo: false },
-    { nombre: 'Normativas', activo: true },
-    { nombre: 'Organigrama', activo: true },
-    { nombre: 'Aplicaciones', activo: true },
+    // TODO: Implementar estos filtros
+    // { nombre: 'Normativas', activo: true },
+    // { nombre: 'Organigrama', activo: true },
+    // { nombre: 'Aplicaciones', activo: true },
 ])
 
 const mostrarFiltroTipos = ref(false)
@@ -102,11 +103,8 @@ function handleLinkApretado(e) {
             </div>
         </div>
 
-        <SeccionRtdoBusqueda titulo="Archivos" :filtros="filtrosBusq" :textoBuscado="textoBuscado"
-            @link-apretado="handleLinkApretado" />
-
-        <SeccionRtdoBusqueda titulo="Auditorías" :filtros="filtrosBusq" :textoBuscado="textoBuscado" />
-
+        <SeccionRtdoBusqueda v-for="tipo in filtrosBusq" :titulo="tipo.nombre" :filtros="filtrosBusq"
+            :textoBuscado="textoBuscado" @cerrar-modal="visible = false" />
 
     </Dialog>
 

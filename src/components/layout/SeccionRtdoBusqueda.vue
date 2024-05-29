@@ -28,30 +28,31 @@ const ENDPOINTS = {
     'Archivos': '/archivos',
     'Auditorías': '/auditorias',
     'Controles': '/controles',
-    'Observaciones': '',
-    'Requerimientos': '',
-    'Pruebas': '',
-    'Relevamientos': '',
-    'Revisiones': '',
-    'Riesgos': '',
-    'Usuarios': '',
-    'Normativas': '',
-    'Organigrama': '',
-    'Aplicaciones': '',
+    'Observaciones': '/observaciones',
+    'Requerimientos': '/pedidos',
+    'Pruebas': '/pruebas',
+    'Relevamientos': '/relevamientos',
+    'Revisiones': '/revisiones',
+    'Riesgos': '/riesgos',
+    'Usuarios': '/usuarios',
+    // TODO: Implementar estos filtros
+    'Normativas': '/normativas',
+    'Organigrama': '/organigrama',
+    'Aplicaciones': '/aplicaciones',
 }
 
 
 async function buscarBackend() {
-    const endpoint = ENDPOINTS[props.titulo] + '/buscarGlobal/' + props.textoBuscado
+    const endpoint = ENDPOINTS[props.titulo] + '/buscarGlobal/' + encodeURIComponent(props.textoBuscado)
     try {
         const { data } = await api.get(endpoint)
         resultados.value = data
     } catch (error) { }
 }
 
-const emit = defineEmits(['linkApretado'])
+const emit = defineEmits(['cerrarModal'])
 function reEmitir(e) {
-    emit('link-apretado', e)
+    emit('cerrarModal')
 }
 
 </script>
@@ -68,13 +69,8 @@ function reEmitir(e) {
                 {{ props.titulo }}
             </h4>
             <div id="contenedorRtdos" class="flex flex-col gap-1">
-                <!-- <ElementoRtdoBusq :buscado="textoBuscado" :resultado="{
-                    nombre: 'Caja de Ahorro',
-                    link: '/audi/1',
-                    texto: '...el supervisor Operativo, tiene que ser óperativo u operar...'
-                }" /> -->
                 <ElementoRtdoBusq v-for="r in resultados" :buscado="textoBuscado" :resultado="r"
-                    @link-apretado="reEmitir" />
+                    @cerrar-modal="reEmitir" :key="r" />
             </div>
         </template>
     </div>
