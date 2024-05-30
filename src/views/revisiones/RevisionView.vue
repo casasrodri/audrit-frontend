@@ -101,6 +101,7 @@ onMounted(async () => {
     setTitulo(idsActivos.value.revision.obj.nombre)
     document.title = `Revisión - ${idsActivos.value.revision.obj.nombre}`
     setMigajas()
+    obtenerPermisos()
 })
 
 watchEffect(() => {
@@ -114,6 +115,17 @@ function nuevo() {
     } else {
         router.push(route.fullPath + '/nuevo')
     }
+}
+
+const permisos = ref({ auditorias: '' })
+
+async function obtenerPermisos() {
+    const { data } = await api.get('/sesiones/me/menu')
+    data.split('|').forEach(menu => {
+        const array = menu.split(':')
+        permisos.value[array[0]] = array[1]
+    });
+    // permisos.auditorias.includes('W')
 }
 
 </script>
@@ -137,7 +149,7 @@ function nuevo() {
                 <ObservTabla :ids="idsActivos" />
             </TabPanel>
         </TabView>
-        <div class="mt-1 ml-4">
+        <div class="mt-1 ml-4" v-if="permisos.auditorias.includes('W')">
             <Button label="Nuevo" @click="nuevo" />
         </div>
     </div>

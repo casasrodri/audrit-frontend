@@ -138,6 +138,7 @@ async function inicializar() {
     setMigajas()
     establecerTitulo()
     document.title = 'Control'
+    obtenerPermisos()
 }
 
 onMounted(inicializar)
@@ -234,7 +235,19 @@ function editarControl() {
     router.push({ params: { nombre: 'editar' } })
 }
 
+const permisos = ref({ auditorias: '' })
 
+async function obtenerPermisos() {
+    const { data } = await api.get('/sesiones/me/menu')
+    data.split('|').forEach(menu => {
+        const array = menu.split(':')
+        permisos.value[array[0]] = array[1]
+    });
+}
+
+function tienePermisoEdicion() {
+    return permisos.value.auditorias.includes('W')
+}
 
 const oportunidadOpts = ['Preventivo', 'Correctivo', 'Detectivo']
 const periodicidadOpts = ['Permanente', 'Periódico', 'Ocasional']
@@ -282,7 +295,7 @@ const automatizacionOpts = ['Automatizado', 'Semi-automatizado', 'Manual']
             </div>
 
 
-            <div class="flex justify-end mt-2">
+            <div class="flex justify-end mt-2" v-if="tienePermisoEdicion()">
                 <Button label="Editar" @click="editarControl" />
             </div>
 
@@ -327,7 +340,7 @@ const automatizacionOpts = ['Automatizado', 'Semi-automatizado', 'Manual']
                     class="w-full md:w-[14rem]" />
             </div>
 
-            <div class="flex justify-end">
+            <div class="flex justify-end" v-if="tienePermisoEdicion()">
                 <Button :label="accion === 'nuevo' ? 'Crear' : 'Guardar'" @click="handleGuardarBoton" />
             </div>
         </div>

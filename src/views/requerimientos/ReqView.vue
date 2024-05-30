@@ -25,6 +25,7 @@ function setMigajas() {
 onMounted(() => {
     getPedidos();
     setMigajas();
+    obtenerPermisos()
 });
 
 const usuarioId = ref(0);
@@ -69,6 +70,20 @@ function cambioSelector(e) {
     console.log(e)
 }
 
+const permisos = ref({ auditorias: '' })
+
+async function obtenerPermisos() {
+    const { data } = await api.get('/sesiones/me/menu')
+    data.split('|').forEach(menu => {
+        const array = menu.split(':')
+        permisos.value[array[0]] = array[1]
+    });
+}
+
+function tienePermisoEdicion() {
+    return permisos.value.auditorias.includes('W')
+}
+
 </script>
 
 <template>
@@ -77,65 +92,72 @@ function cambioSelector(e) {
         <SelectButton v-model="cualesVer" :options="opcionesVer" :allowEmpty="false" @change="cambioSelector" />
     </div>
 
-    <h1 class="font-bold mt-6 mb-3">Requerimientos realizados</h1>
+    <div id="containerYoHice" v-if="pedidosYoHice.length > 0">
 
-    <DataTable id="tablaRequerimientos" :value="pedidosYoHice" tableStyle="min-width: 50rem" stripedRows
-        selectionMode="single" @rowSelect="onRowSelect">
-        <Column field="id" header="ID"></Column>
-        <Column header="Nombre">
-            <template #body="slotProps">
-                <span :title="slotProps.data.descripcion">
-                    {{ slotProps.data.nombre }}
-                </span>
-            </template>
-        </Column>
-        <Column header="Responsable">
-            <template #body="slotProps">
-                <span :title="slotProps.data.destinatario.rol.nombre">
-                    {{ slotProps.data.destinatario.nombre_completo }}
-                </span>
-            </template>
-        </Column>
-        <Column header="Estado">
-            <template #body="slotProps">
-                <span :title="slotProps.data.estado">
-                    {{ slotProps.data.estado }}
-                </span>
-            </template>
-        </Column>
-    </DataTable>
+
+        <h1 class="font-bold mt-6 mb-3">Requerimientos realizados</h1>
+
+        <DataTable id="tablaRequerimientos" :value="pedidosYoHice" tableStyle="min-width: 50rem" stripedRows
+            selectionMode="single" @rowSelect="onRowSelect">
+            <Column field="id" header="ID"></Column>
+            <Column header="Nombre">
+                <template #body="slotProps">
+                    <span :title="slotProps.data.descripcion">
+                        {{ slotProps.data.nombre }}
+                    </span>
+                </template>
+            </Column>
+            <Column header="Responsable">
+                <template #body="slotProps">
+                    <span :title="slotProps.data.destinatario.rol.nombre">
+                        {{ slotProps.data.destinatario.nombre_completo }}
+                    </span>
+                </template>
+            </Column>
+            <Column header="Estado">
+                <template #body="slotProps">
+                    <span :title="slotProps.data.estado">
+                        {{ slotProps.data.estado }}
+                    </span>
+                </template>
+            </Column>
+        </DataTable>
+    </div>
 
     <!-- <pre>{{ JSON.stringify(todosPedidos, null, 2) }}</pre> -->
 
-    <h1 class="font-bold mt-6 mb-3">Requerimientos recibidos</h1>
+    <div id="containerMeHicieron" v-if="pedidosMeHicieron.length > 0">
 
-    <DataTable id="tablaRequerimientos" :value="pedidosMeHicieron" tableStyle="min-width: 50rem" stripedRows
-        selectionMode="single" @rowSelect="onRowSelect">
-        <Column field="id" header="ID"></Column>
-        <Column header="Nombre">
-            <template #body="slotProps">
-                <span :title="slotProps.data.descripcion">
-                    {{ slotProps.data.nombre }}
-                </span>
-            </template>
-        </Column>
-        <Column header="Solicitante">
-            <template #body="slotProps">
-                <span :title="slotProps.data.creador.rol.nombre">
-                    {{ slotProps.data.creador.nombre_completo }}
-                </span>
-            </template>
-        </Column>
-        <Column header="Estado">
-            <template #body="slotProps">
-                <span :title="slotProps.data.estado">
-                    {{ slotProps.data.estado }}
-                </span>
-            </template>
-        </Column>
-    </DataTable>
+        <h1 class="font-bold mt-6 mb-3">Requerimientos recibidos</h1>
 
-    <div class="flex justify-end mt-3">
+        <DataTable id="tablaRequerimientos" :value="pedidosMeHicieron" tableStyle="min-width: 50rem" stripedRows
+            selectionMode="single" @rowSelect="onRowSelect">
+            <Column field="id" header="ID"></Column>
+            <Column header="Nombre">
+                <template #body="slotProps">
+                    <span :title="slotProps.data.descripcion">
+                        {{ slotProps.data.nombre }}
+                    </span>
+                </template>
+            </Column>
+            <Column header="Solicitante">
+                <template #body="slotProps">
+                    <span :title="slotProps.data.creador.rol.nombre">
+                        {{ slotProps.data.creador.nombre_completo }}
+                    </span>
+                </template>
+            </Column>
+            <Column header="Estado">
+                <template #body="slotProps">
+                    <span :title="slotProps.data.estado">
+                        {{ slotProps.data.estado }}
+                    </span>
+                </template>
+            </Column>
+        </DataTable>
+    </div>
+
+    <div class="flex justify-end mt-3" v-if="tienePermisoEdicion()">
         <Button label="Nuevo" @click="nuevoReq" />
     </div>
 </template>

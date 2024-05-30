@@ -390,9 +390,15 @@ onMounted(async () => {
     renderDoc()
     editor = crearEditor(idsActivos.value)
     setMigajas()
+    obtenerPermisos()
 })
 
 async function guardarDocumento() {
+    if (!tienePermisoEdicion()) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'No tienes permisos para guardar el documento.', life: 3000 });
+        return
+    }
+
     const nuevaData = await editor.save()
 
     const nuevoObj = {
@@ -405,12 +411,22 @@ async function guardarDocumento() {
 }
 
 async function bloquearEditor() {
+    if (!tienePermisoEdicion()) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'No tienes permisos para editar el documento.', life: 3000 });
+        return
+    }
+
     documento.value.contenido = JSON.stringify(await editor.save())
     await editor.readOnly.toggle(true)
     determinarMenus()
 }
 
 async function desbloquearEditor() {
+    if (!tienePermisoEdicion()) {
+        toast.add({ severity: 'error', summary: 'Error', detail: 'No tienes permisos para editar el documento.', life: 3000 });
+        return
+    }
+
     try {
         await editor.readOnly.toggle(false)
     } catch (err) {
@@ -466,6 +482,21 @@ function openFromEditorJs(e) {
 
 document.addEventListener('goToRoute', goToFromEditorJs);
 document.addEventListener('openRoute', openFromEditorJs);
+
+const permisos = ref({ auditorias: '' })
+
+async function obtenerPermisos() {
+    const { data } = await api.get('/sesiones/me/menu')
+    data.split('|').forEach(menu => {
+        const array = menu.split(':')
+        permisos.value[array[0]] = array[1]
+    });
+    console.log(permisos.value)
+}
+
+function tienePermisoEdicion() {
+    return permisos.value.auditorias.includes('W')
+}
 </script>
 
 

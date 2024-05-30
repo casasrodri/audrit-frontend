@@ -56,10 +56,57 @@ watchEffect(() => {
     }
 })
 
+// -------------------------------
+function filtrarProcesos(node) {
+    let processes = [];
+
+    // Si el nodo actual es de tipo "proceso", lo agregamos a la lista
+    if (node.data.tipo === 'proceso') {
+        processes.push(node);
+    }
+
+    // Si el nodo actual tiene hijos, los procesamos recursivamente
+    if (node.children && node.children.length > 0) {
+        node.children.forEach(child => {
+            processes = processes.concat(filtrarProcesos(child));
+        });
+    }
+
+    return processes;
+}
+
+function obtenerTodosProcesos(data) {
+    let allProcesses = [];
+    data.forEach(item => {
+        allProcesses = allProcesses.concat(filtrarProcesos(item));
+    });
+
+    return allProcesses;
+}
+
+const expandidoTodo = ref(false);
+function toggleExpandCollapseAll() {
+    const allProcesses = obtenerTodosProcesos(relevamientos.value);
+    const allProcessesKeys = allProcesses.map(process => process.key);
+
+    const allExpanded = allProcessesKeys.every(key => expandedKeys.value[key]);
+
+    allProcessesKeys.forEach(key => {
+        expandedKeys.value[key] = !allExpanded;
+    });
+
+    expandidoTodo.value = !allExpanded;
+}
+
 </script>
 
 <template>
     <div class="max-w-xl">
+        <div class="flex justify-end text-xs">
+            <button @click="toggleExpandCollapseAll" class="text-primary-100 hover:text-primary-500">
+                {{ expandidoTodo ? 'Contraer' : 'Expandir' }} todo
+            </button>
+        </div>
         <TreeTable :value="relevamientos" v-model:expandedKeys="expandedKeys" stripedRows :style="`min-width: 6rem`"
             :pt="{ headerrow: 'hidden', row: 'flex gap-4', column: { bodycell: 'flex' } }" selectionMode="single"
             @nodeSelect="onRowSelect">

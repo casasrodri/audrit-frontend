@@ -125,6 +125,7 @@ async function inicializar() {
     setMigajas()
     establecerTitulo()
     document.title = 'Prueba'
+    obtenerPermisos()
 }
 
 onMounted(inicializar)
@@ -220,6 +221,19 @@ function editarPrueba() {
 
 const sectorOpts = ['Auditoría Centralizada', 'Auditoría Continua', 'Auditoría Sistemas', 'Auditoría Sucursales']
 
+const permisos = ref({ auditorias: '' })
+
+async function obtenerPermisos() {
+    const { data } = await api.get('/sesiones/me/menu')
+    data.split('|').forEach(menu => {
+        const array = menu.split(':')
+        permisos.value[array[0]] = array[1]
+    });
+}
+
+function tienePermisoEdicion() {
+    return permisos.value.auditorias.includes('W')
+}
 
 </script>
 
@@ -247,7 +261,7 @@ const sectorOpts = ['Auditoría Centralizada', 'Auditoría Continua', 'Auditorí
                 </div>
             </div>
 
-            <div class="flex justify-end mt-2">
+            <div class="flex justify-end mt-2" v-if="tienePermisoEdicion()">
                 <Button label="Editar" @click="editarPrueba" />
             </div>
 
@@ -280,7 +294,7 @@ const sectorOpts = ['Auditoría Centralizada', 'Auditoría Continua', 'Auditorí
                 <InputText type="text" class="" v-model="prueba.informe" />
             </div>
 
-            <div class="flex justify-end">
+            <div class="flex justify-end" v-if="tienePermisoEdicion()">
                 <Button :label="accion === 'nuevo' ? 'Crear' : 'Guardar'" @click="handleGuardarBoton" />
             </div>
         </div>

@@ -1,7 +1,7 @@
 <!-- mt-auto mb-0 -->
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useMenuStore } from '@/stores/menuLateral.js'
 import { RouterLink } from 'vue-router'
 import LogoApp from './LogoApp.vue'
@@ -9,6 +9,7 @@ import BotonLateral from './BotonLateral.vue'
 import MenuUsuario from './MenuUsuario.vue'
 import MenuBuscador from './MenuBuscador.vue'
 import MenuAsistente from './MenuAsistente.vue'
+import api from '@/services/api.js'
 
 const menuStore = useMenuStore()
 
@@ -18,6 +19,22 @@ const estilosMenu = computed(() => {
     'min-w-14 max-w-14': menuStore.cerrado
   }
 })
+
+const menuesDisponibles = ref([])
+async function obtenerMenus() {
+  const { data } = await api.get('/sesiones/me/menu')
+  data.split('|').forEach(element => {
+    const op = element.split(':')
+    console.log(op)
+    if (op[1] !== '') {
+      menuesDisponibles.value.push(op[0])
+    }
+  });
+  console.log(menuesDisponibles.value)
+}
+
+onMounted(obtenerMenus)
+
 </script>
 
 <template>
@@ -37,10 +54,8 @@ const estilosMenu = computed(() => {
         </RouterLink>
 
         <div class="flex flex-col mt-2">
-          <BotonLateral tipo="auditorias" />
-          <BotonLateral tipo="observaciones" />
-          <BotonLateral tipo="requerimientos" />
-          <BotonLateral tipo="parametros" />
+          <BotonLateral v-for="menu in menuesDisponibles" :key="menu" :tipo="menu" />
+          <!-- <BotonLateral tipo="parametros" /> -->
           <BotonLateral tipo="tools" />
         </div>
       </div>
@@ -48,7 +63,7 @@ const estilosMenu = computed(() => {
         <div class="flex flex-col">
           <MenuBuscador />
           <MenuAsistente />
-          <BotonLateral tipo="configuracion" />
+          <!-- <BotonLateral tipo="configuracion" /> -->
 
           <MenuUsuario />
 

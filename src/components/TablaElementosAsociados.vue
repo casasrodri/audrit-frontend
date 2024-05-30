@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watchEffect } from 'vue'
+import { ref, watchEffect, onMounted } from 'vue'
 import { useDialog } from 'primevue/usedialog';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -123,6 +123,21 @@ const eliminarAsociacion = (event, slot) => {
     });
 };
 
+const permisos = ref({ auditorias: '' })
+
+async function obtenerPermisos() {
+    const { data } = await api.get('/sesiones/me/menu')
+    data.split('|').forEach(menu => {
+        const array = menu.split(':')
+        permisos.value[array[0]] = array[1]
+    });
+}
+
+function tienePermisoEdicion() {
+    return permisos.value.auditorias.includes('W')
+}
+
+onMounted(obtenerPermisos)
 </script>
 
 <template>
@@ -145,7 +160,7 @@ const eliminarAsociacion = (event, slot) => {
                         </RouterLink>
                     </template>
                 </Column>
-                <Column field="acciones" header="" style="min-width: 10px">
+                <Column field="acciones" header="" style="min-width: 10px" v-if="tienePermisoEdicion()">
                     <template #body="slotProps">
                         <div @click="eliminarAsociacion($event, slotProps)" title="Eliminar asociación"
                             class="text-red-500 cursor-pointer" v-if="slotProps.data.tipo !== 'Relevamientos'">
@@ -162,7 +177,7 @@ const eliminarAsociacion = (event, slot) => {
             <p>No existen asociaciones.</p>
         </template>
 
-        <div class="flex justify-end mt-2">
+        <div class="flex justify-end mt-2" v-if="tienePermisoEdicion()">
             <Button label="Asociar" @click="crearNuevoLink" />
         </div>
     </div>

@@ -76,6 +76,7 @@ function setMigajas() {
 async function inicializar() {
     setMigajas()
     establecerTitulo()
+    obtenerPermisos()
 }
 
 onMounted(inicializar)
@@ -214,6 +215,20 @@ watchEffect(() => {
     }
 })
 
+const permisos = ref({ auditorias: '' })
+
+async function obtenerPermisos() {
+    const { data } = await api.get('/sesiones/me/menu')
+    data.split('|').forEach(menu => {
+        const array = menu.split(':')
+        permisos.value[array[0]] = array[1]
+    });
+}
+
+function tienePermisoEdicion() {
+    return permisos.value.auditorias.includes('W')
+}
+
 </script>
 
 <template>
@@ -262,7 +277,7 @@ watchEffect(() => {
             </div>
 
             <div class="flex justify-end mt-2">
-                <Button label="Editar" @click="editarPedido" />
+                <Button label="Editar" @click="editarPedido" v-if="tienePermisoEdicion()" />
             </div>
 
 
@@ -301,7 +316,7 @@ watchEffect(() => {
                     @complete="buscarUsuario" class="w-full md:w-[20rem]" />
             </div>
 
-            <div class="flex justify-end">
+            <div class="flex justify-end" v-if="tienePermisoEdicion()">
                 <Button :label="accion === 'nuevo' ? 'Crear' : 'Guardar'" @click="handleGuardarBoton" />
             </div>
         </div>

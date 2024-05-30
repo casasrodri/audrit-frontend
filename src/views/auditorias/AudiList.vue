@@ -28,6 +28,7 @@ function setMigajas() {
 onMounted(() => {
     getAuditorias()
     setMigajas()
+    obtenerPermisos()
 });
 
 const tagStyles = {
@@ -62,6 +63,25 @@ const onRowSelect = (row) => {
     router.push(`/auditorias/${sigla}/${nombre}`);
 };
 
+const permisos = ref({ auditorias: '' })
+async function obtenerPermisos() {
+    const { data } = await api.get('/sesiones/me/menu')
+    data.split('|').forEach(menu => {
+        const array = menu.split(':')
+        permisos.value[array[0]] = array[1]
+    });
+
+    if (permisos.value.auditorias === '') {
+        const menus = Object.keys(permisos.value)
+        for (const menu of menus) {
+            if (permisos.value[menu] !== '') {
+                router.push(`/${menu}`)
+                return
+            }
+        }
+    }
+
+}
 
 
 </script>
