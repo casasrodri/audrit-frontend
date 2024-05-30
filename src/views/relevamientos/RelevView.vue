@@ -550,12 +550,8 @@ h2.ce-header {
 <template>
     <div id="editorjs"></div>
 
-    <div id="containerSpeedDial" class="flex bg-red-500 h-lvh fixed bottom-0 right-0">
+    <div id="containerSpeedDial" class="flex bg-red-500 h-lvh fixed bottom-0 right-0 z-10">
         <SpeedDial :model="menuItems" direction="up" class="bottom-0 right-0 m-5" showIcon="pi pi-bars"
             hideIcon="pi pi-plus" :tooltipOptions="{ position: 'left' }" :transitionDelay="80" />
     </div>
-
-    <!-- <button class="rounded-xl bg-[#0768a0] text-white p-2 px-7" @click="guardarDocumento">
-        Guardar
-    </button> -->
 </template>
