@@ -63,6 +63,18 @@ function crearLink() {
         return `/requerimientos/${obj.id}`
     }
 
+    if (tipo === 'organigrama') {
+        return `/organigrama/${obj.id}`
+    }
+
+    if (tipo === 'normativa') {
+        return `/normativas/${obj.id}`
+    }
+
+    if (tipo === 'aplicacion') {
+        return `/aplicaciones/${obj.id}`
+    }
+
     if (tipo === 'archivo') {
         return `/requerimientos/${obj.requerimId}`
     }

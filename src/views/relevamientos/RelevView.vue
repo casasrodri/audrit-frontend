@@ -189,26 +189,26 @@ function crearEditor({ auditoria, revision }) {
             normativa: {
                 class: Normativa,
                 config: {
-                    endpointBuscar: '/listaOrganigrama',
-                    endpointInfoId: '/organigrama',
-                    urlVista: '/organigrama',
-                    urlNuevo: '/organigrama/nuevo',
+                    endpointBuscar: '/normativas/buscar',
+                    endpointInfoId: '/normativas',
+                    urlVista: '/normativas',
+                    urlNuevo: '/normativas/nuevo',
                 }
             },
             aplicacion: {
                 class: Aplicacion,
                 config: {
-                    endpointBuscar: '/listaOrganigrama',
-                    endpointInfoId: '/organigrama',
-                    urlVista: '/organigrama',
-                    urlNuevo: '/organigrama/nuevo',
+                    endpointBuscar: '/aplicaciones/buscar',
+                    endpointInfoId: '/aplicaciones',
+                    urlVista: '/aplicaciones',
+                    urlNuevo: '/aplicaciones/nuevo',
                 }
             },
             organigrama: {
                 class: Organigrama,
                 config: {
-                    endpointBuscar: '/listaOrganigrama',
-                    endpointInfoId: '/organigrama',
+                    endpointBuscar: '/organigramas/buscar',
+                    endpointInfoId: '/organigramas',
                     urlVista: '/organigrama',
                     urlNuevo: '/organigrama/nuevo',
                 }

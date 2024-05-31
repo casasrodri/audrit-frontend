@@ -41,10 +41,9 @@ const filtrosBusq = ref([
     { nombre: 'Revisiones', activo: true },
     { nombre: 'Riesgos', activo: true },
     { nombre: 'Usuarios', activo: false },
-    // TODO: Implementar estos filtros
-    // { nombre: 'Normativas', activo: true },
-    // { nombre: 'Organigrama', activo: true },
-    // { nombre: 'Aplicaciones', activo: true },
+    { nombre: 'Normativas', activo: true },
+    { nombre: 'Organigrama', activo: true },
+    { nombre: 'Aplicaciones', activo: true },
 ])
 
 const mostrarFiltroTipos = ref(false)

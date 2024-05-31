@@ -35,9 +35,8 @@ const ENDPOINTS = {
     'Revisiones': '/revisiones',
     'Riesgos': '/riesgos',
     'Usuarios': '/usuarios',
-    // TODO: Implementar estos filtros
     'Normativas': '/normativas',
-    'Organigrama': '/organigrama',
+    'Organigrama': '/organigramas',
     'Aplicaciones': '/aplicaciones',
 }
 
