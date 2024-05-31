@@ -21,6 +21,13 @@ import ControlForm from '@/views/controles/ControlForm.vue'
 import PruebaForm from '@/views/pruebas/PruebaForm.vue'
 import ObservForm from '@/views/observaciones/ObservForm.vue'
 
+import AplicacView from '@/views/aplicaciones/AplicacView.vue'
+import AplicacForm from '@/views/aplicaciones/AplicacForm.vue'
+import NormView from '@/views/normativas/NormView.vue'
+import NormForm from '@/views/normativas/NormForm.vue'
+import OrganigView from '@/views/organigrama/OrganigView.vue'
+import OrganigForm from '@/views/organigrama/OrganigForm.vue'
+
 import ParamMenu from '@/views/parametros/ParamMenu.vue'
 import ParamCiclos from '@/views/parametros/ParamCiclos.vue'
 import ParamPeriodos from '@/views/parametros/ParamPeriodos.vue'
@@ -86,6 +93,42 @@ const router = createRouter({
           path: '/auditorias/:siglaAudit/revisiones/:siglaRevision/observaciones/:idObservacion/:nombre?',
           name: 'observacionForm',
           component: ObservForm,
+        },
+        {
+          path: '/aplicaciones',
+          name: 'aplicaciones',
+          component: AplicacView,
+          meta: { title: 'Aplicaciones' },
+        },
+        {
+          path: '/aplicaciones/:idAplicacion/:nombre?',
+          name: 'aplicacion',
+          component: AplicacForm,
+          meta: { title: 'Aplicación' },
+        },
+        {
+          path: '/normativas',
+          name: 'normativas',
+          component: NormView,
+          meta: { title: 'Normativas' },
+        },
+        {
+          path: '/normativas/:idNormativa/:nombre?',
+          name: 'normativa',
+          component: NormForm,
+          meta: { title: 'Normativa' },
+        },
+        {
+          path: '/organigrama',
+          name: 'organigrama',
+          component: OrganigView,
+          meta: { title: 'Organigrama' },
+        },
+        {
+          path: '/organigrama/:idOrganigrama/:nombre?',
+          name: 'puestoFuncional',
+          component: OrganigForm,
+          meta: { title: 'Organigrama' },
         },
         {
           path: '/observaciones',
