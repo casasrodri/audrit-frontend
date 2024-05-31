@@ -4,7 +4,7 @@ import { ref, onMounted } from 'vue';
 import api from '@/services/api.js';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import Tag from 'primevue/tag';
+import Button from 'primevue/button';
 import { adaptarTextoParaUrl } from '@/utils/helpers.js'
 import { useRouter, useRoute } from 'vue-router';
 import { setTitulo } from '@/stores/titulo.js';
@@ -13,77 +13,81 @@ import { useMigajasStore } from '@/stores/migajas';
 const router = useRouter();
 const route = useRoute();
 const migajas = useMigajasStore();
-const observaciones = ref([]);
+const normativas = ref([]);
 
-async function getObservaciones() {
-  const { data: listObservaciones } = await api.get(`/observaciones`);
-  observaciones.value = listObservaciones;
+async function getNormativas() {
+  const { data: listNormativas } = await api.get(`/normativas`);
+  normativas.value = listNormativas;
 }
 
 onMounted(() => {
-  getObservaciones();
-  document.title = 'Observaciones'
-  setTitulo('Observaciones');
+  getNormativas();
+  setTitulo('Normativas');
   migajas.items = [
-    { nombre: 'Observaciones', url: '/observaciones' }
+    { nombre: 'Normativas', url: '/normativas', title: 'Listado de normativas' }
   ];
+  obtenerPermisos()
 })
 
 
-const colores = {
-  'Bajo': 'success',
-  'Medio': 'warning',
-  'Alto': 'danger',
-}
-
 const onRowSelect = (row) => {
-  const siglaAudit = row.data.revision.auditoria.sigla;
-  const siglaRevision = row.data.revision.sigla;
-  const idObserv = row.data.id;
-  const nombre = adaptarTextoParaUrl(row.data.nombre);
+  const idNormativa = row.data.id;
+  const nombreLargo = `${row.data.nomenclatura}-${row.data.nombre}`;
+  const nombre = adaptarTextoParaUrl(nombreLargo);
 
-  router.push(`/auditorias/${siglaAudit}/revisiones/${siglaRevision}/observaciones/${idObserv}/${nombre}`);
+  router.push(`/normativas/${idNormativa}/${nombre}`);
 };
 
-function parsearEstado(estado) {
-  return estado.split(']')[0].split('[')[1]
+const permisos = ref({ auditorias: '' })
+
+async function obtenerPermisos() {
+  const { data } = await api.get('/sesiones/me/menu')
+  data.split('|').forEach(menu => {
+    const array = menu.split(':')
+    permisos.value[array[0]] = array[1]
+  });
+  // permisos.auditorias.includes('W')
 }
 
-
-
+function nuevo() {
+  router.push('/normativas/nuevo');
+}
 </script>
 
-<template>
-  <DataTable id="tablaObservaciones" :value="observaciones" tableStyle="min-width: 50rem" stripedRows
-    selectionMode="single" @rowSelect="onRowSelect">
-    <Column field="id" header="ID"></Column>
-    <Column header="Nombre">
-      <template #body="slotProps">
-        <span :title="slotProps.data.descripcion">
-          {{ slotProps.data.nombre }}
-        </span>
-      </template>
-    </Column>
-    <Column header="Riesgo">
-      <template #body="slotProps">
-        <Tag :severity="colores[slotProps.data.riesgo]" :value="slotProps.data.riesgo"></Tag>
-      </template>
-    </Column>
-    <Column header="Estado">
-      <template #body="slotProps">
-        <span :title="slotProps.data.estado">
-          {{ parsearEstado(slotProps.data.estado) }}
-        </span>
-      </template>
-    </Column>
-  </DataTable>
 
+<template>
+  <div class="flex flex-row">
+    <DataTable id="tablaNormativas" :value="normativas" tableStyle="min-width: 50rem" stripedRows selectionMode="single"
+      @rowSelect="onRowSelect">
+      <Column field="id" header="ID"></Column>
+      <Column header="Nombre">
+        <template #body="slotProps">
+          <span :title="slotProps.data.descripcion">
+            {{ slotProps.data.nomenclatura }} - {{ slotProps.data.nombre }}
+          </span>
+        </template>
+      </Column>
+      <Column header="Emisor">
+        <template #body="slotProps">
+          <span v-if="slotProps.data.tipo === 'interna'">
+            Interna
+          </span>
+          <span v-else>
+            {{ slotProps.data.emisor }}
+          </span>
+        </template>
+      </Column>
+    </DataTable>
+    <div class="mt-1 ml-4" v-if="permisos.auditorias.includes('W')">
+      <Button label="Nueva" @click="nuevo" />
+    </div>
+  </div>
 </template>
 
 
 <style>
-#tablaObservaciones thead>tr>th,
-#tablaObservaciones tbody>tr>td {
+#tablaNormativas thead>tr>th,
+#tablaNormativas tbody>tr>td {
   padding: 0.5rem !important;
 }
 </style>

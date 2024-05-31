@@ -47,7 +47,12 @@ async function buscar() {
     const revisionId = dialogRef.value.data.revisionId
     const texto = valorBuscado.value
 
-    const url = `/${entidades}/revision/${revisionId}/buscar/${texto}`
+    let url
+    if (['normativas', 'aplicaciones', 'organigramas'].includes(entidades)) {
+        url = `/${entidades}/buscar/${texto}`
+    } else {
+        url = `/${entidades}/revision/${revisionId}/buscar/${texto}`
+    }
     const { data } = await api.get(url)
     items.value = data
 }

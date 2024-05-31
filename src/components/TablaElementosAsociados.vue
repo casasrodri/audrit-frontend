@@ -29,6 +29,9 @@ const PLURALES = {
     riesgo: 'riesgos',
     prueba: 'pruebas',
     observacion: 'observaciones',
+    normativa: 'normativas',
+    aplicacion: 'aplicaciones',
+    organigrama: 'organigrama', // Queda en singular
 }
 
 const TIPOS_VISUALES = {
@@ -37,6 +40,9 @@ const TIPOS_VISUALES = {
     riesgo: 'Riesgos',
     prueba: 'Pruebas',
     observacion: 'Observaciones',
+    aplicacion: 'Aplicaciones',
+    normativa: 'Normativas',
+    organigrama: 'Posiciones funcionales',
 }
 
 function obtenerObjetoLink(obj) {
@@ -45,11 +51,19 @@ function obtenerObjetoLink(obj) {
     const rev = props.revision.sigla
     const nombre = adaptarTextoParaUrl(obj.nombre)
 
+    // TODO Ver si se puede mostrar el nombre de la normativa
+    let url
+    if (['normativa', 'aplicacion', 'organigrama'].includes(obj.entidad)) {
+        url = `/${plural}/${obj.id}/${nombre}`
+    } else {
+        url = `/auditorias/${audit}/revisiones/${rev}/${plural}/${obj.id}/${nombre}`
+    }
+
     return {
         id: obj.id,
         tipo: TIPOS_VISUALES[obj.entidad],
         nombre: obj.nombre,
-        link: `/auditorias/${audit}/revisiones/${rev}/${plural}/${obj.id}/${nombre}`
+        link: url
     }
 }
 

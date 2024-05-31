@@ -4,7 +4,12 @@ export function isObjectEmpty(obj) {
 
 
 export function adaptarTextoParaUrl(texto) {
-    return texto.toLowerCase().replace(/ /g, '-').normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace('/', '-')
+    return texto
+        // .toLowerCase() // Convertimos a minúsculas
+        .replace(/ /g, '-') // Reemplazamos los espacios por guiones
+        .normalize("NFD") // Normalizamos el texto a su forma de descomposición
+        .replace(/[\u0300-\u036f]/g, "") // Eliminamos las marcas diacríticas (acentos)
+        .replace('/', '-'); // Reemplazamos las barras por guiones
 }
 
 export function fechaFormato(fecha) {

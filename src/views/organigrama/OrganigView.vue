@@ -4,7 +4,7 @@ import { ref, onMounted } from 'vue';
 import api from '@/services/api.js';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import Tag from 'primevue/tag';
+import Button from 'primevue/button';
 import { adaptarTextoParaUrl } from '@/utils/helpers.js'
 import { useRouter, useRoute } from 'vue-router';
 import { setTitulo } from '@/stores/titulo.js';
@@ -13,77 +13,72 @@ import { useMigajasStore } from '@/stores/migajas';
 const router = useRouter();
 const route = useRoute();
 const migajas = useMigajasStore();
-const observaciones = ref([]);
+const organigrama = ref([]);
 
-async function getObservaciones() {
-  const { data: listObservaciones } = await api.get(`/observaciones`);
-  observaciones.value = listObservaciones;
+async function getOrganigrama() {
+  const { data: listOrganigramas } = await api.get(`/organigramas`);
+  organigrama.value = listOrganigramas;
 }
 
 onMounted(() => {
-  getObservaciones();
-  document.title = 'Observaciones'
-  setTitulo('Observaciones');
+  getOrganigrama();
+  setTitulo('Organigrama');
   migajas.items = [
-    { nombre: 'Observaciones', url: '/observaciones' }
+    { nombre: 'Organigrama', url: '/organigrama', title: 'Estructura funcional' }
   ];
+  obtenerPermisos()
 })
 
 
-const colores = {
-  'Bajo': 'success',
-  'Medio': 'warning',
-  'Alto': 'danger',
-}
-
 const onRowSelect = (row) => {
-  const siglaAudit = row.data.revision.auditoria.sigla;
-  const siglaRevision = row.data.revision.sigla;
-  const idObserv = row.data.id;
+  const idPuesto = row.data.id;
   const nombre = adaptarTextoParaUrl(row.data.nombre);
 
-  router.push(`/auditorias/${siglaAudit}/revisiones/${siglaRevision}/observaciones/${idObserv}/${nombre}`);
+  router.push(`/organigrama/${idPuesto}/${nombre}`);
 };
 
-function parsearEstado(estado) {
-  return estado.split(']')[0].split('[')[1]
+const permisos = ref({ auditorias: '' })
+
+async function obtenerPermisos() {
+  const { data } = await api.get('/sesiones/me/menu')
+  data.split('|').forEach(menu => {
+    const array = menu.split(':')
+    permisos.value[array[0]] = array[1]
+  });
+  // permisos.auditorias.includes('W')
 }
 
-
+function nuevo() {
+  router.push('/organigrama/nuevo');
+}
 
 </script>
 
-<template>
-  <DataTable id="tablaObservaciones" :value="observaciones" tableStyle="min-width: 50rem" stripedRows
-    selectionMode="single" @rowSelect="onRowSelect">
-    <Column field="id" header="ID"></Column>
-    <Column header="Nombre">
-      <template #body="slotProps">
-        <span :title="slotProps.data.descripcion">
-          {{ slotProps.data.nombre }}
-        </span>
-      </template>
-    </Column>
-    <Column header="Riesgo">
-      <template #body="slotProps">
-        <Tag :severity="colores[slotProps.data.riesgo]" :value="slotProps.data.riesgo"></Tag>
-      </template>
-    </Column>
-    <Column header="Estado">
-      <template #body="slotProps">
-        <span :title="slotProps.data.estado">
-          {{ parsearEstado(slotProps.data.estado) }}
-        </span>
-      </template>
-    </Column>
-  </DataTable>
 
+<template>
+  <div class="flex flex-row">
+    <DataTable id="tablaOrganigrama" :value="organigrama" tableStyle="min-width: 50rem" stripedRows
+      selectionMode="single" @rowSelect="onRowSelect">
+      <Column field="id" header="ID"></Column>
+      <Column header="Nombre">
+        <template #body="slotProps">
+          <span :title="slotProps.data.descripcion">
+            {{ slotProps.data.nombre }}
+          </span>
+        </template>
+      </Column>
+      <Column field="gerencia" header="Gerencia"></Column>
+    </DataTable>
+    <div class="mt-1 ml-4" v-if="permisos.auditorias.includes('W')">
+      <Button label="Nueva" @click="nuevo" title="Nueva posición funcional" />
+    </div>
+  </div>
 </template>
 
 
 <style>
-#tablaObservaciones thead>tr>th,
-#tablaObservaciones tbody>tr>td {
+#tablaOrganigrama thead>tr>th,
+#tablaOrganigrama tbody>tr>td {
   padding: 0.5rem !important;
 }
 </style>

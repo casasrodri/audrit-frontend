@@ -4,7 +4,7 @@ import api from '@/services/api';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
-import { useRouter } from 'vue-router';
+import { useRouter, RouterLink } from 'vue-router';
 import { adaptarTextoParaUrl } from '@/utils/helpers';
 import { useMigajasStore } from '@/stores/migajas.js';
 
@@ -80,7 +80,6 @@ async function obtenerPermisos() {
             }
         }
     }
-
 }
 
 
@@ -104,4 +103,12 @@ async function obtenerPermisos() {
             </template>
         </Column>
     </DataTable>
+
+    <div class="grid grid-cols-3 mt-10 gap-6">
+        <RouterLink v-for="elem in ['Aplicaciones', 'Normativas', 'Organigrama']"
+            class="flex justify-center min-h-10 items-center rounded bg-cyan-500/30 hover:border-b-2 hover:border-cyan-500 hover:text-cyan-800 hover:font-semibold"
+            :to="`/${elem.toLowerCase()}`">
+            {{ elem }}
+        </RouterLink>
+    </div>
 </template>

@@ -4,7 +4,7 @@ import { ref, onMounted } from 'vue';
 import api from '@/services/api.js';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import Tag from 'primevue/tag';
+import Button from 'primevue/button';
 import { adaptarTextoParaUrl } from '@/utils/helpers.js'
 import { useRouter, useRoute } from 'vue-router';
 import { setTitulo } from '@/stores/titulo.js';
@@ -13,77 +13,71 @@ import { useMigajasStore } from '@/stores/migajas';
 const router = useRouter();
 const route = useRoute();
 const migajas = useMigajasStore();
-const observaciones = ref([]);
+const aplicaciones = ref([]);
 
-async function getObservaciones() {
-  const { data: listObservaciones } = await api.get(`/observaciones`);
-  observaciones.value = listObservaciones;
+async function getAplicaciones() {
+  const { data: listAplicaciones } = await api.get(`/aplicaciones`);
+  aplicaciones.value = listAplicaciones;
 }
 
 onMounted(() => {
-  getObservaciones();
-  document.title = 'Observaciones'
-  setTitulo('Observaciones');
+  getAplicaciones();
+  setTitulo('Aplicaciones');
   migajas.items = [
-    { nombre: 'Observaciones', url: '/observaciones' }
+    { nombre: 'Aplicaciones', url: '/aplicaciones', title: 'Listado de aplicaciones' }
   ];
+  obtenerPermisos()
 })
 
 
-const colores = {
-  'Bajo': 'success',
-  'Medio': 'warning',
-  'Alto': 'danger',
-}
-
 const onRowSelect = (row) => {
-  const siglaAudit = row.data.revision.auditoria.sigla;
-  const siglaRevision = row.data.revision.sigla;
-  const idObserv = row.data.id;
+  const idAplicacion = row.data.id;
   const nombre = adaptarTextoParaUrl(row.data.nombre);
 
-  router.push(`/auditorias/${siglaAudit}/revisiones/${siglaRevision}/observaciones/${idObserv}/${nombre}`);
+  router.push(`/aplicaciones/${idAplicacion}/${nombre}`);
 };
 
-function parsearEstado(estado) {
-  return estado.split(']')[0].split('[')[1]
+const permisos = ref({ auditorias: '' })
+
+async function obtenerPermisos() {
+  const { data } = await api.get('/sesiones/me/menu')
+  data.split('|').forEach(menu => {
+    const array = menu.split(':')
+    permisos.value[array[0]] = array[1]
+  });
+  // permisos.auditorias.includes('W')
 }
 
-
+function nuevo() {
+  router.push('/aplicaciones/nuevo');
+}
 
 </script>
 
 <template>
-  <DataTable id="tablaObservaciones" :value="observaciones" tableStyle="min-width: 50rem" stripedRows
-    selectionMode="single" @rowSelect="onRowSelect">
-    <Column field="id" header="ID"></Column>
-    <Column header="Nombre">
-      <template #body="slotProps">
-        <span :title="slotProps.data.descripcion">
-          {{ slotProps.data.nombre }}
-        </span>
-      </template>
-    </Column>
-    <Column header="Riesgo">
-      <template #body="slotProps">
-        <Tag :severity="colores[slotProps.data.riesgo]" :value="slotProps.data.riesgo"></Tag>
-      </template>
-    </Column>
-    <Column header="Estado">
-      <template #body="slotProps">
-        <span :title="slotProps.data.estado">
-          {{ parsearEstado(slotProps.data.estado) }}
-        </span>
-      </template>
-    </Column>
-  </DataTable>
-
+  <div class="flex flex-row">
+    <DataTable id="tablaAplicaciones" :value="aplicaciones" tableStyle="min-width: 50rem" stripedRows
+      selectionMode="single" @rowSelect="onRowSelect">
+      <Column field="id" header="ID"></Column>
+      <Column header="Nombre">
+        <template #body="slotProps">
+          <span :title="slotProps.data.descripcion">
+            {{ slotProps.data.nombre }}
+          </span>
+        </template>
+      </Column>
+      <Column field="version" header="Versión"></Column>
+    </DataTable>
+    <div class="mt-1 ml-4" v-if="permisos.auditorias.includes('W')">
+      <Button label="Nueva" @click="nuevo" />
+    </div>
+  </div>
 </template>
 
 
 <style>
-#tablaObservaciones thead>tr>th,
-#tablaObservaciones tbody>tr>td {
+#tablaAplicaciones thead>tr>th,
+#tablaAplicaciones tbody>tr>td {
   padding: 0.5rem !important;
 }
 </style>
