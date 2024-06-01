@@ -24,6 +24,7 @@ onMounted(() => {
   getNormativas();
   setTitulo('Normativas');
   migajas.items = [
+    { nombre: 'Auditorias', url: '/auditorias', title: 'Listado de auditorías' },
     { nombre: 'Normativas', url: '/normativas', title: 'Listado de normativas' }
   ];
   obtenerPermisos()

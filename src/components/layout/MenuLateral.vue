@@ -25,12 +25,10 @@ async function obtenerMenus() {
   const { data } = await api.get('/sesiones/me/menu')
   data.split('|').forEach(element => {
     const op = element.split(':')
-    console.log(op)
     if (op[1] !== '') {
       menuesDisponibles.value.push(op[0])
     }
   });
-  console.log(menuesDisponibles.value)
 }
 
 onMounted(obtenerMenus)

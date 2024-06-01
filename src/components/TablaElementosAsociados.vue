@@ -45,10 +45,8 @@ const TIPOS_VISUALES = {
     organigrama: 'Posiciones funcionales',
 }
 
-function obtenerObjetoLink(obj) {
+async function obtenerObjetoLink(obj) {
     const plural = PLURALES[obj.entidad]
-    const audit = props.auditoria.sigla
-    const rev = props.revision.sigla
     const nombre = adaptarTextoParaUrl(obj.nombre)
 
     // TODO Ver si se puede mostrar el nombre de la normativa
@@ -56,6 +54,18 @@ function obtenerObjetoLink(obj) {
     if (['normativa', 'aplicacion', 'organigrama'].includes(obj.entidad)) {
         url = `/${plural}/${obj.id}/${nombre}`
     } else {
+        let audit, rev
+        if (!props.auditoria || !props.revision) {
+            // Se obtiene la revision y auditoria
+            const endpoint = PLURALES[obj.entidad]
+            const { data } = await api.get(`/${endpoint}/${obj.id}`)
+            audit = data.revision.auditoria.sigla
+            rev = data.revision.sigla
+        } else {
+            audit = props.auditoria.sigla
+            rev = props.revision.sigla
+        }
+
         url = `/auditorias/${audit}/revisiones/${rev}/${plural}/${obj.id}/${nombre}`
     }
 
@@ -67,12 +77,13 @@ function obtenerObjetoLink(obj) {
     }
 }
 
-watchEffect(() => {
+watchEffect(async () => {
 
-    linksActivos.value = Object.values({ ...props.objeto.links })
-        .filter(li => li.entidad !== 'objetivo_control')
-        .map(obj => obtenerObjetoLink(obj))
+    const links = Object.values({ ...props.objeto.links })
+    const sin_objetivo_control = links.filter(li => li.entidad !== 'objetivo_control')
+    const objLinks = await Promise.all(sin_objetivo_control.map(async (obj) => await obtenerObjetoLink(obj)))
 
+    linksActivos.value = objLinks
 })
 
 const dialog = useDialog();
@@ -84,6 +95,7 @@ const crearNuevoLink = () => {
             revisionId: props.revision.id,
         },
         onClose: (opt) => {
+            // TODO: Ver como asociar si no tiene revisión ID
             // console.log(opt)
             // const callbackParams = opt.data; // {selectedId: 12}
             // console.log(callbackParams)

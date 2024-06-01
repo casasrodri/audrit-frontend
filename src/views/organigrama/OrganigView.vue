@@ -24,6 +24,7 @@ onMounted(() => {
   getOrganigrama();
   setTitulo('Organigrama');
   migajas.items = [
+    { nombre: 'Auditorias', url: '/auditorias', title: 'Listado de auditorías' },
     { nombre: 'Organigrama', url: '/organigrama', title: 'Estructura funcional' }
   ];
   obtenerPermisos()
@@ -70,7 +71,7 @@ function nuevo() {
       <Column field="gerencia" header="Gerencia"></Column>
     </DataTable>
     <div class="mt-1 ml-4" v-if="permisos.auditorias.includes('W')">
-      <Button label="Nueva" @click="nuevo" title="Nueva posición funcional" />
+      <Button label="Nuevo" @click="nuevo" title="Nuevo puesto funcional" />
     </div>
   </div>
 </template>

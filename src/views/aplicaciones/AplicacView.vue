@@ -24,6 +24,7 @@ onMounted(() => {
   getAplicaciones();
   setTitulo('Aplicaciones');
   migajas.items = [
+    { nombre: 'Auditorias', url: '/auditorias', title: 'Listado de auditorías' },
     { nombre: 'Aplicaciones', url: '/aplicaciones', title: 'Listado de aplicaciones' }
   ];
   obtenerPermisos()
