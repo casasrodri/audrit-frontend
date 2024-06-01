@@ -1,8 +1,9 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { Icon } from '@iconify/vue'
 import InputText from 'primevue/inputtext'
 import Dialog from 'primevue/dialog'
+import api from '@/services/api.js'
 
 import { useMenuStore } from '@/stores/menuLateral.js'
 const menuStore = useMenuStore()
@@ -19,8 +20,6 @@ watch(visible, () => textoBuscado.value = '')
 import IconField from 'primevue/iconfield';
 import InputIcon from 'primevue/inputicon';
 
-const alertame = () => alert('Consultando!!')
-
 document.addEventListener('keydown', (e) => {
     if (e.ctrlKey && e.key === 'a') {
         visible.value = true
@@ -28,6 +27,75 @@ document.addEventListener('keydown', (e) => {
     }
 
     return true
+})
+
+let ws = null
+const streaming = ref(false)
+
+
+function crearWebSocket() {
+    ws = new WebSocket("ws://localhost:8000/api/v1/asistente/ws");
+    ws.onopen = function () {
+        console.log('Conectado al servidor')
+    }
+
+    ws.onclose = function () {
+        console.log('Desconectado del servidor')
+        textoBuscado.value = 'Sin conexión con el servidor.'
+        streaming.value = true
+    }
+
+    ws.onmessage = function (event) {
+        if (event.data === 'ACK:FIN') {
+            // Se veulve a habilitar el input
+            textoBuscado.value = ''
+            streaming.value = false
+        } else {
+            const ult_mensaje = mensajes.value[mensajes.value.length - 1]
+            ult_mensaje.text = ult_mensaje.text + ' ' + event.data
+            // console.log(ult_mensaje.text)
+        }
+    };
+}
+
+function enviarMensaje() {
+    if (textoBuscado.value === '') return
+    if (streaming.value) return
+    ws.send(textoBuscado.value)
+
+    // Se agrega el mensaje del usuario
+    mensajes.value.push({
+        role: 'user',
+        text: textoBuscado.value,
+    })
+
+    // Se agrega el mensaje del bot:
+    mensajes.value.push({
+        role: 'bot',
+        text: '',
+    })
+
+    textoBuscado.value = ''
+    streaming.value = true
+}
+
+function asistenteAbierto() {
+    mensajes.value = []
+    crearWebSocket()
+    textoBuscado.value = ''
+}
+
+function asistenteCerrado() {
+    mensajes.value = []
+    ws.close()
+}
+
+const mensajes = ref([])
+
+const user = ref('Yo')
+onMounted(async () => {
+    const data = await api.me()
+    user.value = data.nombre
 })
 
 </script>
@@ -44,24 +112,34 @@ document.addEventListener('keydown', (e) => {
     </div>
 
     <Dialog v-model:visible="visible" :draggable="false" modal dismissableMask :closable="false"
-        :pt="{ mask: 'bg-black/20 backdrop-blur-[0.5px]' }">
-        <template #header>
-            <!-- <span class="relative w-full">
-                <InputText v-model="textoBuscado" placeholder="Buscar" class="pl-10 w-full" />
-                <i class="pi pi-search absolute top-2/4 -mt-2 left-3 text-surface-400 dark:text-surface-600" />
-            </span> -->
+        :pt="{ mask: 'bg-black/20 backdrop-blur-[0.5px]', header: 'flex items-center shrink-0 bg-surface-0 dark:bg-surface-900 justify-between p-3 rounded-tl-lg rounded-tr-lg border border-b-0 border-surface-200 dark:border-surface-700' }"
+        @show="asistenteAbierto" @hide="asistenteCerrado">
 
-            <IconField class="relative w-full">
-                <InputIcon @click="alertame">
+        <div id="container-completo" class="mt-1">
+
+            <div id="ventana-chat" class="flex flex-col bg-surface-100 border rounded-md mb-1"
+                v-if="mensajes.length > 0">
+                <div v-for="msg in mensajes" class="flex" :class="{ 'justify-end': msg.role === 'user' }">
+                    <div class="my-1 p-2 mx-2 max-w-72 border rounded-md"
+                        :class="{ 'bg-primary-200': msg.role === 'user', 'bg-primary-100': msg.role === 'bot' }">
+                        <div class="text-sm font-semibold">
+                            {{ msg.role === 'user' ? user : 'Asistente' }}:
+                        </div>
+                        <div class="text-sm text-pretty truncate">
+                            {{ msg.text }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <IconField class="relative w-full hover:text-yellow-500">
+                <InputIcon @click="enviarMensaje">
                     <i class="pi pi-sparkles" />
                 </InputIcon>
-                <InputText v-model="textoBuscado" placeholder="Hazme una pregunta..." @keyup.enter="alertame"
-                    @keyup.escape="visible = false" autofocus />
+                <InputText ref="buscador" v-model="textoBuscado" placeholder="Hazme una pregunta..."
+                    @keyup.enter="enviarMensaje" @keyup.escape="visible = false" autofocus :disabled="streaming" />
             </IconField>
-        </template>
-        <p class="m-0">
-            {{ textoBuscado === '' ? '' : `Consultando: ${textoBuscado}...` }}
-        </p>
+        </div>
     </Dialog>
 
 </template>
