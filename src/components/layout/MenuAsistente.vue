@@ -4,7 +4,9 @@ import { Icon } from '@iconify/vue'
 import InputText from 'primevue/inputtext'
 import Dialog from 'primevue/dialog'
 import api from '@/services/api.js'
-
+import { useToast } from 'primevue/usetoast';
+const toast = useToast();
+import ContextMenu from 'primevue/contextmenu';
 import { useMenuStore } from '@/stores/menuLateral.js'
 const menuStore = useMenuStore()
 
@@ -36,12 +38,12 @@ const streaming = ref(false)
 function crearWebSocket() {
     ws = new WebSocket("ws://localhost:8000/api/v1/asistente/ws");
     ws.onopen = function () {
-        console.log('Conectado al servidor')
+        // console.log('Conectado al servidor')
     }
 
     ws.onclose = function () {
-        console.log('Desconectado del servidor')
-        textoBuscado.value = 'Sin conexión con el servidor.'
+        // console.log('Desconectado del servidor')
+        textoBuscado.value = 'Servidor desconectado.'
         streaming.value = true
     }
 
@@ -52,7 +54,7 @@ function crearWebSocket() {
             streaming.value = false
         } else {
             const ult_mensaje = mensajes.value[mensajes.value.length - 1]
-            ult_mensaje.text = ult_mensaje.text + ' ' + event.data
+            ult_mensaje.text = ult_mensaje.text + event.data
             // console.log(ult_mensaje.text)
         }
     };
@@ -83,11 +85,13 @@ function asistenteAbierto() {
     mensajes.value = []
     crearWebSocket()
     textoBuscado.value = ''
+    streaming.value = false
 }
 
 function asistenteCerrado() {
     mensajes.value = []
     ws.close()
+    streaming.value = false
 }
 
 const mensajes = ref([])
@@ -98,17 +102,40 @@ onMounted(async () => {
     user.value = data.nombre
 })
 
+
+const items = ref([
+    {
+        label: 'Actualizar Documentos',
+        icon: 'pi pi-sync',
+        command: async () => {
+            try {
+                toast.add({ severity: 'info', summary: 'Asistente', detail: 'Se está actualizando la base de información del asistente, por favor espere.', life: 3000 });
+                await api.get('/asistente/actualizarContenido')
+                toast.add({ severity: 'success', summary: 'Asistente', detail: 'La información del asistente ha sido actualizada.', life: 3000 });
+
+            } catch (error) {
+                console.error(error)
+                toast.add({ severity: 'warn', summary: 'Asistente', detail: 'No se ha podido actualizar la información del asistente.', life: 3000 });
+
+            }
+        }
+    },
+]);
+
+
 </script>
 
 <template>
-    <div @click="visible = true"
-        class="group/itemnav flex flex-row rounded-md border-[1px] max-w-48 my-1 border-transparent hover:border-cyan-200 hover:bg-cyan-100/70 text-gray-600 hover:text-cyan-600 hover:font-medium p-1 dark:hover:border-cyan-800 dark:hover:bg-cyan-900/70 dark:text-gray-400 dark:hover:text-cyan-300">
+    <div @click="visible = true" class=" group/itemnav flex flex-row rounded-md border-[1px] max-w-48 my-1 border-transparent
+        hover:border-cyan-200 hover:bg-cyan-100/70 text-gray-600 hover:text-cyan-600 hover:font-medium p-1
+        dark:hover:border-cyan-800 dark:hover:bg-cyan-900/70 dark:text-gray-400 dark:hover:text-cyan-300">
         <span class="text-gray-400 group-hover/itemnav:text-sky-500 dark:group-hover/itemnav:text-sky-500">
             <Icon :icon="config.icono" width="26" height="26" />
         </span>
         <span v-if="menuStore.abierto" class="justify-center content-center ml-2">
             {{ config.texto }}
         </span>
+        <ContextMenu global :model="items" />
     </div>
 
     <Dialog v-model:visible="visible" :draggable="false" modal dismissableMask :closable="false"
@@ -126,7 +153,7 @@ onMounted(async () => {
                             {{ msg.role === 'user' ? user : 'Asistente' }}:
                         </div>
                         <div class="text-sm text-pretty truncate">
-                            {{ msg.text }}
+                            {{ msg.text === '' ? '...' : msg.text }}
                         </div>
                     </div>
                 </div>
