@@ -32,7 +32,7 @@ watchEffect(() => {
           </h1>
         </div>
         <span>
-          <DarkMode />
+          <!-- <DarkMode /> -->
         </span>
       </header>
       <main class="flex-grow mt-14 pt-7 px-4">

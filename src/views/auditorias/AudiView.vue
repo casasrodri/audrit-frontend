@@ -106,7 +106,7 @@ const onRowSelect = (row) => {
             </template>
         </Column>
 
-        <Column headerStyle="width: 10rem">
+        <!-- <Column headerStyle="width: 10rem">
             <template #body="props">
                 <div class="flex-row items-center justify-end gap-2 hidden group-hover/filaciclo:flex">
                     {{ props.node.data.sigla }}
@@ -114,7 +114,7 @@ const onRowSelect = (row) => {
                     {{ props.node.data.estado }}
                 </div>
             </template>
-        </Column>
+        </Column> -->
     </TreeTable>
 
 </template>

@@ -9,6 +9,7 @@ import BotonLateral from './BotonLateral.vue'
 import MenuUsuario from './MenuUsuario.vue'
 import MenuBuscador from './MenuBuscador.vue'
 import MenuAsistente from './MenuAsistente.vue'
+import MenuDarkMode from './MenuDarkMode.vue'
 import api from '@/services/api.js'
 
 const menuStore = useMenuStore()
@@ -61,10 +62,10 @@ onMounted(obtenerMenus)
         <div class="flex flex-col">
           <MenuBuscador />
           <MenuAsistente />
+          <MenuDarkMode />
           <!-- <BotonLateral tipo="configuracion" /> -->
 
           <MenuUsuario />
-
         </div>
       </div>
     </div>
