@@ -23,12 +23,18 @@ const user = ref({
 
 const inicial = (texto) => texto.charAt(0).toUpperCase()
 
-// TODO Cambiar por los datos del usuario logueado
 onMounted(async () => {
-    const usuario = await api.me()
-    user.value.nombre = usuario.nombre_completo
-    user.value.siglas = `${inicial(usuario.nombre)}${inicial(usuario.apellido)}`
-    user.value.cargo = usuario.rol.nombre
+    try {
+        const usuario = await api.me()
+        user.value.nombre = usuario.nombre_completo
+        user.value.siglas = `${inicial(usuario.nombre)}${inicial(usuario.apellido)}`
+        user.value.cargo = usuario.rol.nombre
+    } catch (error) {
+        if (error.response.status === 401) {
+            router.push('/login')
+            removeToken()
+        }
+    }
 })
 
 async function cerrarSesion() {

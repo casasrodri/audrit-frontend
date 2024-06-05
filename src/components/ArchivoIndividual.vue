@@ -126,12 +126,13 @@ function getIcono(archivo) {
 
 <template>
     <a :href="`${URL}/archivos/descargar/${props.archivo.link}`" target="_blank" title="Descargar archivo">
-        <div class="flex flex-row border-[1px] rounded-md p-3 min-w-80 bg-white dark:bg-slate-800">
-            <div class="mr-2 text-slate-500 dark:text-slate-300">
+        <div
+            class="flex flex-row border-[1px] dark:border-slate-700 rounded-md p-3 min-w-80 bg-white dark:bg-slate-800">
+            <div class="mr-2 text-slate-500 dark:text-slate-400">
                 <Icon :icon="getIcono(props.archivo)" width="32" height="32" />
             </div>
             <div class="flex flex-col">
-                <div class="flex font-semibold">
+                <div class="flex font-medium">
                     {{ props.archivo.nombre }}
                 </div>
                 <div class="flex font-light text-xs text-gray-600 dark:text-gray-400">

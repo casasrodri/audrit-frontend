@@ -98,8 +98,12 @@ const mensajes = ref([])
 
 const user = ref('Yo')
 onMounted(async () => {
-    const data = await api.me()
-    user.value = data.nombre
+    try {
+        const data = await api.me()
+        user.value = data.nombre
+    } catch (error) {
+        console.error(error)
+    }
 })
 
 
@@ -129,11 +133,13 @@ const onAsistenteRightClick = (event) => {
     menu.value.show(event);
 };
 
+import { usePermisos } from '@/composables/permisos.js'
+const permisos = usePermisos()
 
 </script>
 
 <template>
-    <div @click="visible = true" @contextmenu="onAsistenteRightClick" class=" group/itemnav flex flex-row rounded-md border-[1px] max-w-48 my-1 border-transparent
+    <div v-if="permisos.auditoriasLeer" @click="visible = true" @contextmenu="onAsistenteRightClick" class=" group/itemnav flex flex-row rounded-md border-[1px] max-w-48 my-1 border-transparent
         hover:border-cyan-200 hover:bg-cyan-100/70 text-gray-600 hover:text-cyan-600 hover:font-medium p-1
         dark:hover:border-cyan-800 dark:hover:bg-cyan-900/70 dark:text-gray-400 dark:hover:text-cyan-300">
         <span class="text-gray-400 group-hover/itemnav:text-sky-500 dark:group-hover/itemnav:text-sky-500">
@@ -146,16 +152,17 @@ const onAsistenteRightClick = (event) => {
     </div>
 
     <Dialog v-model:visible="visible" :draggable="false" modal dismissableMask :closable="false"
-        :pt="{ mask: 'bg-black/20 backdrop-blur-[0.5px]', header: 'flex items-center shrink-0 bg-surface-0 dark:bg-surface-900 justify-between p-3 rounded-tl-lg rounded-tr-lg border border-b-0 border-surface-200 dark:border-surface-700' }"
+        :pt="{ mask: 'bg-black/20 backdrop-blur-[0.5px]', header: 'flex items-center shrink-0 bg-surface-0 dark:bg-surface-800 justify-between p-3 rounded-tl-lg rounded-tr-lg border border-b-0 border-surface-200 dark:border-surface-700' }"
         @show="asistenteAbierto" @hide="asistenteCerrado">
 
         <div id="container-completo" class="mt-1">
 
-            <div id="ventana-chat" class="flex flex-col bg-surface-100 border rounded-md mb-1"
+            <div id="ventana-chat"
+                class="flex flex-col bg-surface-100 dark:bg-surface-700 border rounded-md mb-1 dark:border-gray-600"
                 v-if="mensajes.length > 0">
                 <div v-for="msg in mensajes" class="flex" :class="{ 'justify-end': msg.role === 'user' }">
-                    <div class="my-1 p-2 mx-2 max-w-72 border rounded-md"
-                        :class="{ 'bg-primary-200': msg.role === 'user', 'bg-primary-100': msg.role === 'bot' }">
+                    <div class="my-1 p-2 mx-2 max-w-72 border dark:border-gray-600 rounded-md"
+                        :class="{ 'bg-primary-200 dark:bg-primary-700': msg.role === 'user', 'bg-primary-100 dark:bg-primary-600': msg.role === 'bot' }">
                         <div class="text-sm font-semibold">
                             {{ msg.role === 'user' ? user : 'Asistente' }}:
                         </div>

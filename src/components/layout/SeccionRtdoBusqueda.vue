@@ -14,7 +14,7 @@ const props = defineProps({
 
 watchEffect(() => {
     mostrarSeccion.value = props.filtros.find(fi => fi.nombre === props.titulo).activo
-    if (props.textoBuscado.length > 3) {
+    if (props.textoBuscado.length > 0) {
         buscarBackend()
     }
     if (props.textoBuscado === '') {

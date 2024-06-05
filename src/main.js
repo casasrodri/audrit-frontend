@@ -43,5 +43,9 @@ app.use(DialogService)
 import ConfirmationService from 'primevue/confirmationservice';
 app.use(ConfirmationService);
 
+// Tooltips
+import Tooltip from 'primevue/tooltip';
+app.directive('tooltip', Tooltip);
+
 // Mount
 app.mount('#app')

@@ -144,8 +144,7 @@ function crearEditor({ auditoria, revision }) {
             // console.log(event)
             // toast.add({ severity: 'success', summary: 'Update', detail: 'Contenido guardado!', life: 3000 });
         },
-        // TODO: Cambiar por defecto.
-        // readOnly: true,
+        readOnly: true,
 
         placeholder: 'Escribe "/" para ver los bloques disponibles...',
 
@@ -572,3 +571,10 @@ h2.ce-header {
 
 
 </template>
+
+<style>
+.ce-block__content,
+.ce-toolbar__content {
+    max-width: 80rem;
+}
+</style>

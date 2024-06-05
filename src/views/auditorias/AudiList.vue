@@ -107,7 +107,7 @@ async function obtenerPermisos() {
 
     <div class="grid grid-cols-3 mt-10 gap-6">
         <RouterLink v-for="elem in ['Aplicaciones', 'Normativas', 'Organigrama']"
-            class="flex justify-center min-h-10 items-center rounded bg-cyan-500/30 hover:border-b-2 hover:border-cyan-500 hover:text-cyan-800 hover:bg-cyan-500/40 hover:font-semibold"
+            class="flex justify-center min-h-10 items-center rounded bg-cyan-500/30 hover:border-b-2 hover:border-cyan-500 hover:text-cyan-800 hover:bg-cyan-500/40 dark:hover:text-cyan-100 hover:font-semibold"
             :to="`/${elem.toLowerCase()}`">
             {{ elem }}
         </RouterLink>

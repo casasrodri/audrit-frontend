@@ -259,7 +259,7 @@ const permisos = usePermisos()
     <!-- accion: {{ accion }} -->
     <!-- <hr> -->
     <template v-if="accion === 'ver'">
-        <div id="container" class="flex flex-col max-w-2xl mb-5">
+        <div id="container" class="flex flex-col min-w-4xl w-[50vw] mb-5">
             <div id="descripcion" class="my-2 flex flex-col">
                 <label for="descripcion" class="font-semibold">Descripción:</label>
                 <div class="max-w-2xl text-wrap whitespace-pre">
@@ -290,7 +290,7 @@ const permisos = usePermisos()
                 </ul>
             </div>
 
-            <div class="flex justify-end mt-2">
+            <div class="flex justify-end mt-2 mr-8">
                 <Button label="Editar" @click="editarRiesgo" v-if="permisos.auditoriasEditar" />
             </div>
 
@@ -311,7 +311,7 @@ const permisos = usePermisos()
 
         <!-- objetivosControlDisponibles: {{ objetivosControlDisponibles }} -->
         <!-- <hr> -->
-        <div id="container" class="flex flex-col max-w-2xl mb-5">
+        <div id="container" class="flex flex-col min-w-4xl w-[50vw] mb-5">
             <div id="nombre" class="mb-2 flex flex-col">
                 <label for="nombre" class="font-semibold">Nombre</label>
                 <InputText type="text" class="" v-model="riesgo.nombre" />

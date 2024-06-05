@@ -63,33 +63,58 @@ const tagStyles = {
     },
 }
 
+const expandedKeys = ref({})
 const onRowSelect = (row) => {
-    const siglaAudit = route.params.siglaAudit
-    const siglaRev = row.data.sigla;
-    const nombreRev = adaptarTextoParaUrl(row.data.nombre);
-    router.push(`/auditorias/${siglaAudit}/revisiones/${siglaRev}`);
+    if (row.children.length === 0) {
+        const siglaAudit = route.params.siglaAudit
+        const siglaRev = row.data.sigla;
+        const nombreRev = adaptarTextoParaUrl(row.data.nombre);
+        router.push(`/auditorias/${siglaAudit}/revisiones/${siglaRev}/${nombreRev}`);
+    } else {
+        expandedKeys.value[row.key] = !expandedKeys.value[row.key];
+    }
 };
+
+
 
 </script>
 
 <template>
-    Estado: {{ auditoria.estado }}
-    <br>
-    Tipo: {{ auditoria.tipo }}
-    <br>
-    Periodo: {{ auditoria.periodo }}
-    <br><br>
-    <hr>
-    <br>
-    <b>Revisiones:</b>
-    <br>
+
+    <div id="detallesAuditoria">
+
+        <div>
+            <span class="font-semibold">
+                Estado:
+            </span>
+            {{ auditoria.estado }}
+        </div>
+        <div>
+            <span class="font-semibold">
+                Tipo:
+            </span>
+            {{ auditoria.tipo }}
+        </div>
+        <div>
+            <span class="font-semibold">
+                Periodo:
+            </span>
+            {{ auditoria.periodo }}
+        </div>
+
+        <div class="border-b-[1px] dark:border-slate-700 my-4"></div>
+    </div>
+
+    <div class="font-semibold">
+        Revisiones:
+    </div>
 
     <!-- TODO Agregar boton para nuevo o importar... -->
 
-    <TreeTable :value="revisiones" :pt="{ headerrow: 'hidden' }" class="mt-3" selectionMode="single"
-        @nodeSelect="onRowSelect">
+    <TreeTable id="tablaAuditorias" :value="revisiones" :pt="{ headerrow: 'hidden' }" class="mt-3"
+        selectionMode="single" @nodeSelect="onRowSelect" v-model:expandedKeys="expandedKeys">
 
-        <Column expander>
+        <Column expander style="width: 50vw;">
             <template #body="props">
                 <span
                     class="bg-blue-100 text-blue-800 text-xs font-medium me-2 px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">
@@ -102,10 +127,9 @@ const onRowSelect = (row) => {
         <Column headerStyle="width: 10rem">
             <template #body="props">
                 <Tag :value="tagStyles[props.node.data.estado].text"
-                    :severity="tagStyles[props.node.data.estado].severity" />
+                    :severity="tagStyles[props.node.data.estado].severity" v-if="props.node.children.length === 0" />
             </template>
         </Column>
-
         <!-- <Column headerStyle="width: 10rem">
             <template #body="props">
                 <div class="flex-row items-center justify-end gap-2 hidden group-hover/filaciclo:flex">
@@ -118,3 +142,14 @@ const onRowSelect = (row) => {
     </TreeTable>
 
 </template>
+
+<style>
+#tablaAuditorias thead>tr>th,
+#tablaAuditorias tbody>tr>td {
+    padding: 0.5rem !important;
+}
+
+#tablaAuditorias {
+    max-width: 60vw;
+}
+</style>

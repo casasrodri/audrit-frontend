@@ -1,6 +1,6 @@
 <script setup>
 
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watchEffect } from 'vue';
 import api from '@/services/api.js';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
@@ -50,33 +50,71 @@ function parsearEstado(estado) {
 }
 
 
+import SelectButton from 'primevue/selectbutton';
+const cualesVer = ref('Pendientes');
+const opcionesVer = ref(['Pendientes', 'Todas']);
+const observacionesVer = ref([]);
+
+watchEffect(() => {
+
+  let auxTodos = [...observaciones.value];
+
+  auxTodos.forEach(obs => {
+    console.log(obs.estado)
+  });
+
+  if (cualesVer.value === 'Pendientes') {
+    observacionesVer.value = auxTodos.filter(obs => obs.estado !== '[A] Adecuado');
+  } else {
+    observacionesVer.value = auxTodos;
+  }
+
+  // pedidosYoHice.value = auxTodos.filter(pedido => pedido.creador.id === usuarioId.value);
+  // pedidosMeHicieron.value = auxTodos.filter(pedido => pedido.destinatario.id === usuarioId.value);
+});
 
 </script>
 
 <template>
-  <DataTable id="tablaObservaciones" :value="observaciones" tableStyle="min-width: 50rem" stripedRows
-    selectionMode="single" @rowSelect="onRowSelect">
-    <Column field="id" header="ID"></Column>
-    <Column header="Nombre">
-      <template #body="slotProps">
-        <span :title="slotProps.data.descripcion">
-          {{ slotProps.data.nombre }}
-        </span>
-      </template>
-    </Column>
-    <Column header="Riesgo">
-      <template #body="slotProps">
-        <Tag :severity="colores[slotProps.data.riesgo]" :value="slotProps.data.riesgo"></Tag>
-      </template>
-    </Column>
-    <Column header="Estado">
-      <template #body="slotProps">
-        <span :title="slotProps.data.estado">
-          {{ parsearEstado(slotProps.data.estado) }}
-        </span>
-      </template>
-    </Column>
-  </DataTable>
+  <div v-if="observacionesVer.length > 0">
+    <div class="flex justify-end mt-1 mb-4">
+      <SelectButton v-model="cualesVer" :options="opcionesVer" :allowEmpty="false" />
+    </div>
+
+    <DataTable id="tablaObservaciones" :value="observacionesVer" tableStyle="min-width: 50rem" stripedRows
+      selectionMode="single" @rowSelect="onRowSelect">
+      <Column field="id" header="ID"></Column>
+      <Column header="Auditoría">
+        <template #body="slotProps">
+          <span v-tooltip="slotProps.data.revision.auditoria.nombre">
+            {{ slotProps.data.revision.auditoria.sigla }}
+          </span>
+        </template>
+      </Column>
+      <Column header="Nombre">
+        <template #body="slotProps">
+          <span :title="slotProps.data.descripcion">
+            {{ slotProps.data.nombre }}
+          </span>
+        </template>
+      </Column>
+      <Column header="Riesgo">
+        <template #body="slotProps">
+          <Tag :severity="colores[slotProps.data.riesgo]" :value="slotProps.data.riesgo"></Tag>
+        </template>
+      </Column>
+      <Column header="Estado">
+        <template #body="slotProps">
+          <span v-tooltip="slotProps.data.estado">
+            {{ parsearEstado(slotProps.data.estado) }}
+          </span>
+        </template>
+      </Column>
+    </DataTable>
+  </div>
+  <div v-else>
+    No existen observaciones creadas.
+  </div>
 
 </template>
 

@@ -163,7 +163,7 @@ const permisos = usePermisos()
         <h3 class="font-semibold mb-2">Elementos asociados:</h3>
         <template v-if="linksActivos.length > 0">
             <DataTable :value="linksActivos" rowGroupMode="subheader" groupRowsBy="tipo" sortMode="single"
-                sortField="tipo" :sortOrder="1" scrollable class="border-x-[1px] border-t-[1px]">
+                sortField="tipo" :sortOrder="1" scrollable class="border-x-[1px] border-t-[1px] dark:border-slate-700">
                 <Column field="tipo" header="Tipo"></Column>
                 <Column field="id" header="ID" style="min-width: 10px; max-width: 20px;"></Column>
                 <Column field="nombre" header="Nombre">

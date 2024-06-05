@@ -106,7 +106,7 @@ watchEffect(() => {
 
         <label for="tipo" class="font-semibold mt-3">Elemento:</label>
         <AutoComplete
-            :pt="{ root: 'min-w-full', container: 'min-w-full', input: 'min-w-full text-base leading-[normal] appearance-none rounded-md m-0 p-2 text-surface-700 dark:text-white/80 border focus:outline-none focus:outline-offset-0 focus:ring focus:ring-primary-400/50 dark:focus:ring-primary-300/50' }"
+            :pt="{ root: 'min-w-full', container: 'min-w-full', input: 'min-w-full text-base leading-[normal] appearance-none rounded-md m-0 p-2 text-surface-700 dark:text-white/80 border focus:outline-none focus:outline-offset-0 focus:ring focus:ring-primary-400/50 dark:focus:ring-primary-300/50 dark:bg-surface-700' }"
             v-model="valorBuscado" :suggestions="items" optionLabel="nombre" @complete="buscar"
             :disabled="tipoBuscado === ''" />
     </div>

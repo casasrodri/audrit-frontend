@@ -81,7 +81,7 @@ const onProgressUpload = (e) => {
     </span>
     <div id="container" v-if="mostrarDetalle">
         <div v-if="archivos.length > 0" id="container"
-            class="flex flex-col px-2 min-w-96 border-[1px] rounded-md bg-slate-50 dark:bg-slate-700 gap-2 py-2">
+            class="flex flex-col px-2 min-w-96 border-[1px] dark:border-slate-800 rounded-md bg-slate-50 dark:bg-slate-700 gap-2 py-2">
             <ArchivoIndividual v-for="archivo in archivos" :key="archivo.id" :archivo="archivo" />
         </div>
         <div v-else class="ml-2 text-sm mb-2">

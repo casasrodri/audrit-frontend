@@ -76,8 +76,11 @@ const permisos = usePermisos()
 
 <template>
 
-    <div class="flex justify-end mt-2">
+    <div class="flex justify-end mt-2" v-if="todosPedidos.length > 0">
         <SelectButton v-model="cualesVer" :options="opcionesVer" :allowEmpty="false" @change="cambioSelector" />
+    </div>
+    <div v-else>
+        No existen requerimientos pendientes.
     </div>
 
     <div id="containerYoHice" v-if="pedidosYoHice.length > 0">

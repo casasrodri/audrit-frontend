@@ -79,7 +79,7 @@ function handleLinkApretado(e) {
 
         <!-- FILTRO DEL BUSCADOR -->
         <div id="selectorBusqueda" class="flex justify-end text-[0.75rem]">
-            <div class="flex gap-2 bg-slate-100 max-w-min p-[0.2rem] rounded-md px-1">
+            <div class="flex gap-2 bg-slate-100 dark:bg-slate-700 max-w-min p-[0.2rem] rounded-md px-1">
                 <template v-if="!mostrarFiltroTipos">
                     <div class="text-gray-500 cursor-pointer flex items-center"
                         @click="mostrarFiltroTipos = !mostrarFiltroTipos">
@@ -93,7 +93,7 @@ function handleLinkApretado(e) {
                     </div>
                     <div class="min-w-max grid grid-cols-5 gap-1">
                         <div v-for="fi in filtrosBusq" @click="fi.activo = !fi.activo"
-                            :class="{ 'bg-primary-200 font-semibold': fi.activo }"
+                            :class="{ 'bg-primary-200 dark:bg-primary-700 font-semibold': fi.activo }"
                             class="rounded-md p-1 px-1 cursor-pointer text-center">
                             {{ fi.nombre }}
                         </div>

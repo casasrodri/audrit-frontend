@@ -28,7 +28,8 @@ function parsearMomento(momento) {
 <template>
 
     <div class="flex mx-2" :class="{ 'justify-end': usuarioId === props.comentario.usuario.id }">
-        <div class="flex flex-col border-[1px] rounded-md p-2 min-w-80 bg-white">
+        <div class="flex flex-col border-[1px] dark:border-slate-700 rounded-md p-2 min-w-80 bg-white dark:bg-surface-600"
+            :class="{ 'dark:bg-primary-700': usuarioId === props.comentario.usuario.id }">
             <div class="flex font-semibold mb-1" :class="{ 'justify-end': usuarioId === props.comentario.usuario.id }">
                 {{ props.comentario.usuario.nombre_completo }}
             </div>

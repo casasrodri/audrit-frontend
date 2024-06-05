@@ -96,9 +96,9 @@ function irLink() {
 
 <template>
     <a :href="rtdo.link" @click.prevent="irLink"
-        class="border-[1px] rounded-md p-1 ml-1 pl-2 hover:bg-primary-100 cursor-pointer">
+        class="border-[1px] border-slate-200 dark:border-slate-700 rounded-md p-1 ml-1 pl-2 hover:bg-primary-100 dark:hover:bg-primary-800 cursor-pointer">
         <div class="font-medium" v-html="rtdo.nombre" />
-        <div class="text-sm text-gray-400" v-html="rtdo.texto" />
+        <div class="text-sm text-gray-400 dark:text-gray-500" v-html="rtdo.texto" />
     </a>
 </template>
 

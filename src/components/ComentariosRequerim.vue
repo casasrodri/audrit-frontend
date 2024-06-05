@@ -98,7 +98,7 @@ onMounted(async () => {
     </span>
     <div id="container" v-if="mostrarDetalle">
         <div v-if="comentarios.length > 0" id="container"
-            class="flex flex-col gap-2 mt-3 min-w-96 border-[1px] rounded-md bg-slate-50 dark:bg-slate-700">
+            class="flex flex-col gap-2 mt-3 min-w-96 border-[1px] dark:border-slate-800 rounded-md bg-slate-50 dark:bg-slate-700">
             <ComentarioIndividual v-for="comentario in comentarios" :key="comentario.id" :comentario="comentario"
                 class="my-2" />
         </div>
