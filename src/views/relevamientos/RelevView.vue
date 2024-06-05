@@ -7,6 +7,7 @@ import api from '@/services/api.js';
 import { setTitulo } from '@/stores/titulo.js';
 import { useMigajasStore } from '@/stores/migajas.js';
 import { adaptarTextoParaUrl } from '@/utils/helpers.js';
+import { usePermisos } from '@/composables/permisos.js';
 
 
 const migajasStore = useMigajasStore();
@@ -143,7 +144,8 @@ function crearEditor({ auditoria, revision }) {
             // console.log(event)
             // toast.add({ severity: 'success', summary: 'Update', detail: 'Contenido guardado!', life: 3000 });
         },
-        readOnly: true,
+        // TODO: Cambiar por defecto.
+        // readOnly: true,
 
         placeholder: 'Escribe "/" para ver los bloques disponibles...',
 
@@ -254,7 +256,6 @@ function crearEditor({ auditoria, revision }) {
                 shortcut: 'CMD+SHIFT+M',
             }
         },
-        // data: dataEjemplo,
     });
 }
 
@@ -284,12 +285,15 @@ async function getIds() {
     documento.value = documentoDB
 }
 
+const TIEMPO_ESPERA = 10
+const contenidoCargado = ref(false)
 async function renderDoc() {
     while (!editorReady.value) {
-        await new Promise(resolve => setTimeout(resolve, 1000))
+        await new Promise(resolve => setTimeout(resolve, TIEMPO_ESPERA))
     }
     const formatJson = JSON.parse(documento.value.contenido)
     editor.render(formatJson)
+    contenidoCargado.value = true
 }
 
 async function getTitulo() {
@@ -382,7 +386,7 @@ async function setMigajas() {
 
 
 
-
+let permisos = usePermisos()
 let editor = null
 onMounted(async () => {
     await getIds()
@@ -392,11 +396,18 @@ onMounted(async () => {
     setMigajas()
 })
 
-async function guardarDocumento() {
-    if (!tienePermisoEdicion()) {
+
+function edicionBloqueada() {
+    if (!permisos.value.auditoriasEditar) {
         toast.add({ severity: 'error', summary: 'Error', detail: 'No tienes permisos para guardar el documento.', life: 3000 });
-        return
+        return true
     }
+
+    return false
+}
+
+async function guardarDocumento() {
+    if (edicionBloqueada()) return
 
     const nuevaData = await editor.save()
 
@@ -406,14 +417,11 @@ async function guardarDocumento() {
     }
 
     const resPut = await api.put(`/documentos/${idsActivos.value.documento.id}`, nuevoObj)
-    // log(resPut)
+    log(resPut)
 }
 
 async function bloquearEditor() {
-    if (!tienePermisoEdicion()) {
-        toast.add({ severity: 'error', summary: 'Error', detail: 'No tienes permisos para editar el documento.', life: 3000 });
-        return
-    }
+    if (edicionBloqueada()) return
 
     documento.value.contenido = JSON.stringify(await editor.save())
     await editor.readOnly.toggle(true)
@@ -421,10 +429,7 @@ async function bloquearEditor() {
 }
 
 async function desbloquearEditor() {
-    if (!tienePermisoEdicion()) {
-        toast.add({ severity: 'error', summary: 'Error', detail: 'No tienes permisos para editar el documento.', life: 3000 });
-        return
-    }
+    if (edicionBloqueada()) return
 
     try {
         await editor.readOnly.toggle(false)
@@ -482,8 +487,13 @@ function openFromEditorJs(e) {
 document.addEventListener('goToRoute', goToFromEditorJs);
 document.addEventListener('openRoute', openFromEditorJs);
 
-import { usePermisos } from '@/composables/permisos.js';
-const permisos = usePermisos()
+
+import ContextMenu from 'primevue/contextmenu';
+const menu = ref();
+const onImageRightClick = (event) => {
+    menu.value.show(event);
+};
+import Skeleton from 'primevue/skeleton';
 </script>
 
 
@@ -535,10 +545,30 @@ h2.ce-header {
 </style>
 
 <template>
-    <div id="editorjs"></div>
+    <div class="min-w-full w-full max-w-full" @contextmenu="onImageRightClick">
+        <ContextMenu ref="menu" :model="menuItems" />
+        <div id="editorjs" :class="{ 'hidden': !contenidoCargado }" />
 
-    <div id="containerSpeedDial" class="flex bg-red-500 h-lvh fixed bottom-0 right-0 z-10">
-        <SpeedDial :model="menuItems" direction="up" class="bottom-0 right-0 m-5" showIcon="pi pi-bars"
-            hideIcon="pi pi-plus" :tooltipOptions="{ position: 'left' }" :transitionDelay="80" />
+        <div id="skeleton" v-if="!contenidoCargado" class="w-full min-w-full max-w-full" style="width: 600px;">
+            <Skeleton height="2rem" class="mb-2"></Skeleton>
+            <div class="h-3"></div>
+            <Skeleton class="mb-2"></Skeleton>
+            <Skeleton class="mb-2"></Skeleton>
+            <Skeleton width="5rem" class="mb-2"></Skeleton>
+            <div class="h-12"></div>
+            <Skeleton height="2rem" class="mb-2"></Skeleton>
+            <div class="h-3"></div>
+            <Skeleton class="mb-2"></Skeleton>
+            <Skeleton class="mb-2"></Skeleton>
+            <Skeleton class="mb-2"></Skeleton>
+            <Skeleton width="5rem" class="mb-2"></Skeleton>
+        </div>
+
+        <!-- <div id="containerSpeedDial" class="flex bg-red-500 h-lvh fixed bottom-0 right-0 z-10">
+            <SpeedDial :model="menuItems" direction="up" class="bottom-0 right-0 m-5" showIcon="pi pi-bars"
+                hideIcon="pi pi-plus" :tooltipOptions="{ position: 'left' }" :transitionDelay="80" />
+        </div> -->
     </div>
+
+
 </template>

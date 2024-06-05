@@ -140,7 +140,7 @@ const permisos = usePermisos()
                 <ObservTabla :ids="idsActivos" />
             </TabPanel>
         </TabView>
-        <div class="mt-1 ml-4" v-if="permisos.auditorias.includes('W')">
+        <div class="mt-1 ml-4" v-if="permisos.auditoriasEditar">
             <Button label="Nuevo" @click="nuevo" />
         </div>
     </div>

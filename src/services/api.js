@@ -8,7 +8,7 @@ export const URL = `${HOST}/api/v1`
 
 const OPTS = {
   log: true,
-  respuesta: true,
+  respuesta: false,
   respuestaData: true,
   colors: {
     get: 'cyan',
