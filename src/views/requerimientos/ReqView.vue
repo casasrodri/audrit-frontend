@@ -25,7 +25,6 @@ function setMigajas() {
 onMounted(() => {
     getPedidos();
     setMigajas();
-    obtenerPermisos()
 });
 
 const usuarioId = ref(0);
@@ -70,19 +69,8 @@ function cambioSelector(e) {
     console.log(e)
 }
 
-const permisos = ref({ auditorias: '' })
-
-async function obtenerPermisos() {
-    const { data } = await api.get('/sesiones/me/menu')
-    data.split('|').forEach(menu => {
-        const array = menu.split(':')
-        permisos.value[array[0]] = array[1]
-    });
-}
-
-function tienePermisoEdicion() {
-    return permisos.value.auditorias.includes('W')
-}
+import { usePermisos } from '@/composables/permisos.js';
+const permisos = usePermisos()
 
 </script>
 
@@ -157,7 +145,7 @@ function tienePermisoEdicion() {
         </DataTable>
     </div>
 
-    <div class="flex justify-end mt-3" v-if="tienePermisoEdicion()">
+    <div class="flex justify-end mt-3" v-if="permisos.auditoriasEditar">
         <Button label="Nuevo" @click="nuevoReq" />
     </div>
 </template>

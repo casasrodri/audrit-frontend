@@ -35,7 +35,6 @@ const normativa = ref({
 const inicializar = () => {
     establecerTitulo();
     setMigajas();
-    obtenerPermisos()
 }
 onMounted(inicializar)
 
@@ -82,19 +81,8 @@ watchEffect(() => {
     inicializar()
 })
 
-const permisos = ref({ auditorias: '' })
-
-async function obtenerPermisos() {
-    const { data } = await api.get('/sesiones/me/menu')
-    data.split('|').forEach(menu => {
-        const array = menu.split(':')
-        permisos.value[array[0]] = array[1]
-    });
-}
-
-function tienePermisoEdicion() {
-    return permisos.value.auditorias.includes('W')
-}
+import { usePermisos } from '@/composables/permisos.js';
+const permisos = usePermisos()
 
 function editarNormativa() {
     router.push({ params: { nombre: 'editar' } })
@@ -255,7 +243,7 @@ const tipoOpts = ['Interna', 'Externa']
                 </div>
             </div>
 
-            <div class="flex justify-end mt-2" v-if="tienePermisoEdicion()">
+            <div class="flex justify-end mt-2" v-if="permisos.auditoriasEditar">
                 <Button label="Editar" @click="editarNormativa" />
             </div>
 
@@ -309,7 +297,7 @@ const tipoOpts = ['Interna', 'Externa']
                 <Textarea v-model="normativa.comentarios" autoResize rows="5" cols="30" id="descripCtrl" />
             </div>
 
-            <div class="flex justify-end" v-if="tienePermisoEdicion()">
+            <div class="flex justify-end" v-if="permisos.auditoriasEditar">
                 <Button :label="accion === 'nuevo' ? 'Crear' : 'Guardar'" @click="handleGuardarBoton" />
             </div>
 

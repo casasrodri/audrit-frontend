@@ -101,7 +101,6 @@ onMounted(async () => {
     setTitulo(idsActivos.value.revision.obj.nombre)
     document.title = `Revisión - ${idsActivos.value.revision.obj.nombre}`
     setMigajas()
-    obtenerPermisos()
 })
 
 watchEffect(() => {
@@ -117,16 +116,8 @@ function nuevo() {
     }
 }
 
-const permisos = ref({ auditorias: '' })
-
-async function obtenerPermisos() {
-    const { data } = await api.get('/sesiones/me/menu')
-    data.split('|').forEach(menu => {
-        const array = menu.split(':')
-        permisos.value[array[0]] = array[1]
-    });
-    // permisos.auditorias.includes('W')
-}
+import { usePermisos } from '@/composables/permisos.js';
+const permisos = usePermisos()
 
 </script>
 

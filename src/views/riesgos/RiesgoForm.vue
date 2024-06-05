@@ -154,8 +154,6 @@ async function inicializar() {
     getObjetivosControlDisponibles()
     setMigajas()
     establecerTitulo()
-    document.title = 'Riesgo'
-    obtenerPermisos()
 }
 
 onMounted(inicializar)
@@ -246,25 +244,13 @@ function editarRiesgo() {
     router.push({ params: { nombre: 'editar' } })
 }
 
-const permisos = ref({ auditorias: '' })
-
-async function obtenerPermisos() {
-    const { data } = await api.get('/sesiones/me/menu')
-    data.split('|').forEach(menu => {
-        const array = menu.split(':')
-        permisos.value[array[0]] = array[1]
-    });
-}
-
-function tienePermisoEdicion() {
-    return permisos.value.auditorias.includes('W')
-}
-
-
-
 const niveles = ['Alto', 'Medio', 'Bajo']
 const objetivosControlDisponibles = ref([]);
 const verDescripObjCtrl = ref(true)
+
+import { usePermisos } from '@/composables/permisos.js';
+const permisos = usePermisos()
+
 
 </script>
 
@@ -305,7 +291,7 @@ const verDescripObjCtrl = ref(true)
             </div>
 
             <div class="flex justify-end mt-2">
-                <Button label="Editar" @click="editarRiesgo" v-if="tienePermisoEdicion()" />
+                <Button label="Editar" @click="editarRiesgo" v-if="permisos.auditoriasEditar" />
             </div>
 
             <TablaElementosAsociados :auditoria="idsActivos.auditoria" :revision="idsActivos.revision" tipo="riesgo"
@@ -359,7 +345,7 @@ const verDescripObjCtrl = ref(true)
                 </div>
             </div>
 
-            <div class="flex justify-end" v-if="tienePermisoEdicion()">
+            <div class="flex justify-end" v-if="permisos.auditoriasEditar">
                 <Button :label="$route.params.idRiesgo === 'nuevo' ? 'Crear' : 'Guardar'" @click="handleGuardarBoton" />
             </div>
         </div>

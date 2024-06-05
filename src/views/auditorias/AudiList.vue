@@ -64,6 +64,7 @@ const onRowSelect = (row) => {
 };
 
 const permisos = ref({ auditorias: '' })
+
 async function obtenerPermisos() {
     const { data } = await api.get('/sesiones/me/menu')
     data.split('|').forEach(menu => {

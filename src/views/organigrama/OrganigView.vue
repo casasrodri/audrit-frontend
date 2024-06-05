@@ -27,7 +27,6 @@ onMounted(() => {
     { nombre: 'Auditorias', url: '/auditorias', title: 'Listado de auditorías' },
     { nombre: 'Organigrama', url: '/organigrama', title: 'Estructura funcional' }
   ];
-  obtenerPermisos()
 })
 
 
@@ -38,16 +37,8 @@ const onRowSelect = (row) => {
   router.push(`/organigrama/${idPuesto}/${nombre}`);
 };
 
-const permisos = ref({ auditorias: '' })
-
-async function obtenerPermisos() {
-  const { data } = await api.get('/sesiones/me/menu')
-  data.split('|').forEach(menu => {
-    const array = menu.split(':')
-    permisos.value[array[0]] = array[1]
-  });
-  // permisos.auditorias.includes('W')
-}
+import { usePermisos } from '@/composables/permisos.js';
+const permisos = usePermisos()
 
 function nuevo() {
   router.push('/organigrama/nuevo');
@@ -70,7 +61,7 @@ function nuevo() {
       </Column>
       <Column field="gerencia" header="Gerencia"></Column>
     </DataTable>
-    <div class="mt-1 ml-4" v-if="permisos.auditorias.includes('W')">
+    <div class="mt-1 ml-4" v-if="permisos.auditoriasEditar">
       <Button label="Nuevo" @click="nuevo" title="Nuevo puesto funcional" />
     </div>
   </div>

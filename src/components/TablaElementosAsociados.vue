@@ -149,21 +149,9 @@ const eliminarAsociacion = (event, slot) => {
     });
 };
 
-const permisos = ref({ auditorias: '' })
+import { usePermisos } from '@/composables/permisos.js';
+const permisos = usePermisos()
 
-async function obtenerPermisos() {
-    const { data } = await api.get('/sesiones/me/menu')
-    data.split('|').forEach(menu => {
-        const array = menu.split(':')
-        permisos.value[array[0]] = array[1]
-    });
-}
-
-function tienePermisoEdicion() {
-    return permisos.value.auditorias.includes('W')
-}
-
-onMounted(obtenerPermisos)
 </script>
 
 <template>
@@ -186,7 +174,7 @@ onMounted(obtenerPermisos)
                         </RouterLink>
                     </template>
                 </Column>
-                <Column field="acciones" header="" style="min-width: 10px" v-if="tienePermisoEdicion()">
+                <Column field="acciones" header="" style="min-width: 10px" v-if="permisos.auditoriasEditar">
                     <template #body="slotProps">
                         <div @click="eliminarAsociacion($event, slotProps)" title="Eliminar asociación"
                             class="text-red-500 cursor-pointer" v-if="slotProps.data.tipo !== 'Relevamientos'">
@@ -203,7 +191,7 @@ onMounted(obtenerPermisos)
             <p>No existen asociaciones.</p>
         </template>
 
-        <div class="flex justify-end mt-2" v-if="tienePermisoEdicion()">
+        <div class="flex justify-end mt-2" v-if="permisos.auditoriasEditar">
             <Button label="Asociar" @click="crearNuevoLink" />
         </div>
     </div>

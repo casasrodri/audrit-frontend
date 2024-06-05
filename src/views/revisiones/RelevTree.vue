@@ -103,7 +103,7 @@ function toggleExpandCollapseAll() {
 <template>
     <div class="max-w-xl">
         <div class="flex justify-end text-xs">
-            <button @click="toggleExpandCollapseAll" class="text-primary-100 hover:text-primary-500">
+            <button @click="toggleExpandCollapseAll" class="text-primary-300 hover:text-primary-500">
                 {{ expandidoTodo ? 'Contraer' : 'Expandir' }} todo
             </button>
         </div>
@@ -112,7 +112,7 @@ function toggleExpandCollapseAll() {
             @nodeSelect="onRowSelect">
             <Column header="Sigla" expander headerStyle="max-width: rem">
                 <template #body="slotProps">
-                    <div class="flex place-items-center justify-between min-w-20">
+                    <div class="flex place-items-center justify-between min-w-20 cursor-pointer">
                         <Icon :icon="iconos[slotProps.node.data.tipo].icono" width="24" height="24"
                             :color="iconos[slotProps.node.data.tipo].color" />
                         <span class="text-gray-400">
@@ -125,12 +125,12 @@ function toggleExpandCollapseAll() {
                 <template #body="slotProps">
                     <template v-if="slotProps.node.data.tipo === 'documento'">
                         <RouterLink :to="relevURL(slotProps.node.data)"
-                            class="flex place-items-center hover:font-medium">
+                            class="flex place-items-center hover:font-medium cursor-pointer">
                             {{ slotProps.node.data.nombre }}
                         </RouterLink>
                     </template>
                     <template v-else>
-                        <span class="flex place-items-center hover:font-medium">
+                        <span class="flex place-items-center hover:font-medium cursor-pointer">
                             {{ slotProps.node.data.nombre }}
                         </span>
                     </template>

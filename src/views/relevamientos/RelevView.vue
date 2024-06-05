@@ -390,7 +390,6 @@ onMounted(async () => {
     renderDoc()
     editor = crearEditor(idsActivos.value)
     setMigajas()
-    obtenerPermisos()
 })
 
 async function guardarDocumento() {
@@ -483,20 +482,8 @@ function openFromEditorJs(e) {
 document.addEventListener('goToRoute', goToFromEditorJs);
 document.addEventListener('openRoute', openFromEditorJs);
 
-const permisos = ref({ auditorias: '' })
-
-async function obtenerPermisos() {
-    const { data } = await api.get('/sesiones/me/menu')
-    data.split('|').forEach(menu => {
-        const array = menu.split(':')
-        permisos.value[array[0]] = array[1]
-    });
-    console.log(permisos.value)
-}
-
-function tienePermisoEdicion() {
-    return permisos.value.auditorias.includes('W')
-}
+import { usePermisos } from '@/composables/permisos.js';
+const permisos = usePermisos()
 </script>
 
 
