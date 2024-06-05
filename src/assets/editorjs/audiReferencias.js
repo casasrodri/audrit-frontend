@@ -116,7 +116,7 @@ export class AudiReferencias {
 
         buscadorNombre.value = objeto.nombre
         descripcion.innerHTML = objeto.descripcion
-        btnNuevo.style.display = 'none'
+        // btnNuevo.style.display = 'none'
     }
 
     renderLectura() {
@@ -241,7 +241,7 @@ export class AudiReferencias {
                     buscadorNombre.value = objeto.nombre;
                     descripcion.innerHTML = objeto.descripcion;
                     opciones.innerHTML = '';
-                    btnNuevo.style.display = 'none'
+                    // btnNuevo.style.display = 'none'
                 });
                 opciones.appendChild(div);
             });
