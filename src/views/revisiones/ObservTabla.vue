@@ -56,7 +56,7 @@ const onRowSelect = (row) => {
 
 <template>
     <DataTable id="tablaObservaciones" :value="observaciones" tableStyle="min-width: 50rem" stripedRows
-        selectionMode="single" @rowSelect="onRowSelect">
+        selectionMode="single" @rowSelect="onRowSelect" v-if="observaciones.length > 0">
         <Column field="id" header="ID"></Column>
         <Column field="nombre" header="Nombre"></Column>
         <Column header="Riesgo">
@@ -65,6 +65,9 @@ const onRowSelect = (row) => {
             </template>
         </Column>
     </DataTable>
+    <div v-else>
+        Aún no se agregaron observaciones a esta revisión.
+    </div>
 </template>
 
 

@@ -64,7 +64,7 @@ const colores = {
 
 <template>
     <DataTable id="tablaControles" :value="controles" tableStyle="min-width: 50rem" stripedRows selectionMode="single"
-        @rowSelect="onRowSelect">
+        @rowSelect="onRowSelect" v-if="controles.length > 0">
         <Column field="id" header="ID"></Column>
         <Column field="nombre" header="Nombre"></Column>
         <Column header="Periodicidad">
@@ -83,6 +83,9 @@ const colores = {
             </template>
         </Column>
     </DataTable>
+    <div v-else>
+        Aún no se agregaron controles a esta revisión.
+    </div>
 </template>
 
 

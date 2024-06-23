@@ -101,7 +101,7 @@ function toggleExpandCollapseAll() {
 </script>
 
 <template>
-    <div class="max-w-xl">
+    <div class="max-w-xl" v-if="relevamientos.length > 0">
         <div class="flex justify-end text-xs">
             <button @click="toggleExpandCollapseAll" class="text-primary-300 hover:text-primary-500">
                 {{ expandidoTodo ? 'Contraer' : 'Expandir' }} todo
@@ -137,5 +137,8 @@ function toggleExpandCollapseAll() {
                 </template>
             </Column>
         </TreeTable>
+    </div>
+    <div v-else>
+        Aún no se agregaron relevamientos a esta revisión.
     </div>
 </template>

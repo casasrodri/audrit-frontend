@@ -56,7 +56,7 @@ const colores = {
 
 <template>
     <DataTable id="tablaRiesgos" :value="riesgos" tableStyle="min-width: 50rem" stripedRows selectionMode="single"
-        @rowSelect="onRowSelect">
+        @rowSelect="onRowSelect" v-if="riesgos.length > 0">
         <Column field="id" header="ID"></Column>
         <Column field="nombre" header="Nombre"></Column>
         <Column header="Nivel de riesgo">
@@ -65,6 +65,9 @@ const colores = {
             </template>
         </Column>
     </DataTable>
+    <div v-else>
+        Aún no se agregaron riesgos a esta revisión.
+    </div>
 </template>
 
 

@@ -50,7 +50,7 @@ const onRowSelect = (row) => {
 
 <template>
     <DataTable id="tablaPruebas" :value="pruebas" tableStyle="min-width: 50rem" stripedRows selectionMode="single"
-        @rowSelect="onRowSelect">
+        @rowSelect="onRowSelect" v-if="pruebas.length > 0">
         <Column field="id" header="ID"></Column>
         <Column field="nombre" header="Nombre"></Column>
         <Column header="Sector">
@@ -58,8 +58,10 @@ const onRowSelect = (row) => {
                 {{ slotProps.data.sector }}
             </template>
         </Column>
-
     </DataTable>
+    <div v-else>
+        Aún no se agregaron pruebas a esta revisión.
+    </div>
 </template>
 
 
