@@ -7,6 +7,7 @@ import AppLayout from '@/layouts/AppLayout.vue'
 // Views
 import AudiList from '@/views/auditorias/AudiList.vue'
 import AudiView from '@/views/auditorias/AudiView.vue'
+import AudiForm from '@/views/auditorias/AudiForm.vue'
 
 import RevisionView from '@/views/revisiones/RevisionView.vue'
 
@@ -58,6 +59,18 @@ const router = createRouter({
           name: 'auditorias',
           component: AudiList,
           meta: { title: 'Auditorías' },
+        },
+        {
+          path: '/auditorias/nueva',
+          name: 'nuevaAuditoria',
+          component: AudiForm,
+          meta: { title: 'Nueva auditoría' },
+        },
+        {
+          path: '/auditorias/:siglaAudit/editar',
+          name: 'editarAuditoria',
+          component: AudiForm,
+          meta: { title: 'Editar auditoría' },
         },
         {
           path: '/auditorias/:siglaAudit/:nombre?',

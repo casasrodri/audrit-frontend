@@ -4,6 +4,7 @@ import api from '@/services/api';
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
+import Button from 'primevue/button';
 import { useRouter, RouterLink } from 'vue-router';
 import { adaptarTextoParaUrl } from '@/utils/helpers';
 import { useMigajasStore } from '@/stores/migajas.js';
@@ -44,6 +45,10 @@ const tagStyles = {
     },
 
     estados: {
+        pendiente: {
+            severity: 'info',
+            text: 'pendiente',
+        },
         iniciada: {
             severity: 'success',
             text: 'iniciada',
@@ -63,19 +68,19 @@ const onRowSelect = (row) => {
     router.push(`/auditorias/${sigla}/${nombre}`);
 };
 
-const permisos = ref({ auditorias: '' })
+const permisosGlobales = ref({ auditorias: '' })
 
 async function obtenerPermisos() {
     const { data } = await api.get('/sesiones/me/menu')
     data.split('|').forEach(menu => {
         const array = menu.split(':')
-        permisos.value[array[0]] = array[1]
+        permisosGlobales.value[array[0]] = array[1]
     });
 
-    if (permisos.value.auditorias === '') {
-        const menus = Object.keys(permisos.value)
+    if (permisosGlobales.value.auditorias === '') {
+        const menus = Object.keys(permisosGlobales.value)
         for (const menu of menus) {
-            if (permisos.value[menu] !== '') {
+            if (permisosGlobales.value[menu] !== '') {
                 router.push(`/${menu}`)
                 return
             }
@@ -83,13 +88,23 @@ async function obtenerPermisos() {
     }
 }
 
+import { usePermisos } from '@/composables/permisos.js';
+const permisos = usePermisos()
+
+function nuevo() {
+    router.push('/auditorias/nueva')
+}
 
 </script>
 
 <template>
+    <div class="mb-4 mr-4 w-full justify-end flex" v-if="permisos.auditoriasEditar">
+        <Button label="Nueva" @click="nuevo" />
+    </div>
+
     <DataTable :value="auditorias" sortField="estado" :sortOrder="-1" tableStyle="min-width: 50rem" stripedRows
         selectionMode="single" @rowSelect="onRowSelect">
-        <Column field="sigla" header="Sigla"></Column>
+        <Column field="sigla" header="ID"></Column>
         <Column field="nombre" header="Nombre"></Column>
         <Column header="Tipo">
             <template #body="slotProps">

@@ -1,7 +1,7 @@
 <script setup>
 import api from '@/services/api';
 import { ref, onMounted } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import { useMigajasStore } from '@/stores/migajas.js';
 const route = useRoute();
 const migajasStore = useMigajasStore();
@@ -9,13 +9,15 @@ const migajasStore = useMigajasStore();
 import TreeTable from 'primevue/treetable';
 import Column from 'primevue/column';
 import Tag from 'primevue/tag';
+import Button from 'primevue/button';
 
-import { useRouter } from 'vue-router';
 import { adaptarTextoParaUrl } from '@/utils/helpers';
 import { setTitulo } from '@/stores/titulo.js';
 
 const router = useRouter();
-const auditoria = ref({});
+const auditoria = ref({
+    id: null,
+});
 const revisiones = ref([]);
 
 async function getAuditoria() {
@@ -48,6 +50,10 @@ onMounted(async () => {
     setMigajas()
 });
 
+const editarAuditoria = () => {
+    router.push(`/auditorias/${auditoria.value.sigla}/editar`);
+}
+
 const tagStyles = {
     iniciada: {
         severity: 'success',
@@ -75,45 +81,81 @@ const onRowSelect = (row) => {
     }
 };
 
+import { usePermisos } from '@/composables/permisos.js';
+const permisos = usePermisos()
 
+
+import { useDialog } from 'primevue/usedialog';
+const dialog = useDialog();
+import CrearRevision from '@/components/CrearRevision.vue';
+
+const crearNuevaRevision = () => {
+    dialog.open(CrearRevision, {
+        data: {
+            id: auditoria.value.id,
+        },
+        onClose: (opt) => {
+            // TODO: Ver como asociar si no tiene revisión ID
+            // console.log(opt)
+            // const callbackParams = opt.data; // {selectedId: 12}
+            // console.log(callbackParams)
+            if (opt.type == 'config-close') getAuditoria()
+        },
+        props: {
+            header: 'Nueva revisión',
+            style: {
+                width: '50vw',
+            },
+            breakpoints: {
+                '960px': '75vw',
+                '640px': '90vw'
+            },
+            modal: true,
+            maximizable: false,
+        }
+    });
+}
 
 </script>
 
 <template>
 
-    <div id="detallesAuditoria">
+    <div id="panelSuperior" class="flex flex-row justify-between border-b-[1px] dark:border-slate-700 my-2">
+        <div id="detallesAuditoria" class="flex flex-col">
+            <div>
+                <span class="font-semibold">
+                    Estado:
+                </span>
+                {{ auditoria.estado }}
+            </div>
+            <div>
+                <span class="font-semibold">
+                    Tipo:
+                </span>
+                {{ auditoria.tipo }}
+            </div>
+            <div>
+                <span class="font-semibold">
+                    Periodo:
+                </span>
+                {{ auditoria.periodo }}
+            </div>
 
-        <div>
-            <span class="font-semibold">
-                Estado:
-            </span>
-            {{ auditoria.estado }}
         </div>
-        <div>
-            <span class="font-semibold">
-                Tipo:
-            </span>
-            {{ auditoria.tipo }}
+        <div class="my-4">
+            <div class="mb-4 mr-4 w-full justify-end flex" v-if="permisos.auditoriasEditar">
+                <Button label="Editar" @click="editarAuditoria" />
+            </div>
         </div>
-        <div>
-            <span class="font-semibold">
-                Periodo:
-            </span>
-            {{ auditoria.periodo }}
-        </div>
-
-        <div class="border-b-[1px] dark:border-slate-700 my-4"></div>
     </div>
 
     <div class="font-semibold">
         Revisiones:
     </div>
 
-    <!-- TODO Agregar boton para nuevo o importar... -->
-
     <TreeTable id="tablaAuditorias" :value="revisiones" :pt="{ headerrow: 'hidden' }" class="mt-3"
-        selectionMode="single" @nodeSelect="onRowSelect" v-model:expandedKeys="expandedKeys">
-
+        selectionMode="single" @nodeSelect="onRowSelect" v-model:expandedKeys="expandedKeys"
+        v-if="revisiones.length > 0">
         <Column expander style="width: 50vw;">
             <template #body="props">
                 <span
@@ -130,16 +172,18 @@ const onRowSelect = (row) => {
                     :severity="tagStyles[props.node.data.estado].severity" v-if="props.node.children.length === 0" />
             </template>
         </Column>
-        <!-- <Column headerStyle="width: 10rem">
-            <template #body="props">
-                <div class="flex-row items-center justify-end gap-2 hidden group-hover/filaciclo:flex">
-                    {{ props.node.data.sigla }}
-                    {{ props.node.data.nombre }}
-                    {{ props.node.data.estado }}
-                </div>
-            </template>
-        </Column> -->
     </TreeTable>
+
+    <div v-else class="mt-4">
+        <div>
+            Aún no se han agregado revisiones para esta auditoría.
+        </div>
+    </div>
+    <div class="my-4">
+        <div class="mb-4 mr-4 w-full justify-end flex" v-if="permisos.auditoriasEditar">
+            <Button label="Agregar" @click="crearNuevaRevision" />
+        </div>
+    </div>
 
 </template>
 

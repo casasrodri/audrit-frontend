@@ -6,12 +6,12 @@ export function isObjectEmpty(obj) {
 export function adaptarTextoParaUrl(texto) {
     return texto
         // .toLowerCase() // Convertimos a minúsculas
-        .replace(/ /g, '-') // Reemplazamos los espacios por guiones
+        .replace(new RegExp(' ', 'g'), '-') // Reemplazamos los espacios por guiones
         .normalize("NFD") // Normalizamos el texto a su forma de descomposición
         .replace(/[\u0300-\u036f]/g, "") // Eliminamos las marcas diacríticas (acentos)
-        .replace('/', '-') // Reemplazamos las barras por guiones
-        .replace('.', '') // Reemplazamos los puntos por nada
-        .replace(',', '') // Reemplazamos las comas por nada
+        .replace(new RegExp('/', 'g'), '-') // Reemplazamos las barras por guiones
+        .replace(new RegExp('\\.', 'g'), '') // Reemplazamos los puntos por nada
+        .replace(new RegExp(',', 'g'), '') // Reemplazamos las comas por nada
 }
 
 export function fechaFormato(fecha) {
