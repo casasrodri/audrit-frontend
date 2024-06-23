@@ -108,9 +108,41 @@ watchEffect(() => {
     router.replace({ params: { tab: seleccionada } })
 })
 
+
+import { useDialog } from 'primevue/usedialog';
+const dialog = useDialog();
+import CrearRelevamiento from '@/components/CrearRelevamiento.vue';
+
+const crearNuevoRelevamiento = () => {
+    dialog.open(CrearRelevamiento, {
+        data: {
+            id: idsActivos.value.revision.id,
+        },
+        onClose: (opt) => {
+            // TODO: Ver como asociar si no tiene revisión ID
+            // console.log(opt)
+            // const callbackParams = opt.data; // {selectedId: 12}
+            // console.log(callbackParams)
+            if (opt.type == 'config-close') getIds()
+        },
+        props: {
+            header: 'Nuevo relevamiento',
+            style: {
+                width: '50vw',
+            },
+            breakpoints: {
+                '960px': '75vw',
+                '640px': '90vw'
+            },
+            modal: true,
+            maximizable: false,
+        }
+    });
+}
+
 function nuevo() {
     if (route.params.tab == 'relevamientos') {
-        alert('Ver como los creamos!')
+        crearNuevoRelevamiento()
     } else {
         router.push(route.fullPath + '/nuevo')
     }
