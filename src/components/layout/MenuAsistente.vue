@@ -86,6 +86,7 @@ function asistenteAbierto() {
     crearWebSocket()
     textoBuscado.value = ''
     streaming.value = false
+    verificarSincro()
 }
 
 function asistenteCerrado() {
@@ -101,28 +102,33 @@ onMounted(async () => {
     try {
         const data = await api.me()
         user.value = data.nombre
+        verificarSincro()
     } catch (error) {
         console.error(error)
     }
 })
 
+async function sincronizarAsistente() {
+    try {
+        sincronizandoAsistente.value = true
+        cantidadPendientes.value = 0
+        toast.add({ severity: 'info', summary: 'Asistente', detail: 'Se está actualizando la base de información del asistente, por favor espere.', life: 3000 });
+        await api.get('/asistente/sincronizar')
+        toast.add({ severity: 'success', summary: 'Asistente', detail: 'La información del asistente ha sido actualizada.', life: 3000 });
+
+    } catch (error) {
+        console.error(error)
+        toast.add({ severity: 'warn', summary: 'Asistente', detail: 'No se ha podido actualizar la información del asistente.', life: 3000 });
+    } finally {
+        sincronizandoAsistente.value = false
+    }
+}
 
 const items = ref([
     {
         label: 'Actualizar Documentos',
         icon: 'pi pi-sync',
-        command: async () => {
-            try {
-                toast.add({ severity: 'info', summary: 'Asistente', detail: 'Se está actualizando la base de información del asistente, por favor espere.', life: 3000 });
-                await api.get('/asistente/actualizarContenido')
-                toast.add({ severity: 'success', summary: 'Asistente', detail: 'La información del asistente ha sido actualizada.', life: 3000 });
-
-            } catch (error) {
-                console.error(error)
-                toast.add({ severity: 'warn', summary: 'Asistente', detail: 'No se ha podido actualizar la información del asistente.', life: 3000 });
-
-            }
-        }
+        command: sincronizarAsistente
     },
 ]);
 
@@ -135,6 +141,22 @@ const onAsistenteRightClick = (event) => {
 
 import { usePermisos } from '@/composables/permisos.js'
 const permisos = usePermisos()
+
+const verificandoSincro = ref(false)
+const cantidadPendientes = ref(-1)
+const sincronizandoAsistente = ref(false)
+
+async function verificarSincro() {
+    verificandoSincro.value = true
+    try {
+        const cantidad = await api.get('/asistente/contarCantidadPendientes')
+        cantidadPendientes.value = cantidad.data
+    } catch (error) {
+        console.error(error)
+    } finally {
+        verificandoSincro.value = false
+    }
+}
 
 </script>
 
@@ -180,6 +202,38 @@ const permisos = usePermisos()
                 <InputText ref="buscador" v-model="textoBuscado" placeholder="Hazme una pregunta..."
                     @keyup.enter="enviarMensaje" @keyup.escape="visible = false" autofocus :disabled="streaming" />
             </IconField>
+            <div class="mt-2 ml-1">
+                <div v-if="verificandoSincro">
+                    <span class="text-gray-400 dark:text-gray-600">
+                        <i class="pi pi-spin pi-spinner" style="font-size: 1rem"></i>
+                    </span>
+                    <span class="text-gray-400 dark:text-gray-600 text-sm">
+                        Verificando actualizaciones...
+                    </span>
+                </div>
+                <div v-if="!verificandoSincro && cantidadPendientes > 0">
+                    <span class="text-red-500 dark:text-red-400 mr-1">
+                        <i class="pi pi-exclamation-triangle" style="font-size: 1rem"></i>
+                    </span>
+                    <span class="text-red-500 dark:text-red-400 text-sm">
+                        {{ cantidadPendientes }} {{ cantidadPendientes == 1 ? 'actualización' : 'actualizaciones' }} {{
+                            cantidadPendientes == 1 ? 'pendiente' : 'pendientes' }} &nbsp;
+                    </span>
+                    <span class="underline text-sm cursor-pointer text-gray-400 dark:text-gray-600"
+                        @click="sincronizarAsistente">
+                        Sincronizar
+                    </span>
+                </div>
+                <div v-if="sincronizandoAsistente">
+                    <span class="text-blue-400 dark:text-blue-600">
+                        <i class="pi pi-spin pi-spinner" style="font-size: 1rem"></i>
+                    </span>
+                    <span class="text-blue-400 dark:text-blue-600 text-sm">
+                        Sincronizando...
+                    </span>
+                </div>
+            </div>
+
         </div>
     </Dialog>
 
