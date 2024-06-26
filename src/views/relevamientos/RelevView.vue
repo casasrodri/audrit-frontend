@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watchEffect } from 'vue';
 import SpeedDial from 'primevue/speeddial';
 import { useToast } from 'primevue/usetoast';
 import { useRouter, useRoute } from 'vue-router';
@@ -392,6 +392,14 @@ onMounted(async () => {
     getTitulo()
     renderDoc()
     editor = crearEditor(idsActivos.value)
+    setMigajas()
+})
+
+watchEffect(async () => {
+    route.params
+    await getIds()
+    getTitulo()
+    renderDoc()
     setMigajas()
 })
 
