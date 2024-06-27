@@ -75,6 +75,7 @@ export class AudiReferencias {
         this.endpointInfoId = config.endpointInfoId || ''
         this.urlVista = config.urlVista || ''
         this.urlNuevo = config.urlNuevo || ''
+        this.mostrarDescripcion = config.mostrarDescripcion === undefined ? true : config.mostrarDescripcion
     }
 
     async _buscarListaObjetos(texto) {
@@ -87,8 +88,13 @@ export class AudiReferencias {
         return data
     }
 
+    _modificarNombre(objeto) {
+        return objeto.nombre
+    }
+
     async _setCamposInfoObjLectura(wrapper, idObj, titulo, descripcion, izq, der) {
         const objeto = await this._infoObjeto(this.data.id)
+        const nombre = this._modificarNombre(objeto)
 
         idObj.value = this.data.id;
         // izq.href = `${this.urlVista}/${this.data.id}`
@@ -98,12 +104,25 @@ export class AudiReferencias {
         der.appendChild(titulo)
 
         if (objeto.descripcion) {
-            titulo.innerHTML = objeto.nombre + ':';
-            titulo.className = 'font-semibold underline cursor-pointer';
-            descripcion.innerHTML = objeto.descripcion;
-            der.appendChild(descripcion)
+
+            let nombreMostrar
+            let estilos = 'font-semibold cursor-pointer'
+
+            if (this.mostrarDescripcion) {
+                nombreMostrar = nombre + ':'
+                estilos += ' underline'
+                descripcion.innerHTML = objeto.descripcion;
+                console.log(objeto.descripcion)
+                der.appendChild(descripcion)
+            } else {
+                nombreMostrar = nombre
+                descripcion.classList.add('hidden')
+            }
+
+            titulo.innerHTML = nombreMostrar;
+            titulo.className = estilos;
         } else {
-            titulo.innerHTML = objeto.nombre
+            titulo.innerHTML = nombre
         }
 
         wrapper.appendChild(der)
@@ -111,12 +130,13 @@ export class AudiReferencias {
 
     async _setCamposInfoObjEdicion(idObj, buscadorNombre, descripcion, izq, btnNuevo) {
         const objeto = await this._infoObjeto(this.data.id)
+        const nombre = this._modificarNombre(objeto)
 
         idObj.value = this.data.id;
         // izq.href = `${this.urlVista}/${this.data.id}`
         izq.addEventListener('click', () => openRoute(`${this.urlVista}/${this.data.id}`))
 
-        buscadorNombre.value = objeto.nombre
+        buscadorNombre.value = nombre
         descripcion.innerHTML = objeto.descripcion
         // btnNuevo.style.display = 'none'
     }
@@ -334,6 +354,10 @@ export class Normativa extends AudiReferencias {
         this.titulo = 'Normativa'
         this.colores = COLORES.slate;
         this.tipo = 'normativa'
+    }
+
+    _modificarNombre(objeto) {
+        return `${objeto.nombre} (${objeto.nomenclatura})`
     }
 }
 

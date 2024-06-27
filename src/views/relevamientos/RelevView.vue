@@ -194,6 +194,7 @@ function crearEditor({ auditoria, revision }) {
                     endpointInfoId: '/normativas',
                     urlVista: '/normativas',
                     urlNuevo: '/normativas/nuevo',
+                    mostrarDescripcion: false,
                 }
             },
             aplicacion: {
@@ -203,6 +204,7 @@ function crearEditor({ auditoria, revision }) {
                     endpointInfoId: '/aplicaciones',
                     urlVista: '/aplicaciones',
                     urlNuevo: '/aplicaciones/nuevo',
+                    mostrarDescripcion: false,
                 }
             },
             organigrama: {
@@ -212,6 +214,7 @@ function crearEditor({ auditoria, revision }) {
                     endpointInfoId: '/organigramas',
                     urlVista: '/organigrama',
                     urlNuevo: '/organigrama/nuevo',
+                    mostrarDescripcion: false,
                 }
             },
             checklist: {
