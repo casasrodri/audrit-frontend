@@ -28,8 +28,8 @@
     "editorjs-toggle-block": "^0.3.16",
     "pinia": "^2.1.7",
     "primeicons": "^7.0.0",
-    "primevue": "^3.52.0",
-    "vue": "^3.4.30",
+    "primevue": "^3.53.0",
+    "vue": "^3.4.31",
     "vue-router": "^4.4.0"
   },
   "devDependencies": {
@@ -38,11 +38,11 @@
     "@vitejs/plugin-vue": "^5.0.5",
     "@vue/eslint-config-prettier": "^9.0.0",
     "autoprefixer": "^10.4.19",
-    "eslint": "^9.5.0",
+    "eslint": "^9.6.0",
     "eslint-plugin-vue": "^9.26.0",
-    "postcss": "^8.4.38",
+    "postcss": "^8.4.39",
     "prettier": "^3.3.2",
     "tailwindcss": "^3.4.4",
-    "vite": "^5.3.1"
+    "vite": "^5.3.2"
   }
 }
