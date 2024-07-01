@@ -58,6 +58,7 @@ function nuevo() {
           </span>
         </template>
       </Column>
+      <Column field="desarrollador" header="Desarrollador"></Column>
       <Column field="version" header="Versión"></Column>
     </DataTable>
     <div class="mt-1 ml-4" v-if="permisos.auditoriasEditar">

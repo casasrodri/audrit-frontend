@@ -253,7 +253,7 @@ const tipoOpts = ['Interna', 'Externa']
     </template>
 
     <template v-else>
-        <div id="container" class="flex flex-col min-w-4xl w-[50vw] mb-5">
+        <div id="container" class="flex flex-col min-w-4xl w-[26vw] mb-5">
             <div id="nomenclatura" class="mb-2 flex flex-col">
                 <label for="nomenclatura" class="font-semibold">Nomenclatura</label>
                 <InputText type="text" class="" v-model="normativa.nomenclatura" />

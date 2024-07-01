@@ -200,7 +200,7 @@ function validarInputs() {
     </template>
 
     <template v-else>
-        <div id="container" class="flex flex-col min-w-4xl w-[50vw] mb-5">
+        <div id="container" class="flex flex-col min-w-4xl w-[26vw] mb-5">
             <div id="nombre" class="mb-2 flex flex-col">
                 <label for="nombre" class="font-semibold">Nombre</label>
                 <InputText type="text" class="" v-model="puestoFuncional.nombre" />

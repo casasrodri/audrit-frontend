@@ -246,7 +246,7 @@ const automatizacionOpts = ['Automatizado', 'Semi-automatizado', 'Manual']
 
 <template>
     <template v-if="accion === 'ver'">
-        <div id="container" class="flex flex-col min-w-4xl w-[50vw] mb-5">
+        <div id="container" class="flex flex-col min-w-4xl w-[26vw] mb-5">
             <div id="descripcion" class="my-2 flex flex-col">
                 <label for="descripcion" class="font-semibold">Descripción:</label>
                 <div class="max-w-2xl text-wrap whitespace-pre">
@@ -294,7 +294,7 @@ const automatizacionOpts = ['Automatizado', 'Semi-automatizado', 'Manual']
     </template>
 
     <template v-else>
-        <div id="container" class="flex flex-col min-w-4xl w-[50vw] mb-5">
+        <div id="container" class="flex flex-col min-w-4xl w-[26vw] mb-5">
             <div id="nombre" class="mb-2 flex flex-col">
                 <label for="nombre" class="font-semibold">Nombre</label>
                 <InputText type="text" class="" v-model="control.nombre" />
