@@ -55,7 +55,7 @@ onMounted(obtenerMenus)
         <div class="flex flex-col mt-2">
           <BotonLateral v-for="menu in menuesDisponibles" :key="menu" :tipo="menu" />
           <!-- <BotonLateral tipo="parametros" /> -->
-          <BotonLateral tipo="tools" />
+          <!-- <BotonLateral tipo="tools" /> -->
         </div>
       </div>
       <div id="inferior">
